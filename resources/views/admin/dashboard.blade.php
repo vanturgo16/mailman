@@ -33,7 +33,7 @@
 
                     </div>
                     <div class="icon">
-                        <i class="fa fa-file"></i>
+                        <i class="fas fa-file-import"></i>
                     </div>
                     {{--  <a href="#" class="small-box-footer">Surat Online<i class="fas fa-arrow-circle-right"></i></a>  --}}
                 </div>
@@ -78,7 +78,7 @@
                         <p>Surat Keluar Sudah Diproses</p>
                     </div>
                     <div class="icon">
-                        <i class="fa fa-check-circle"></i>
+                        <i class="fa fa-check"></i>
                     </div>
                     {{-- <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> --}}
                 </div>
@@ -122,23 +122,16 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($pesan as $pesan)
-
                                         <tr>
-                                            <td>{{  $loop->iteration }}</td>
-                                            <td>
-                                                {{ $pesan->email }}
-                                            <td>
-                                                {{ $pesan->nama }}
-                                            </td>
-                                            <td>{{ $pesan->subjek }}</td>
-                                            <td>{{ $pesan->updated_at }}</td>
-
-                                            <td class="text-center">
-
-                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
-                                        @endforeach
 
 
                                 </table>

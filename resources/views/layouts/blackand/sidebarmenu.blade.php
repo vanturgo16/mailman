@@ -55,48 +55,48 @@
           <ul class="nav nav-treeview">
 
             <li class="nav-item">
-              <a href="/jabatan" class="nav-link">
+              <a href={{ url('/gedung') }} class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Gedung</p>
+                <p>Daftar Gedung</p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="/pejabat" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Lantai </p>
+                <p>Daftar Lantai </p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="/opd" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Ruang </p>
+                <p>Daftar Ruang </p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="/data-jml-penduduk" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Rak</p>
+                <p>Daftar Rak</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="/data-jml-penduduk" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Baris</p>
+                <p>Daftar Baris</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="/data-jml-penduduk" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Kolom</p>
+                <p>Daftar Kolom</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="/data-jml-penduduk" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Boks</p>
+                <p>Daftar Boks</p>
               </a>
             </li>
 
