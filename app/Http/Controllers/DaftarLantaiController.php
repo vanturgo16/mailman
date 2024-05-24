@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\DaftarGedung;
+use App\Models\DaftarLantai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class DaftarGedungController extends Controller
+class DaftarLantaiController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,9 +16,15 @@ class DaftarGedungController extends Controller
      */
     public function index()
     {
+        $lantais = DaftarLantai::select(
+            'daftar_lantai.*',
+            'daftar_gedung.nama_gedung'
+        )
+        ->leftJoin('daftar_gedung','daftar_lantai.id_gedung','daftar_gedung.id')
+        ->get();
         $gedungs = DaftarGedung::get();
     
-        return view('gedung.index',compact('gedungs'));
+        return view('lantai.index',compact('lantais','gedungs'));
     }
 
     /**
@@ -40,37 +47,40 @@ class DaftarGedungController extends Controller
     {
         //dd($request->all());
         $request->validate([
-            "kode_gedung" => "required",
             "nama_gedung" => "required",
+            "kode_lantai" => "required",
+            "nama_lantai" => "required",
             "kapasitas" => "required"
         ]);
 
         DB::beginTransaction();
         try {
             $user = auth()->user()->email;
-            $store = DaftarGedung::create([
-                'kode_gedung' => $request->kode_gedung,
-                'nama_gedung' => $request->nama_gedung,
-                'kapasitas_gedung' => $request->kapasitas,
-                'keterangan_gedung' => $request->keterangan,
+            $store = DaftarLantai::create([
+                'id_gedung' => $request->nama_gedung,
+                'kode_lantai' => $request->kode_lantai,
+                'nama_lantai' => $request->nama_lantai,
+                'kapasitas_lantai' => $request->kapasitas,
+                'keterangan_lantai' => $request->keterangan,
                 'created_by' => $user,
             ]);
 
             DB::commit();
-            return redirect()->back()->with(['success' => 'Sukses Tambah Data Gedung']);
+            return redirect()->back()->with(['success' => 'Sukses Tambah Data Lantai']);
         } catch (\Throwable $th) {
+            dd($th);
             DB::rollback();
-            return redirect()->back()->with(['fail' => 'Gagal Tambah Data Gedung!']);
+            return redirect()->back()->with(['fail' => 'Gagal Tambah Data Lantai!']);
         }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\DaftarGedung  $daftarGedung
+     * @param  \App\Models\DaftarLantai  $daftarLantai
      * @return \Illuminate\Http\Response
      */
-    public function show(DaftarGedung $daftarGedung)
+    public function show(DaftarLantai $daftarLantai)
     {
         //
     }
@@ -78,10 +88,10 @@ class DaftarGedungController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\DaftarGedung  $daftarGedung
+     * @param  \App\Models\DaftarLantai  $daftarLantai
      * @return \Illuminate\Http\Response
      */
-    public function edit(DaftarGedung $daftarGedung)
+    public function edit(DaftarLantai $daftarLantai)
     {
         //
     }
@@ -90,78 +100,82 @@ class DaftarGedungController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\DaftarGedung  $daftarGedung
+     * @param  \App\Models\DaftarLantai  $daftarLantai
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, DaftarGedung $daftarGedung, $id)
+    public function update(Request $request, DaftarLantai $daftarLantai, $id)
     {
         //dd($request->all());
         $request->validate([
-            "kode_gedung" => "required",
             "nama_gedung" => "required",
+            "kode_lantai" => "required",
+            "nama_lantai" => "required",
             "kapasitas" => "required"
         ]);
 
         DB::beginTransaction();
         try {
             $user = auth()->user()->email;
-            $store = DaftarGedung::where('id',$id)
+            $store = DaftarLantai::where('id',$id)
             ->update([
-                'kode_gedung' => $request->kode_gedung,
-                'nama_gedung' => $request->nama_gedung,
-                'kapasitas_gedung' => $request->kapasitas,
-                'keterangan_gedung' => $request->keterangan,
+                'id_gedung' => $request->nama_gedung,
+                'kode_lantai' => $request->kode_lantai,
+                'nama_lantai' => $request->nama_lantai,
+                'kapasitas_lantai' => $request->kapasitas,
+                'keterangan_lantai' => $request->keterangan,
                 'created_by' => $user,
             ]);
 
             DB::commit();
-            return redirect()->back()->with(['success' => 'Sukses Ubah Data Gedung']);
+            return redirect()->back()->with(['success' => 'Sukses Ubah Data Lantai']);
         } catch (\Throwable $th) {
             DB::rollback();
-            return redirect()->back()->with(['fail' => 'Gagal Ubah Data Gedung!']);
+            return redirect()->back()->with(['fail' => 'Gagal Ubah Data Lantai!']);
         }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\DaftarGedung  $daftarGedung
+     * @param  \App\Models\DaftarLantai  $daftarLantai
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DaftarGedung $daftarGedung, $id)
+    public function destroy(DaftarLantai $daftarLantai, $id)
     {
+        // dd($id);
         DB::beginTransaction();
         try {
             $user = auth()->user()->email;
-            $store = DaftarGedung::where('id',$id)
+            $store = DaftarLantai::where('id',$id)
             ->update([
-                'is_active' => '0',
+                'is_active' => 0,
                 'created_by' => $user,
             ]);
 
             DB::commit();
-            return redirect()->back()->with(['success' => 'Sukses Ubah Data Gedung']);
+            return redirect()->back()->with(['success' => 'Sukses Ubah Data Lantai']);
         } catch (\Throwable $th) {
+            dd($th);
             DB::rollback();
-            return redirect()->back()->with(['fail' => 'Gagal Ubah Data Gedung!']);
+            return redirect()->back()->with(['fail' => 'Gagal Ubah Data Lantai!']);
         }
     }
 
-    public function aktif(DaftarGedung $daftarGedung,$id){
+    public function aktif(DaftarLantai $daftarLantai,$id){
         DB::beginTransaction();
         try {
             $user = auth()->user()->email;
-            $store = DaftarGedung::where('id',decrypt($id))
+            $store = DaftarLantai::where('id',decrypt($id))
             ->update([
                 'is_active' => '1',
                 'created_by' => $user,
             ]);
 
             DB::commit();
-            return redirect()->back()->with(['success' => 'Sukses Ubah Data Gedung']);
+            return redirect()->back()->with(['success' => 'Sukses Ubah Data Lantai']);
         } catch (\Throwable $th) {
             DB::rollback();
-            return redirect()->back()->with(['fail' => 'Gagal Ubah Data Gedung!']);
+            return redirect()->back()->with(['fail' => 'Gagal Ubah Data Lantai!']);
         }
     }
 }

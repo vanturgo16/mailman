@@ -62,7 +62,7 @@
             </li>
 
             <li class="nav-item">
-              <a href="/pejabat" class="nav-link">
+              <a href={{ url('/lantai') }} class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Daftar Lantai </p>
               </a>

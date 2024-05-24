@@ -26,8 +26,8 @@ class FrondandController extends Controller
   public function __construct()
   {
     // parent::__construct();
-    $this->profil_desa = Profildesa::first();
-    $this->posts = Posts::latest()->paginate(8);
+    // $this->profil_desa = Profildesa::first();
+    // $this->posts = Posts::latest()->paginate(8);
   }
 
   public function login()
@@ -37,27 +37,27 @@ class FrondandController extends Controller
 
   public function index()
   {
-    $profil_desa = Profildesa::first();
-    $visi = Visimisi::first();
-    $sejarah = Sejarah::first();
-    $sambutan = Sambutan::first();
-    $potensi = Potensi_alam::first();
-    $staff = Staff::get();
-    $post = Posts::paginate(12);
-    $posts = Posts::latest()->paginate(8);
-    $slider = Slider::paginate(5);
-    // dd($posts);
-    return view('welcome', compact(
-      'profil_desa',
-      'visi',
-      'sejarah',
-      'sambutan',
-      'staff',
-      'post',
-      'potensi',
-      'slider',
-      'posts'
-    ));
+    // $profil_desa = Profildesa::first();
+    // $visi = Visimisi::first();
+    // $sejarah = Sejarah::first();
+    // $sambutan = Sambutan::first();
+    // $potensi = Potensi_alam::first();
+    // $staff = Staff::get();
+    // $post = Posts::paginate(12);
+    // $posts = Posts::latest()->paginate(8);
+    // $slider = Slider::paginate(5);
+    // // dd($posts);
+    // return view('welcome', compact(
+    //   'profil_desa',
+    //   'visi',
+    //   'sejarah',
+    //   'sambutan',
+    //   'staff',
+    //   'post',
+    //   'potensi',
+    //   'slider',
+    //   'posts'
+    // ));
   }
 
   public function surat_online()

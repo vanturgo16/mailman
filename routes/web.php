@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\DaftarGedungController;
+use App\Http\Controllers\DaftarLantaiController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -119,5 +120,8 @@ Route::group(['middleware' => 'cekopd'], function () {
 
 //mulai dari sini
 Route::resource('gedung', DaftarGedungController::class);
-    
+Route::patch('/gedung/aktif/{id}', [DaftarGedungController::class, 'aktif']);
+Route::resource('lantai', DaftarLantaiController::class);
+Route::patch('/lantai/aktif/{id}', [DaftarLantaiController::class, 'aktif']);
+
 require __DIR__.'/auth.php';
