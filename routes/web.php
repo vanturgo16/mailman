@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Http\Controllers\ClassificationController;
 use App\Http\Controllers\DaftarGedungController;
 use App\Http\Controllers\DaftarLantaiController;
 use Illuminate\Support\Facades\Route;
@@ -134,6 +135,8 @@ Route::resource('sator', SatorController::class);
 Route::patch('/sator/aktif/{id}', [SatorController::class, 'aktif']);
 Route::resource('unitkerja', WorkUnitController::class);
 Route::patch('/unitkerja/aktif/{id}', [WorkUnitController::class, 'aktif']);
+Route::resource('klasifikasi', ClassificationController::class);
+Route::patch('/klasifikasi/aktif/{id}', [ClassificationController::class, 'aktif']);
 
 
 require __DIR__.'/auth.php';
