@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\ClassificationController;
+use App\Http\Controllers\ComplainController;
 use App\Http\Controllers\DaftarGedungController;
 use App\Http\Controllers\DaftarLantaiController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,7 @@ use App\Http\Controllers\front\SliderController;
 use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\LetterController;
 use App\Http\Controllers\SatorController;
+use App\Http\Controllers\UnitLetterController;
 use App\Http\Controllers\WorkUnitController;
 use Carbon\Carbon;
 use App\Models\User;
@@ -134,14 +136,23 @@ Route::patch('/lantai/aktif/{id}', [DaftarLantaiController::class, 'aktif']);
 //Parameters
 Route::resource('instansi', InstansiController::class);
 Route::patch('/instansi/aktif/{id}', [InstansiController::class, 'aktif']);
+
 Route::resource('sator', SatorController::class);
 Route::patch('/sator/aktif/{id}', [SatorController::class, 'aktif']);
+
 Route::resource('unitkerja', WorkUnitController::class);
 Route::patch('/unitkerja/aktif/{id}', [WorkUnitController::class, 'aktif']);
+
 Route::resource('klasifikasi', ClassificationController::class);
 Route::patch('/klasifikasi/aktif/{id}', [ClassificationController::class, 'aktif']);
+
 Route::resource('naskah', LetterController::class);
 Route::patch('/naskah/aktif/{id}', [LetterController::class, 'aktif']);
 
+Route::resource('pengaduan', ComplainController::class);
+Route::patch('/pengaduan/aktif/{id}', [ComplainController::class, 'aktif']);
+
+Route::resource('satnas', UnitLetterController::class);
+Route::patch('/satnas/aktif/{id}', [UnitLetterController::class, 'aktif']);
 
 require __DIR__.'/auth.php';

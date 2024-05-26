@@ -152,13 +152,13 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/pengaduan') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Data Jenis Pengaduan</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/satnas') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Data Satuan Naskah</p>
               </a>
