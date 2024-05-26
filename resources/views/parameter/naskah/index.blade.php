@@ -5,12 +5,12 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0"><i class="fas fa-building"></i> Daftar Klasifikasi Arsip</h1>
+                <h1 class="m-0"><i class="fas fa-building"></i> Daftar Jenis Naskah Dinas</h1>
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Beranda</a></li>
-                    <li class="breadcrumb-item active">Daftar Klasifikasi Arsip</li>
+                    <li class="breadcrumb-item active">Daftar Jenis Naskah Dinas</li>
                 </ol>
             </div><!-- /.col -->
         </div><!-- /.row -->
@@ -31,33 +31,29 @@
                                     <div class="card-header">
                                         <h3 class="card-title">
                                             <a href="#" data-toggle="modal" data-target="#modalAdd"><i class="fa fa-plus"></i> </a>
-                                            Tambah Daftar Klasifikasi Arsip
+                                            Tambah Daftar Jenis Naskah Dinas
                                         </h3>
 
                                         <!-- Modal -->
-                                        <form action="{{ route('klasifikasi.store') }}" method="POST" enctype="multipart/form-data">
+                                        <form action="{{ route('naskah.store') }}" method="POST" enctype="multipart/form-data">
                                             @csrf
                                             <div class="modal fade" id="modalAdd" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalAddLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-md">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                    <h5 class="modal-title" id="modalAddLabel">Tambah Daftar Klasifikasi Arsip</h5>
+                                                    <h5 class="modal-title" id="modalAddLabel">Tambah Daftar Jenis Naskah Dinas</h5>
                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group">
-                                                            <label>Nama Klasifikasi Arsip</label>
-                                                            <input type="text" class="form-control" id="" name="nama_klasifikasi" required>
+                                                            <label>Kode Naskah Dinas</label>
+                                                            <input type="text" class="form-control" id="" name="kode_naskah" required>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Retensi (Tahun)</label>
-                                                            <input type="number" min="0" class="form-control" id="" name="tahun_retensi" required>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>Retensi (Bulan)</label>
-                                                            <input type="text" min="0" class="form-control" id="" name="bulan_retensi" required>
+                                                            <label>Nama Naskah Dinas</label>
+                                                            <input type="text" class="form-control" id="" name="nama_naskah" required>
                                                         </div>
                                                         <div class="form-group">
                                                             <label>Keterangan</label>
@@ -97,7 +93,8 @@
                                             <thead>
                                                 <tr>
                                                     <th scope="col" style="text-align: center;width: 6%">No.</th>
-                                                    <th scope="col">Nama Klasifikasi Arsip</th>
+                                                    <th scope="col">Kode Naskah Dinas</th>
+                                                    <th scope="col">Nama Naskah Dinas</th>
                                                     <th scope="col">Tanggal Perubahan</th>
                                                     <th scope="col">Pengubah</th>
                                                     <th scope="col">Status</th>
@@ -107,7 +104,8 @@
                                             @foreach ($datas as $data)    
                                             <tbody>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->classification_name }}</td>
+                                                <td>{{ $data->let_code }}</td>
+                                                <td>{{ $data->let_name }}</td>
                                                 <td>{{ $data->updated_at }}</td>
                                                 <td>{{ $data->created_by }}</td>
                                                 <td>
@@ -124,34 +122,30 @@
                                                     </button>
                                                     
                                                     <!-- Modal -->
-                                                    <form action="{{ route('klasifikasi.update', $data->id) }}" method="POST" enctype="multipart/form-data">
+                                                    <form action="{{ route('naskah.update', $data->id) }}" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     @method('PUT')
                                                     <div class="modal fade" id="editModal{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                                                         <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                            <h5 class="modal-title" id="editModalLabel">Ubah Data Klasifikasi Arsip</h5>
+                                                            <h5 class="modal-title" id="editModalLabel">Ubah Data Naskah Dinas</h5>
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                             </div>
                                                             <div class="modal-body">
                                                                 <div class="form-group">
-                                                                    <label>Nama Klasifikasi Arsip</label>
-                                                                    <input type="text" class="form-control" id="" name="nama_klasifikasi" value="{{ $data->classification_name }}" required>
+                                                                    <label>Kode Naskah Dinas</label>
+                                                                    <input type="text" class="form-control" id="" name="kode_naskah" value="{{ $data->let_code }}" required>
                                                                 </div>
                                                                 <div class="form-group">
-                                                                    <label>Retensi (Tahun)</label>
-                                                                    <input type="number" min="0" class="form-control" id="" name="tahun_retensi" value="{{ $data->retention_year }}" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Retensi (Bulan)</label>
-                                                                    <input type="text" min="0" class="form-control" id="" name="bulan_retensi" value="{{ $data->retention_month }}" required>
+                                                                    <label>Nama Naskah Dinas</label>
+                                                                    <input type="text" class="form-control" id="" name="nama_naskah" value="{{ $data->let_name }}" required>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label>Keterangan</label>
-                                                                    <textarea class="form-control" id="" rows="2" name="keterangan">{{ $data->classification_desc }}</textarea>
+                                                                    <textarea class="form-control" id="" rows="2" name="keterangan">{{ $data->let_desc }}</textarea>
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
@@ -163,16 +157,16 @@
                                                     </div>
                                                     </form>
                                                     @if ($data->is_active == '1')
-                                                        <form action="{{ route('klasifikasi.destroy', $data->id) }}" method="POST" style="display:inline-block;">
+                                                        <form action="{{ route('naskah.destroy', $data->id) }}" method="POST" style="display:inline-block;">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Hapus Klasifikasi Arsip?')">Hapus Data</button>
+                                                            <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Hapus Naskah Dinas?')">Hapus Data</button>
                                                         </form>
                                                     @else
-                                                        <form action="{{ url('/klasifikasi/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
+                                                        <form action="{{ url('/naskah/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
                                                             @csrf
                                                             @method('PATCH')
-                                                            <button type="submit" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Klasifikasi Arsip?')">Aktif Data</button>
+                                                            <button type="submit" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Naskah Dinas?')">Aktif Data</button>
                                                         </form>
                                                         {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
                                                     @endif

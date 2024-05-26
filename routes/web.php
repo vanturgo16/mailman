@@ -22,10 +22,13 @@ use App\Http\Controllers\opd\AjuanAgenda;
 
 use App\Http\Controllers\front\SliderController;
 use App\Http\Controllers\InstansiController;
+use App\Http\Controllers\LetterController;
 use App\Http\Controllers\SatorController;
 use App\Http\Controllers\WorkUnitController;
 use Carbon\Carbon;
 use App\Models\User;
+use PgSql\Lob;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -137,6 +140,8 @@ Route::resource('unitkerja', WorkUnitController::class);
 Route::patch('/unitkerja/aktif/{id}', [WorkUnitController::class, 'aktif']);
 Route::resource('klasifikasi', ClassificationController::class);
 Route::patch('/klasifikasi/aktif/{id}', [ClassificationController::class, 'aktif']);
+Route::resource('naskah', LetterController::class);
+Route::patch('/naskah/aktif/{id}', [LetterController::class, 'aktif']);
 
 
 require __DIR__.'/auth.php';
