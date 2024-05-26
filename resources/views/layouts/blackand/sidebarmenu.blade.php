@@ -43,7 +43,7 @@
           </a>
         </li>
         @can('master data')
-        <li class="nav-item">
+        {{-- <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-copy"></i>
             <p>
@@ -101,7 +101,7 @@
             </li>
 
           </ul>
-        </li>
+        </li> --}}
         @endcan
         @can('benner')
         <li class="nav-item">
@@ -116,13 +116,13 @@
           <ul class="nav nav-treeview">
 
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/instansi') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Data Instansi Eksternal</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/unitkerja') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Data Unit Kerja Internal</p>
               </a>
@@ -164,7 +164,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/sator') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Data Satuan Organisasi</p>
               </a>

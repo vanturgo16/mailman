@@ -20,6 +20,9 @@ use App\Http\Controllers\opd\AjuanAgenda;
 
 
 use App\Http\Controllers\front\SliderController;
+use App\Http\Controllers\InstansiController;
+use App\Http\Controllers\SatorController;
+use App\Http\Controllers\WorkUnitController;
 use Carbon\Carbon;
 use App\Models\User;
 /*
@@ -123,5 +126,14 @@ Route::resource('gedung', DaftarGedungController::class);
 Route::patch('/gedung/aktif/{id}', [DaftarGedungController::class, 'aktif']);
 Route::resource('lantai', DaftarLantaiController::class);
 Route::patch('/lantai/aktif/{id}', [DaftarLantaiController::class, 'aktif']);
+
+//Parameters
+Route::resource('instansi', InstansiController::class);
+Route::patch('/instansi/aktif/{id}', [InstansiController::class, 'aktif']);
+Route::resource('sator', SatorController::class);
+Route::patch('/sator/aktif/{id}', [SatorController::class, 'aktif']);
+Route::resource('unitkerja', WorkUnitController::class);
+Route::patch('/unitkerja/aktif/{id}', [WorkUnitController::class, 'aktif']);
+
 
 require __DIR__.'/auth.php';
