@@ -135,43 +135,44 @@
                                                         </form>
                                                         {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
                                                     @endif
+
+                                                    <!-- Modal -->
+                                                    <form action="{{ route('pengaduan.update', $data->id) }}" method="POST" enctype="multipart/form-data">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <div class="modal fade" id="editModal{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                <h5 class="modal-title" id="editModalLabel">Ubah Data Jenid Pengaduan</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="form-group">
+                                                                        <label>Kode jenis Pengaduan</label>
+                                                                        <input type="text" class="form-control" id="" name="kode_pengaduan" value="{{ $data->com_code }}" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Nama jenis Pengaduan</label>
+                                                                        <input type="text" class="form-control" id="" name="nama_pengaduan" value="{{ $data->com_name }}" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>keterangan</label>
+                                                                        <textarea class="form-control" id="" rows="2" name="keterangan">{{ $data->com_desc }}</textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                                                <button type="submit" class="btn btn-primary">Update</button>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
                                                 </td>
                                             </tbody>
-                                            <!-- Modal -->
-                                            <form action="{{ route('pengaduan.update', $data->id) }}" method="POST" enctype="multipart/form-data">
-                                            @csrf
-                                            @method('PUT')
-                                            <div class="modal fade" id="editModal{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel">Ubah Data Jenid Pengaduan</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="form-group">
-                                                            <label>Kode jenis Pengaduan</label>
-                                                            <input type="text" class="form-control" id="" name="kode_pengaduan" value="{{ $data->com_code }}" required>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>Nama jenis Pengaduan</label>
-                                                            <input type="text" class="form-control" id="" name="nama_pengaduan" value="{{ $data->com_name }}" required>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>keterangan</label>
-                                                            <textarea class="form-control" id="" rows="2" name="keterangan">{{ $data->com_desc }}</textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                                    <button type="submit" class="btn btn-primary">Update</button>
-                                                    </div>
-                                                </div>
-                                                </div>
-                                            </div>
-                                            </form>
                                             @endforeach
                                         </table>
                                     </div>

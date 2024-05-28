@@ -25,6 +25,7 @@ use App\Http\Controllers\front\SliderController;
 use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\LetterController;
 use App\Http\Controllers\SatorController;
+use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UnitLetterController;
 use App\Http\Controllers\WorkUnitController;
 use Carbon\Carbon;
@@ -154,5 +155,8 @@ Route::patch('/pengaduan/aktif/{id}', [ComplainController::class, 'aktif']);
 
 Route::resource('satnas', UnitLetterController::class);
 Route::patch('/satnas/aktif/{id}', [UnitLetterController::class, 'aktif']);
+
+Route::resource('template', TemplateController::class);
+Route::patch('/template/aktif/{id}', [TemplateController::class, 'aktif']);
 
 require __DIR__.'/auth.php';

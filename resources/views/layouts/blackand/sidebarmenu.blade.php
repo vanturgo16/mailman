@@ -146,9 +146,9 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/template') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Templet Surat Keluar</p>
+                <p>Template Surat Keluar</p>
               </a>
             </li>
             <li class="nav-item">

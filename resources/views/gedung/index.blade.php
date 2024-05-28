@@ -137,47 +137,48 @@
                                                         </form>
                                                         {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
                                                     @endif
+
+                                                    <!-- Modal -->
+                                                    <form action="{{ route('gedung.update', $data->id) }}" method="POST" enctype="multipart/form-data">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <div class="modal fade" id="editModalGedung{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalGedungLabel" aria-hidden="true">
+                                                            <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                <h5 class="modal-title" id="editModalGedungLabel">Modal title</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="form-group">
+                                                                        <label>Kode Gedung</label>
+                                                                        <input type="text" class="form-control" value="{{ $data->kode_gedung }}" name="kode_gedung" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Nama Gedung</label>
+                                                                        <input type="text" class="form-control" value="{{ $data->nama_gedung }}" name="nama_gedung" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Kapasitas (Lantai)</label>
+                                                                        <input type="number" min="1" class="form-control w-25" value="{{ $data->kapasitas_gedung }}" name="kapasitas" required>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Keterangan</label>
+                                                                        <textarea class="form-control" rows="3" name="keterangan">{{ $data->keterangan_gedung }}</textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                                                <button type="submit" class="btn btn-primary">Update</button>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
                                                 </td>
                                             </tbody>
-                                            <!-- Modal -->
-                                            <form action="{{ route('gedung.update', $data->id) }}" method="POST" enctype="multipart/form-data">
-                                            @csrf
-                                            @method('PUT')
-                                            <div class="modal fade" id="editModalGedung{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalGedungLabel" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalGedungLabel">Modal title</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="form-group">
-                                                            <label>Kode Gedung</label>
-                                                            <input type="text" class="form-control" value="{{ $data->kode_gedung }}" name="kode_gedung" required>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>Nama Gedung</label>
-                                                            <input type="text" class="form-control" value="{{ $data->nama_gedung }}" name="nama_gedung" required>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>Kapasitas (Lantai)</label>
-                                                            <input type="number" min="1" class="form-control w-25" value="{{ $data->kapasitas_gedung }}" name="kapasitas" required>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label>Keterangan</label>
-                                                            <textarea class="form-control" rows="3" name="keterangan">{{ $data->keterangan_gedung }}</textarea>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                                    <button type="submit" class="btn btn-primary">Update</button>
-                                                    </div>
-                                                </div>
-                                                </div>
-                                            </div>
-                                            </form>
                                             @endforeach
                                         </table>
                                     </div>
