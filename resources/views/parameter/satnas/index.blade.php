@@ -48,7 +48,7 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group">
-                                                            <label>Nama Satuan</label>
+                                                            <label class="text-danger">Nama Satuan*</label>
                                                             <input type="text" class="form-control" id="" name="nama_satuan_naskah" required>
                                                         </div>
                                                         <div class="form-group">
@@ -145,7 +145,7 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <div class="form-group">
-                                                                        <label>Nama Satuan</label>
+                                                                        <label class="text-danger">Nama Satuan*</label>
                                                                         <input type="text" class="form-control" id="" name="nama_satuan_naskah" value="{{ $data->unit_name }}" required>
                                                                     </div>
                                                                     <div class="form-group">

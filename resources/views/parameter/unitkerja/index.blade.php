@@ -48,7 +48,7 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group">
-                                                            <label>Kode Unit Kerja</label>
+                                                            <label class="text-danger">Kode Unit Kerja*</label>
                                                             <select class="form-control" id="kode_unit" name="kode_unit" required>
                                                                 <option value="">Pilih Kode Unit</option>
                                                             @foreach ($sators as $sator)
@@ -57,11 +57,11 @@
                                                         </select>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Nama Unit Kerja</label>
+                                                            <label class="text-danger">Nama Unit Kerja*</label>
                                                             <input type="text" class="form-control" id="" name="nama_unit" required>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Nama Kepala Unit Kerja</label>
+                                                            <label class="text-danger">Nama Kepala Unit Kerja*</label>
                                                             <input type="text" class="form-control" id="" name="nama_kepala_unit" required>
                                                         </div>  
                                                         <div class="form-group">
@@ -162,7 +162,7 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <div class="form-group">
-                                                                        <label>Kode Unit Kerja</label>
+                                                                        <label class="text-danger">Kode Unit Kerja*</label>
                                                                         <select class="form-control" id="kode_unit" name="kode_unit" required>
                                                                             <option value="">Pilih Kode Unit</option>
                                                                         @foreach ($sators as $sator)
@@ -171,11 +171,11 @@
                                                                     </select>
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label>Nama Unit Kerja</label>
+                                                                        <label class="text-danger">Nama Unit Kerja*</label>
                                                                         <input type="text" class="form-control" id="" name="nama_unit" value="{{ $data->work_name }}" required>
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label>Nama Kepala Unit Kerja</label>
+                                                                        <label class="text-danger">Nama Kepala Unit Kerja*</label>
                                                                         <input type="text" class="form-control" id="" name="nama_kepala_unit" value="{{ $data->work_head_name }}" required>
                                                                     </div>  
                                                                     <div class="form-group">

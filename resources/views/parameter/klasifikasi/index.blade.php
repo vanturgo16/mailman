@@ -48,7 +48,7 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group">
-                                                            <label>Nama Klasifikasi Arsip</label>
+                                                            <label class="text-danger">Nama Klasifikasi Arsip*</label>
                                                             <input type="text" class="form-control" id="" name="nama_klasifikasi" required>
                                                         </div>
                                                         <div class="form-group">
@@ -153,7 +153,7 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <div class="form-group">
-                                                                        <label>Nama Klasifikasi Arsip</label>
+                                                                        <label class="text-danger">Nama Klasifikasi Arsip*</label>
                                                                         <input type="text" class="form-control" id="" name="nama_klasifikasi" value="{{ $data->classification_name }}" required>
                                                                     </div>
                                                                     <div class="form-group">

@@ -48,11 +48,11 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group">
-                                                            <label>Kode Naskah Dinas</label>
+                                                            <label class="text-danger">Kode Naskah Dinas*</label>
                                                             <input type="text" class="form-control" id="" name="kode_naskah" required>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Nama Naskah Dinas</label>
+                                                            <label class="text-danger">Nama Naskah Dinas*</label>
                                                             <input type="text" class="form-control" id="" name="nama_naskah" required>
                                                         </div>
                                                         <div class="form-group">
@@ -150,11 +150,11 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <div class="form-group">
-                                                                        <label>Kode Naskah Dinas</label>
+                                                                        <label class="text-danger">Kode Naskah Dinas*</label>
                                                                         <input type="text" class="form-control" id="" name="kode_naskah" value="{{ $data->let_code }}" required>
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label>Nama Naskah Dinas</label>
+                                                                        <label class="text-danger">Nama Naskah Dinas*</label>
                                                                         <input type="text" class="form-control" id="" name="nama_naskah" value="{{ $data->let_name }}" required>
                                                                     </div>
                                                                     <div class="form-group">

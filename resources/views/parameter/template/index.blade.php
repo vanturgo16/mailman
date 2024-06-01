@@ -48,15 +48,15 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group">
-                                                            <label>Nama Template</label>
+                                                            <label class="text-danger">Nama Template*</label>
                                                             <input type="text" class="form-control" id="" name="nama_template" required>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Versi Template</label>
+                                                            <label class="text-danger">Versi Template*</label>
                                                             <input type="text" class="form-control" id="" name="versi" required>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Tanggal Efektif</label>
+                                                            <label class="text-danger">Tanggal Efektif*</label>
                                                             <div class="row">
                                                                 <div class="col-6">
                                                                     <label>Awal</label>
@@ -69,7 +69,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Kategori/Kelompok</label>
+                                                            <label class="text-danger">Kategori/Kelompok*</label>
                                                             <div class="row">
                                                                 <div class="col-6">
                                                                     <select class="form-control" id="kategori" name="kategori" required>
@@ -82,7 +82,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>File</label>
+                                                            <label class="text-danger">File*</label>
                                                             <input type="file" class="form-control" id="" name="file_template" required>
                                                         </div>
                                                         <div class="form-group">
@@ -179,11 +179,11 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <div class="form-group">
-                                                                        <label>Nama Template</label>
+                                                                        <label class="text-danger">Nama Template*</label>
                                                                         <input type="text" class="form-control" id="" name="nama_template" value="{{ $data->template_name }}" required>
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label>Versi Template</label>
+                                                                        <label class="text-danger">Versi Template*</label>
                                                                         <input type="text" class="form-control" id="" name="versi" value="{{ $data->template_version }}" required>
                                                                     </div>
                                                                     <div class="form-group">
@@ -200,7 +200,7 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label>Kategori/Kelompok</label>
+                                                                        <label class="text-danger">Kategori/Kelompok*</label>
                                                                         <div class="row">
                                                                             <div class="col-6">
                                                                                 <select class="form-control" id="kategori" name="kategori" required>
@@ -213,7 +213,7 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label>File</label>
+                                                                        <label class="text-danger">File*</label>
                                                                         <input type="file" class="form-control" id="" name="file_template">
                                                                         <label><a href="{{ asset('storage/template/'. $data->template_filename) }}">Download File</a></label>
                                                                     </div>

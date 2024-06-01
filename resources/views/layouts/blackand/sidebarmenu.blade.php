@@ -142,7 +142,7 @@
             <li class="nav-item">
               <a href="/adm-benner" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p> Surat Keluar</p>
+                <p>Penomoran Surat Ke Luar</p>
               </a>
             </li>
             <li class="nav-item">

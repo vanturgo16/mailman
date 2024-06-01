@@ -48,7 +48,7 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group">
-                                                            <label>Nama Instansi</label>
+                                                            <label class="text-danger">Nama Instansi*</label>
                                                             <input type="text" class="form-control" id="" name="nama_instansi" required>
                                                         </div>
                                                         <div class="form-group">
@@ -159,7 +159,7 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <div class="form-group">
-                                                                        <label>Nama Instansi</label>
+                                                                        <label class="text-danger">Nama Instansi*</label>
                                                                         <input type="text" class="form-control" id="" name="nama_instansi" value="{{ $data->name_ins }}" required>
                                                                     </div>
                                                                     <div class="form-group">

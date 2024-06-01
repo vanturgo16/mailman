@@ -48,11 +48,11 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group">
-                                                            <label>Kode jenis Pengaduan</label>
+                                                            <label class="text-danger">Kode jenis Pengaduan*</label>
                                                             <input type="text" class="form-control" id="" name="kode_pengaduan" required>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Nama jenis Pengaduan</label>
+                                                            <label class="text-danger">Nama jenis Pengaduan*</label>
                                                             <input type="text" class="form-control" id="" name="nama_pengaduan" required>
                                                         </div>
                                                         <div class="form-group">
@@ -151,11 +151,11 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <div class="form-group">
-                                                                        <label>Kode jenis Pengaduan</label>
+                                                                        <label class="text-danger">Kode jenis Pengaduan*</label>
                                                                         <input type="text" class="form-control" id="" name="kode_pengaduan" value="{{ $data->com_code }}" required>
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label>Nama jenis Pengaduan</label>
+                                                                        <label class="text-danger">Nama jenis Pengaduan*</label>
                                                                         <input type="text" class="form-control" id="" name="nama_pengaduan" value="{{ $data->com_name }}" required>
                                                                     </div>
                                                                     <div class="form-group">
