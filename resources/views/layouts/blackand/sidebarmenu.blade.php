@@ -42,6 +42,15 @@
             </p>
           </a>
         </li>
+        <li class="nav-item">
+          <a href="{{ url('/dropdown') }}" class="nav-link">
+            <i class="nav-icon fas fa-caret-square-down"></i>
+            <p>
+              Master Dropdown
+              <span class="right badge badge-danger"></span>
+            </p>
+          </a>
+        </li>
         @can('master data')
         {{-- <li class="nav-item">
           <a href="#" class="nav-link">
@@ -137,12 +146,6 @@
               <a href="{{ url('/naskah') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Jenis Naskah Dinas</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Penomoran Surat Ke Luar</p>
               </a>
             </li>
             <li class="nav-item">

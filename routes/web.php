@@ -6,6 +6,7 @@ use App\Http\Controllers\ClassificationController;
 use App\Http\Controllers\ComplainController;
 use App\Http\Controllers\DaftarGedungController;
 use App\Http\Controllers\DaftarLantaiController;
+use App\Http\Controllers\DropdownController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,10 +25,12 @@ use App\Http\Controllers\opd\AjuanAgenda;
 use App\Http\Controllers\front\SliderController;
 use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\LetterController;
+use App\Http\Controllers\PatternController;
 use App\Http\Controllers\SatorController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UnitLetterController;
 use App\Http\Controllers\WorkUnitController;
+use App\Models\Dropdown;
 use Carbon\Carbon;
 use App\Models\User;
 use PgSql\Lob;
@@ -149,6 +152,8 @@ Route::patch('/klasifikasi/aktif/{id}', [ClassificationController::class, 'aktif
 
 Route::resource('naskah', LetterController::class);
 Route::patch('/naskah/aktif/{id}', [LetterController::class, 'aktif']);
+Route::post('/pattern/store/{id}', [LetterController::class, 'storePattern']);
+Route::get('/pattern/create/{id}', [LetterController::class, 'createPattern']);
 
 Route::resource('pengaduan', ComplainController::class);
 Route::patch('/pengaduan/aktif/{id}', [ComplainController::class, 'aktif']);
@@ -158,5 +163,8 @@ Route::patch('/satnas/aktif/{id}', [UnitLetterController::class, 'aktif']);
 
 Route::resource('template', TemplateController::class);
 Route::patch('/template/aktif/{id}', [TemplateController::class, 'aktif']);
+
+Route::resource('dropdown', DropdownController::class);
+Route::patch('/dropdown/aktif/{id}', [DropdownController::class, 'aktif']);
 
 require __DIR__.'/auth.php';
