@@ -42,8 +42,17 @@
             </p>
           </a>
         </li>
-        @can('master data')
         <li class="nav-item">
+          <a href="{{ url('/dropdown') }}" class="nav-link">
+            <i class="nav-icon fas fa-caret-square-down"></i>
+            <p>
+              Master Dropdown
+              <span class="right badge badge-danger"></span>
+            </p>
+          </a>
+        </li>
+        @can('master data')
+        {{-- <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-copy"></i>
             <p>
@@ -55,53 +64,53 @@
           <ul class="nav nav-treeview">
 
             <li class="nav-item">
-              <a href="/jabatan" class="nav-link">
+              <a href={{ url('/gedung') }} class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Gedung</p>
+                <p>Daftar Gedung</p>
               </a>
             </li>
 
             <li class="nav-item">
-              <a href="/pejabat" class="nav-link">
+              <a href={{ url('/lantai') }} class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Lantai </p>
+                <p>Daftar Lantai </p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="/opd" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Ruang </p>
+                <p>Daftar Ruang </p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="/data-jml-penduduk" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Rak</p>
+                <p>Daftar Rak</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="/data-jml-penduduk" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Baris</p>
+                <p>Daftar Baris</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="/data-jml-penduduk" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Kolom</p>
+                <p>Daftar Kolom</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="/data-jml-penduduk" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Boks</p>
+                <p>Daftar Boks</p>
               </a>
             </li>
 
           </ul>
-        </li>
+        </li> --}}
         @endcan
         @can('benner')
         <li class="nav-item">
@@ -116,55 +125,49 @@
           <ul class="nav nav-treeview">
 
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/instansi') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Data Instansi Eksternal</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/unitkerja') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Data Unit Kerja Internal</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/klasifikasi') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Data Klasifikasi Arsip</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/naskah') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Jenis Naskah Dinas</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/template') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p> Surat Keluar</p>
+                <p>Template Surat Keluar</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Templet Surat Keluar</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/pengaduan') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Data Jenis Pengaduan</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/satnas') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Data Satuan Naskah</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/adm-benner" class="nav-link">
+              <a href="{{ url('/sator') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Data Satuan Organisasi</p>
               </a>

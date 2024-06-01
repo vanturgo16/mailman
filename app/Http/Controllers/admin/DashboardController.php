@@ -24,11 +24,11 @@ class DashboardController extends Controller
     public function index()
     {
         // belum
-        $ag   = AgendaPejabat::where('sk',0)->count();
-        $ap   = AgendaPejabat::where('sk','<>',0)->count();
+        $ag   = 0;
+        $ap   = 0;
 
-        $profil_desa=Profildesa::first();
-        $pesan=PesanWarga::limit(20)->get();
+        $profil_desa = "";
+        $pesan = "";
 
         return view('admin.dashboard',compact('pesan','profil_desa','ag','ap'));
     }
