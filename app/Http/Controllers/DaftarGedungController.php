@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DaftarGedung;
+use App\Models\DaftarLantai;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
