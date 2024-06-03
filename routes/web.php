@@ -23,6 +23,7 @@ use App\Http\Controllers\opd\AjuanAgenda;
 
 
 use App\Http\Controllers\front\SliderController;
+use App\Http\Controllers\IncommingMailController;
 use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\LetterController;
 use App\Http\Controllers\PatternController;
@@ -132,39 +133,51 @@ Route::group(['middleware' => 'cekopd'], function () {
 });
 
 //mulai dari sini
-Route::resource('gedung', DaftarGedungController::class);
-Route::patch('/gedung/aktif/{id}', [DaftarGedungController::class, 'aktif']);
-Route::resource('lantai', DaftarLantaiController::class);
-Route::patch('/lantai/aktif/{id}', [DaftarLantaiController::class, 'aktif']);
+Route::middleware(['auth'])->group(function () {
+    // MASTER
+    Route::resource('gedung', DaftarGedungController::class);
+    Route::patch('/gedung/aktif/{id}', [DaftarGedungController::class, 'aktif']);
+    Route::resource('lantai', DaftarLantaiController::class);
+    Route::patch('/lantai/aktif/{id}', [DaftarLantaiController::class, 'aktif']);
 
-//Parameters
-Route::resource('instansi', InstansiController::class);
-Route::patch('/instansi/aktif/{id}', [InstansiController::class, 'aktif']);
+    //Parameters
+    Route::resource('instansi', InstansiController::class);
+    Route::patch('/instansi/aktif/{id}', [InstansiController::class, 'aktif']);
 
-Route::resource('sator', SatorController::class);
-Route::patch('/sator/aktif/{id}', [SatorController::class, 'aktif']);
+    Route::resource('sator', SatorController::class);
+    Route::patch('/sator/aktif/{id}', [SatorController::class, 'aktif']);
 
-Route::resource('unitkerja', WorkUnitController::class);
-Route::patch('/unitkerja/aktif/{id}', [WorkUnitController::class, 'aktif']);
+    Route::resource('unitkerja', WorkUnitController::class);
+    Route::patch('/unitkerja/aktif/{id}', [WorkUnitController::class, 'aktif']);
 
-Route::resource('klasifikasi', ClassificationController::class);
-Route::patch('/klasifikasi/aktif/{id}', [ClassificationController::class, 'aktif']);
+    Route::resource('klasifikasi', ClassificationController::class);
+    Route::patch('/klasifikasi/aktif/{id}', [ClassificationController::class, 'aktif']);
 
-Route::resource('naskah', LetterController::class);
-Route::patch('/naskah/aktif/{id}', [LetterController::class, 'aktif']);
-Route::post('/pattern/store/{id}', [LetterController::class, 'storePattern']);
-Route::get('/pattern/create/{id}', [LetterController::class, 'createPattern']);
+    Route::resource('naskah', LetterController::class);
+    Route::patch('/naskah/aktif/{id}', [LetterController::class, 'aktif']);
+    Route::post('/pattern/store/{id}', [LetterController::class, 'storePattern']);
+    Route::get('/pattern/create/{id}', [LetterController::class, 'createPattern']);
 
-Route::resource('pengaduan', ComplainController::class);
-Route::patch('/pengaduan/aktif/{id}', [ComplainController::class, 'aktif']);
+    Route::resource('pengaduan', ComplainController::class);
+    Route::patch('/pengaduan/aktif/{id}', [ComplainController::class, 'aktif']);
 
-Route::resource('satnas', UnitLetterController::class);
-Route::patch('/satnas/aktif/{id}', [UnitLetterController::class, 'aktif']);
+    Route::resource('satnas', UnitLetterController::class);
+    Route::patch('/satnas/aktif/{id}', [UnitLetterController::class, 'aktif']);
 
-Route::resource('template', TemplateController::class);
-Route::patch('/template/aktif/{id}', [TemplateController::class, 'aktif']);
+    Route::resource('template', TemplateController::class);
+    Route::patch('/template/aktif/{id}', [TemplateController::class, 'aktif']);
 
-Route::resource('dropdown', DropdownController::class);
-Route::patch('/dropdown/aktif/{id}', [DropdownController::class, 'aktif']);
+    Route::resource('dropdown', DropdownController::class);
+    Route::patch('/dropdown/aktif/{id}', [DropdownController::class, 'aktif']);
+
+    //SURAT
+    //SURAT MASUK
+    Route::controller(IncommingMailController::class)->group(function () {
+        Route::prefix('surat-masuk')->group(function () {
+            Route::get('/', 'index')->name('incommingmail.index');
+            Route::get('/tambah', 'create')->name('incommingmail.create');
+        });
+    });
+});
 
 require __DIR__.'/auth.php';
