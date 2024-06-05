@@ -1,9 +1,9 @@
 @extends('layouts.blackand.app')
+@section('content')
 
 {{-- Jquery --}}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-@section('content')
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
