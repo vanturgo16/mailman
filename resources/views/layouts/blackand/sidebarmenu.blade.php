@@ -194,7 +194,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="/agenda-pejabat" class="nav-link">
+              <a href="{{ route('outgoingmail.index') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Surat Keluar</p>
               </a>

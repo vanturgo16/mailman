@@ -26,6 +26,7 @@ use App\Http\Controllers\front\SliderController;
 use App\Http\Controllers\IncommingMailController;
 use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\LetterController;
+use App\Http\Controllers\OutgoingMailController;
 use App\Http\Controllers\PatternController;
 use App\Http\Controllers\SatorController;
 use App\Http\Controllers\TemplateController;
@@ -176,6 +177,13 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('surat-masuk')->group(function () {
             Route::get('/', 'index')->name('incommingmail.index');
             Route::get('/tambah', 'create')->name('incommingmail.create');
+        });
+    });
+    //SURAT KELUAR
+    Route::controller(OutgoingMailController::class)->group(function () {
+        Route::prefix('surat-keluar')->group(function () {
+            Route::get('/', 'index')->name('outgoingmail.index');
+            Route::get('/tambah', 'create')->name('outgoingmail.create');
         });
     });
 });
