@@ -184,7 +184,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('surat-keluar')->group(function () {
             Route::get('/', 'index')->name('outgoingmail.index');
             Route::get('/tambah', 'create')->name('outgoingmail.create');
-            Route::post('/store', 'create')->name('outgoingmail.store');
+            Route::post('/store', 'store')->name('outgoingmail.store');
         });
     });
 });
