@@ -53,7 +53,7 @@
               {{-- Jenis Naskah --}}
               <div class="col-md-6">
                 <div class="form-group">
-                  <label>Jenis Naskah<i style="color: red;"> *</i></label>
+                  <label style="color: red;">Jenis Naskah *</label>
                   <select class="form-control js-example-basic-single" name="scripture_type" style="width: 100%;" required>
                     <option value="">- Pilih -</option>
                     @foreach($letters as $letter)
@@ -65,7 +65,7 @@
               <div class="col-md-6"></div>
               {{-- Konseptor --}}
               <div class="col-md-6">
-                <label>Konseptor<i style="color: red;"> *</i></label>
+                <label style="color: red;">Konseptor *</label>
                 <div class="row">
                   <div class="col-md-8">
                     <select class="form-control js-example-basic-single" name="drafter" style="width: 100%;" required>
@@ -105,26 +105,26 @@
             {{-- Perihal --}}
             <div class="col-md-12">
               <div class="form-group">
-                <label>Perihal / Tentang<i style="color: red;"> *</i></label>
+                <label style="color: red;">Perihal / Tentang *</label>
                 <textarea class="form-control" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat.." value="{{ old('mail_regarding') }}" required></textarea>
               </div>
             </div>
             {{-- Tanggal --}}
             <div class="col-md-3">
               <div class="form-group">
-                <label>Tanggal Keluar<i style="color: red;"> *</i></label>
+                <label style="color: red;">Tanggal Keluar *</label>
                 <input type="date" name="out_date" value="{{ old('out_date') }}" class="form-control" required>
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group">
-                <label>Tanggal Surat<i style="color: red;"> *</i></label>
+                <label style="color: red;">Tanggal Surat *</label>
                 <input type="datetime-local" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
               </div>
             </div>
             {{-- Penandatanganan --}}
             <div class="col-md-6">
-              <label>Penandatanganan<i style="color: red;"> *</i></label>
+              <label style="color: red;">Penandatanganan *</label>
               <div class="row">
                 <div class="col-md-8">
                   <select class="form-control js-example-basic-single" name="signing" style="width: 100%;" required>
@@ -149,21 +149,21 @@
             {{-- Penerima --}}
             <div class="col-md-6">
               <div class="form-group">
-                <label>Penerima<i style="color: red;"> *</i></label>
+                <label style="color: red;">Penerima *</label>
                 <textarea class="form-control" rows="3" type="text" name="receiver" placeholder="Masukkan Penerima.." value="{{ old('receiver') }}"></textarea>
               </div>
             </div>
             {{-- Jumlah --}}
             <div class="col-md-2">
               <div class="form-group">
-                <label>Jumlah<i style="color: red;"> *</i></label>
+                <label style="color: red;">Jumlah *</label>
                 <input type="number" name="mail_quantity" value="{{ old('mail_quantity') }}" class="form-control" placeholder="Masukkan Jumlah.." required>
               </div>
             </div>
             {{-- Satuan --}}
             <div class="col-md-2">
               <div class="form-group">
-                <label>Satuan<i style="color: red;"> *</i></label>
+                <label style="color: red;">Satuan *</label>
                 <select class="form-control js-example-basic-single" name="mail_unit" style="width: 100%;" required>
                   <option value="">- Pilih -</option>
                   @foreach($unitletters as $unitletter)
@@ -181,9 +181,10 @@
             {{-- Arsip Pertinggal --}}
             <div class="col-md-4">
               <div class="form-group">
-                <label>Arsip Pertinggal<i style="color: red;"> *</i></label>
+                <label style="color: red;">Arsip Pertinggal *</label>
                 <select class="form-control js-example-basic-single" name="archive_remain" style="width: 100%;" required>
                   <option value="">- Pilih -</option>
+                  <option value="Test">Test</option>
                 </select>
               </div>
             </div>
@@ -260,13 +261,13 @@
             <div class="col-md-5">
               <div class="form-group">
                 <label>Referensi Surat</label>
-                <input type="text" name="mail_ref" value="{{ old('mail_ref') }}" class="form-control" placeholder="Pilih Referensi Surat.." readonly>
+                <input type="text" id="mail_ref" name="mail_ref" value="{{ old('mail_ref') }}" class="form-control" placeholder="Pilih Referensi Surat.." readonly>
               </div>
             </div>
             <div class="col-md-1">
               <div class="form-group">
                 <label>&nbsp;</label>
-                <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#klasifikasi">...</button>
+                <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#refMail">...</button>
               </div>
             </div>
             {{-- Lampiran --}}
@@ -300,6 +301,292 @@
 
 {{-- MODAL ADD --}}
 @include('mail.modal')
+
+{{-- Lokasi Simpan --}}
+<div class="modal fade" id="locSave" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+        <div class="modal-header" style="background-color: #0074F1; color: white;">
+          <h5 class="modal-title font-weight-bold" id="modalAddLabel">Pilih Lokasi Simpan</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
+              <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
+          <div class="form-group">
+            <label class="text-danger">Nama Gedung*</label>
+            <select class="form-control js-example-basic-single" id="namaGedung" style="width: 100%;" required>
+              <option value="">- Pilih -</option>
+              <option value="1">Gedung A</option>
+              <option value="2">Gedung B</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="text-danger">Nama Lantai*</label>
+            <select class="form-control js-example-basic-single" id="namaLantai" style="width: 100%;" required>
+              <option value="">- Pilih -</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="text-danger">Nama Ruang*</label>
+            <select class="form-control js-example-basic-single" id="namaRuang" style="width: 100%;" required>
+              <option value="">- Pilih -</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="text-danger">Nama Rak*</label>
+            <select class="form-control js-example-basic-single" id="namaRak" style="width: 100%;" required>
+              <option value="">- Pilih -</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="text-danger">Nama Baris*</label>
+            <select class="form-control js-example-basic-single" id="namaBaris" style="width: 100%;" required>
+              <option value="">- Pilih -</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="text-danger">Nama Kolom*</label>
+            <select class="form-control js-example-basic-single" id="namaKolom" style="width: 100%;" required>
+              <option value="">- Pilih -</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="text-danger">Nama Boks*</label>
+            <select class="form-control js-example-basic-single" id="namaBoks" style="width: 100%;" required>
+              <option value="">- Pilih -</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          <button type="button" class="btn btn-primary" id="chooseLocSave" disabled>Pilih</button>
+        </div>
+        <script>
+          function populateSelect($select, data, idField, textField) {
+            $select.empty().append('<option value="">- Pilih -</option>');
+            $.each(data, function(index, item) {
+              $select.append($('<option>', { 
+                value: item[idField],
+                'data-Text': item[textField],
+                text : item[textField],
+              }));
+            });
+          }
+
+          const lantais = [
+            { id: 1, gedungId: 1, name: "Lantai 1" },
+            { id: 2, gedungId: 1, name: "Lantai 2" },
+            { id: 3, gedungId: 2, name: "Lantai 1" },
+            { id: 4, gedungId: 2, name: "Lantai 2" }
+          ];
+
+          const ruangs = [
+            { id: 1, lantaiId: 1, name: "Ruang 101" },
+            { id: 2, lantaiId: 1, name: "Ruang 102" },
+            { id: 3, lantaiId: 2, name: "Ruang 201" },
+            { id: 4, lantaiId: 2, name: "Ruang 202" },
+            { id: 5, lantaiId: 3, name: "Ruang 101" },
+            { id: 6, lantaiId: 3, name: "Ruang 102" },
+            { id: 7, lantaiId: 4, name: "Ruang 201" },
+            { id: 8, lantaiId: 4, name: "Ruang 202" }
+          ];
+
+          const raks = [
+            { id: 1, ruangId: 1, name: "Rak 1" },
+            { id: 2, ruangId: 1, name: "Rak 2" },
+            { id: 3, ruangId: 2, name: "Rak 1" },
+            { id: 4, ruangId: 2, name: "Rak 2" },
+            { id: 5, ruangId: 3, name: "Rak 1" },
+            { id: 6, ruangId: 3, name: "Rak 2" }
+          ];
+
+          const bariss = [
+            { id: 1, rakId: 1, name: "Baris 1" },
+            { id: 2, rakId: 1, name: "Baris 2" },
+            { id: 3, rakId: 2, name: "Baris 1" },
+            { id: 4, rakId: 2, name: "Baris 2" }
+          ];
+
+          const koloms = [
+            { id: 1, barisId: 1, name: "Kolom 1" },
+            { id: 2, barisId: 1, name: "Kolom 2" },
+            { id: 3, barisId: 2, name: "Kolom 1" },
+            { id: 4, barisId: 2, name: "Kolom 2" }
+          ];
+
+          const boks = [
+            { id: 1, kolomId: 1, name: "Boks 1" },
+            { id: 2, kolomId: 1, name: "Boks 2" },
+            { id: 3, kolomId: 2, name: "Boks 1" },
+            { id: 4, kolomId: 2, name: "Boks 2" }
+          ];
+
+          $('select[id="namaGedung"]').on('change', function() {
+            $('#saveLocation').val("");
+            const gedungId = $(this).val();
+            const filteredLantais = lantais.filter(lantai => lantai.gedungId == gedungId);
+            populateSelect($('#namaLantai'), filteredLantais, 'id', 'name');
+            
+            $('#namaRuang').empty().append('<option value="">- Pilih -</option>');
+            $('#namaRak').empty().append('<option value="">- Pilih -</option>');
+            $('#namaBaris').empty().append('<option value="">- Pilih -</option>');
+            $('#namaKolom').empty().append('<option value="">- Pilih -</option>');
+            $('#namaBoks').empty().append('<option value="">- Pilih -</option>');
+            $('#chooseLocSave').attr('disabled', 'disabled');
+          });
+          $('select[id="namaLantai"]').on('change', function() {
+            $('#saveLocation').val("");
+            const lantaiId = $(this).val();
+            const filteredRuangs = ruangs.filter(ruang => ruang.lantaiId == lantaiId);
+            populateSelect($('#namaRuang'), filteredRuangs, 'id', 'name');
+            
+            $('#namaRak').empty().append('<option value="">- Pilih -</option>');
+            $('#namaBaris').empty().append('<option value="">- Pilih -</option>');
+            $('#namaKolom').empty().append('<option value="">- Pilih -</option>');
+            $('#namaBoks').empty().append('<option value="">- Pilih -</option>');
+            $('#chooseLocSave').attr('disabled', 'disabled');
+          });
+          $('select[id="namaRuang"]').on('change', function() {
+            $('#saveLocation').val("");
+            const ruangId = $(this).val();
+            const filteredRaks = raks.filter(rak => rak.ruangId == ruangId);
+            populateSelect($('#namaRak'), filteredRaks, 'id', 'name');
+            
+            $('#namaBaris').empty().append('<option value="">- Pilih -</option>');
+            $('#namaKolom').empty().append('<option value="">- Pilih -</option>');
+            $('#namaBoks').empty().append('<option value="">- Pilih -</option>');
+            $('#chooseLocSave').attr('disabled', 'disabled');
+          });
+          $('select[id="namaRak"]').on('change', function() {
+            $('#saveLocation').val("");
+            const rakId = $(this).val();
+            const filteredBariss = bariss.filter(baris => baris.rakId == rakId);
+            populateSelect($('#namaBaris'), filteredBariss, 'id', 'name');
+            
+            $('#namaKolom').empty().append('<option value="">- Pilih -</option>');
+            $('#namaBoks').empty().append('<option value="">- Pilih -</option>');
+            $('#chooseLocSave').attr('disabled', 'disabled');
+          });
+          $('select[id="namaBaris"]').on('change', function() {
+            $('#saveLocation').val("");
+            const barisId = $(this).val();
+            const filteredKoloms = koloms.filter(kolom => kolom.barisId == barisId);
+            populateSelect($('#namaKolom'), filteredKoloms, 'id', 'name');
+
+            $('#namaBoks').empty().append('<option value="">- Pilih -</option>');
+            $('#chooseLocSave').attr('disabled', 'disabled');
+          });
+          $('select[id="namaKolom"]').on('change', function() {
+            $('#saveLocation').val("");
+            const kolomId = $(this).val();
+            const filteredBoks = boks.filter(boks => boks.kolomId == kolomId);
+            populateSelect($('#namaBoks'), filteredBoks, 'id', 'name');
+
+            $('#chooseLocSave').attr('disabled', 'disabled');
+          });
+
+          $('select[id="namaBoks"]').on('change', function() {
+            $('#saveLocation').val("");
+            var namaBoks = $(this).val();
+            if(namaBoks == null || namaBoks == ""){
+              $('#chooseLocSave').attr('disabled', 'disabled');
+            } else {
+              $('#chooseLocSave').removeAttr('disabled');
+            }
+          });
+          $('#chooseLocSave').on('click', function() {
+            var namaBoks = $('select[id="namaBoks"]').find('option:selected').attr('data-Text');
+            $('#saveLocation').val(namaBoks);
+            $('#chooseLocSave').attr('data-dismiss', 'modal').trigger('click');
+          });
+        </script>
+    </div>
+  </div>
+</div>
+
+{{-- Referensi Surat --}}
+<div class="modal fade" id="refMail" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+        <div class="modal-header" style="background-color: #0074F1; color: white;">
+          <h5 class="modal-title font-weight-bold" id="modalAddLabel">Pilih Referensi Surat</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
+              <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" style="height: 70vh">
+          <div class="row">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label>Nomor Dokumen / Perihal</label>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Masukkan Nomor Dokumen / Perihal.." aria-describedby="button-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary btn-primary text-white" type="button" id="button-addon2">Gunakan Filter & Cari</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="col-12" style="height: 50vh; overflow-y: auto;">
+                <table id="server-side-table" class="table table-bordered" style="font-size: small; width:100%;">
+                    <thead>
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Perihal / Tentang</th>
+                            <th scope="col">Tipe</th>
+                            <th scope="col">Tgl. Perubahan</th>
+                            <th scope="col">Pengubah</th>
+                            <th scope="col">Aksi</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        
+        <script>
+            $(function() {
+                var table = $('#server-side-table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: '{!! route('outgoingmail.create') !!}',
+                    lengthMenu: [5],
+                    columns: [
+                        { data: null,
+                            render: function(data, type, row, meta) {
+                                return meta.row + meta.settings._iDisplayStart + 1;
+                            },
+                            orderable: false,
+                            searchable: false,
+                            className: 'align-middle text-center',
+                        },
+                        { data: 'mail_regarding', name: 'mail_regarding', orderable: true, searchable: true, className: 'align-middle text-center' },
+                        { data: 'receiver', name: 'receiver', orderable: true, searchable: true, className: 'align-middle text-center' },
+                        { data: 'updated_at', name: 'updated_at', orderable: true, searchable: true, className: 'align-middle text-center' },
+                        { data: 'created_by', name: 'created_by', orderable: true, searchable: true, className: 'align-middle text-center' },
+                        { data: 'action', name: 'action', orderable: false, searchable: false, className: 'align-middle text-center' },
+                    ],
+                });
+                $('.dataTables_wrapper .dataTables_length').hide();
+                $('.dataTables_wrapper .dataTables_filter').hide();
+        
+                $('#button-addon2').on('click', function() {
+                    var searchTerm = $('#searchInput').val();
+                    table.search(searchTerm).draw();
+                });
+            });
+        </script>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeRef">Tutup</button>
+        </div>
+    </div>
+
+
+  </div>
+</div>
 
 <script>
   $(".js-example-basic-single").select2().on("select2:open", function () {

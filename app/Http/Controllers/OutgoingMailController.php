@@ -44,15 +44,25 @@ class OutgoingMailController extends Controller
 
         $sators = Sator::orderBy('sator_name','asc')->get();
 
+        $datas = IncommingMail::orderBy('created_at', 'desc')->get();
+        if ($request->ajax()) {
+            $data = DataTables::of($datas)
+            ->addColumn('action', function ($data) {
+                return view('mail.outgoing.action-select', compact('data'));
+            })
+            ->toJson();
+            return $data;
+        }
+
         return view('mail.outgoing.create', compact('letters', 'workunits', 'sators', 'unitletters', 'classifications', 'receivedvias',
             'sators'));
     }
 
     public function store(Request $request)
     {
-        //dd('hai');
+        dd($request->all());
         $request->validate([
-            "kode_unit" => "required",
+            "scripture_type" => "required",
         ]);
 
         DB::beginTransaction();
