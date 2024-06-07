@@ -38,6 +38,21 @@
 </div>
 @endif
 
+<!--validasi form with $validate-->
+@if (count($errors)>0)
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <i class="mdi mdi-block-helper label-icon"></i><strong>&nbsp; Data Gagal Disimpan!</strong>
+  <ul class="mb-0">
+    @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+    @endforeach
+  </ul>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+@endif
+
 <div class="container-fluid">
   <div class="card card-primary card-outline">
       <div class="card-header">
@@ -229,7 +244,7 @@
             <div class="col-md-5">
               <div class="form-group">
                 <label>Lokasi Simpan</label>
-                <input type="text" name="save_location" id="saveLocation" value="{{ old('save_location') }}" class="form-control" placeholder="Pilih Lokasi Simpan.." readonly required>
+                <input type="text" name="save_location" id="saveLocation" value="{{ old('save_location') }}" class="form-control" placeholder="Pilih Lokasi Simpan.." readonly>
               </div>
             </div>
             <div class="col-md-1">
@@ -281,7 +296,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label>Keterangan</label>
-                <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Keterangan.." value="{{ old('attachment_text') }}"></textarea>
+                <textarea class="form-control" rows="3" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}"></textarea>
               </div>
             </div>
 

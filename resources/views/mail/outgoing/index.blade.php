@@ -50,15 +50,15 @@
             <table id="server-side-table" class="table table-bordered" style="font-size: small">
                 <thead>
                     <tr>
-                        <th scope="col">No.</th>
-                        <th scope="col">Konseptor</th>
-                        <th scope="col">No. Surat</th>
-                        <th scope="col">Tgl. Surat</th>
-                        <th scope="col">Perihal / Tentang</th>
-                        <th scope="col">Penerima</th>
-                        <th scope="col">Tgl. Perubahan</th>
-                        <th scope="col">Pengubah</th>
-                        <th scope="col">Aksi</th>
+                        <th class="text-center">No.</th>
+                        <th class="text-center">Konseptor</th>
+                        <th class="text-center">No. Surat</th>
+                        <th class="text-center">Tgl. Surat</th>
+                        <th class="text-center">Perihal / Tentang</th>
+                        <th class="text-center">Penerima</th>
+                        <th class="text-center">Tgl. Perubahan</th>
+                        <th class="text-center">Pengubah</th>
+                        <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
             </table>
@@ -83,8 +83,8 @@
                     className: 'align-middle text-center',
                 },
                 {
-                    data: 'sender',
-                    name: 'sender',
+                    data: 'drafter_name',
+                    name: 'drafter_name',
                     orderable: true,
                     searchable: true,
                     className: 'align-middle text-center',
@@ -95,6 +95,15 @@
                     orderable: true,
                     searchable: true,
                     className: 'align-middle text-center',
+                    render: function(data, type, row) {
+                        var html
+                        if(row.mail_number == null){
+                            html = '<span class="badge bg-info text-white">Menunggu..</span>';
+                        } else {
+                            html = row.mail_number;
+                        }
+                        return html;
+                    },
                 },
                 {
                     data: 'mail_date',
@@ -108,7 +117,7 @@
                     name: 'mail_regarding',
                     orderable: true,
                     searchable: true,
-                    className: 'align-middle text-center',
+                    className: 'align-middle',
                 },
                 {
                     data: 'receiver',
@@ -123,13 +132,31 @@
                     orderable: true,
                     searchable: true,
                     className: 'align-middle text-center',
+                    render: function(data, type, row) {
+                        var html
+                        if(row.updated_by == null){
+                            html = '<span class="badge bg-secondary text-white">Null</span>';
+                        } else {
+                            html = row.updated_at;
+                        }
+                        return html;
+                    },
                 },
                 {
-                    data: 'created_by',
-                    name: 'created_by',
+                    data: 'updated_by',
+                    name: 'updated_by',
                     orderable: true,
                     searchable: true,
                     className: 'align-middle text-center',
+                    render: function(data, type, row) {
+                        var html
+                        if(row.updated_by == null){
+                            html = '<span class="badge bg-secondary text-white">Null</span>';
+                        } else {
+                            html = row.updated_by;
+                        }
+                        return html;
+                    },
                 },
                 {
                     data: 'action',
