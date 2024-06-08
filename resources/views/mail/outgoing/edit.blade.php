@@ -7,13 +7,13 @@
   <div class="container-fluid">
       <div class="row mb-2">
           <div class="col-sm-6">
-              <h1 class="m-0"><i class="fas fa-plus"></i> Tambah Surat Keluar</h1>
+              <h1 class="m-0"><i class="mdi mdi-file-edit"></i> Ubah Surat Keluar</h1>
           </div>
           <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Beranda</a></li>
                   <li class="breadcrumb-item"><a href="{{ route('outgoingmail.index') }}"> Daftar Surat Keluar</a></li>
-                    <li class="breadcrumb-item active">Tambah</li>
+                    <li class="breadcrumb-item active">Ubah</li>
               </ol>
           </div>
       </div>
@@ -57,10 +57,10 @@
   <div class="card card-primary card-outline">
       <div class="card-header">
           <h3 class="card-title">
-              Formulir Tambah Surat Keluar
+              Formulir Ubah Surat Keluar
           </h3>
       </div>
-      <form action="{{ route('outgoingmail.store') }}" method="POST" enctype="multipart/form-data" id="formOutgoingMail">
+      <form action="{{ route('outgoingmail.update', encrypt($data->id)) }}" method="POST" enctype="multipart/form-data" id="formOutgoingMail">
         @csrf
         <div class="card-body" style="max-height: 65vh; overflow-y: auto;">
           <div class="card p-3" style="background-color:rgb(240, 240, 240);">
@@ -69,12 +69,17 @@
               <div class="col-md-6">
                 <div class="form-group">
                   <label  class="text-danger">Jenis Naskah *</label>
-                  <select class="form-control js-example-basic-single" name="id_mst_letter" style="width: 100%;" required>
+                  <input type="hidden" name="id_mst_letter" value="{{ $data->id_mst_letter }}" class="form-control">
+                  <input type="text" value="{{ $data->let_name }}" class="form-control" readonly>
+
+                  {{-- <select class="form-control js-example-basic-single" name="id_mst_letter" style="width: 100%;" required>
                     <option value="">- Pilih -</option>
                     @foreach($letters as $letter)
-                      <option value="{{ $letter->id }}">{{ $letter->let_name }}</option>
+                      <option value="{{ $letter->id }}" @if($data->id_mst_letter == $letter->id) selected="selected" @endif>
+                        {{ $letter->let_name }}
+                      </option>
                     @endforeach
-                  </select>
+                  </select> --}}
                 </div>
               </div>
               <div class="col-md-6"></div>
@@ -86,7 +91,9 @@
                     <select class="form-control js-example-basic-single" name="drafter" style="width: 100%;" required>
                       <option value="">- Pilih -</option>
                       @foreach($workunits as $workunit)
-                        <option value="{{ $workunit->id }}">{{ $workunit->work_name }}</option>
+                        <option value="{{ $workunit->id }}" @if($data->drafter == $workunit->id) selected="selected" @endif>
+                          {{ $workunit->work_name }}
+                        </option>
                       @endforeach
                     </select>
                   </div>
@@ -103,7 +110,9 @@
                     <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
                       <option value="">- Pilih -</option>
                       @foreach($sators as $sator)
-                        <option value="{{ $sator->id }}">{{ $sator->sator_name }}</option>
+                        <option value="{{ $sator->id }}" @if($data->org_unit == $sator->id) selected="selected" @endif>
+                          {{ $sator->sator_name }}
+                        </option>
                       @endforeach
                     </select>
                   </div>
@@ -121,20 +130,20 @@
             <div class="col-md-12">
               <div class="form-group">
                 <label  class="text-danger">Perihal / Tentang *</label>
-                <textarea class="form-control editor" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat.." value="{{ old('mail_regarding') }}" required></textarea>
+                <textarea class="form-control editor" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat.." required>{{ $data->mail_regarding }}</textarea>
               </div>
             </div>
             {{-- Tanggal --}}
             <div class="col-md-3">
               <div class="form-group">
                 <label  class="text-danger">Tanggal Keluar *</label>
-                <input type="date" name="out_date" value="{{ old('out_date') }}" class="form-control" required>
+                <input type="date" name="out_date" value="{{ \Carbon\Carbon::parse($data->out_date)->format('Y-m-d') }}" class="form-control" required>
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group">
                 <label  class="text-danger">Tanggal Surat *</label>
-                <input type="datetime-local" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
+                <input type="datetime-local" name="mail_date" value="{{ $data->mail_date }}" class="form-control" required>
               </div>
             </div>
             {{-- Penandatanganan --}}
@@ -145,7 +154,9 @@
                   <select class="form-control js-example-basic-single" name="signing" style="width: 100%;" required>
                     <option value="">- Pilih -</option>
                     @foreach($workunits as $workunit)
-                      <option value="{{ $workunit->id }}">{{ $workunit->work_name }}</option>
+                      <option value="{{ $workunit->id }}" @if($data->signing == $workunit->id) selected="selected" @endif>
+                        {{ $workunit->work_name }}
+                      </option>
                     @endforeach
                   </select>
                 </div>
@@ -158,21 +169,21 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label>Penandatanganan Pihak Instansi Lain</label>
-                <textarea class="form-control" rows="3" type="text" name="signing_other" placeholder="Masukkan Pihak Instansi Lain.." value="{{ old('signing_other') }}"></textarea>
+                <textarea class="form-control" rows="3" type="text" name="signing_other" placeholder="Masukkan Pihak Instansi Lain..">{{ $data->signing_other }}</textarea>
               </div>
             </div>
             {{-- Penerima --}}
             <div class="col-md-6">
               <div class="form-group">
                 <label  class="text-danger">Penerima *</label>
-                <textarea class="form-control" rows="3" type="text" name="receiver" placeholder="Masukkan Penerima.." value="{{ old('receiver') }}"></textarea>
+                <textarea class="form-control" rows="3" type="text" name="receiver" placeholder="Masukkan Penerima..">{{ $data->receiver }}</textarea>
               </div>
             </div>
             {{-- Jumlah --}}
             <div class="col-md-2">
               <div class="form-group">
                 <label  class="text-danger">Jumlah *</label>
-                <input type="number" name="mail_quantity" value="{{ old('mail_quantity') }}" class="form-control" placeholder="Masukkan Jumlah.." required>
+                <input type="number" name="mail_quantity" value="{{ $data->mail_quantity }}" class="form-control" placeholder="Masukkan Jumlah.." required>
               </div>
             </div>
             {{-- Satuan --}}
@@ -182,7 +193,9 @@
                 <select class="form-control js-example-basic-single" name="mail_unit" style="width: 100%;" required>
                   <option value="">- Pilih -</option>
                   @foreach($unitletters as $unitletter)
-                    <option value="{{ $unitletter->id }}">{{ $unitletter->unit_name }}</option>
+                    <option value="{{ $unitletter->id }}" @if($data->mail_unit == $unitletter->id) selected="selected" @endif>
+                      {{ $unitletter->unit_name }}
+                    </option>
                   @endforeach
                 </select>
               </div>
@@ -199,7 +212,7 @@
                 <label  class="text-danger">Arsip Pertinggal *</label>
                 <select class="form-control js-example-basic-single" name="archive_remain" style="width: 100%;" required>
                   <option value="">- Pilih -</option>
-                  <option value="Test">Test</option>
+                  <option value="Test" @if($data->archive_remains == 'Test') selected="selected" @endif>Test</option>
                 </select>
               </div>
             </div>
@@ -216,7 +229,9 @@
                 <select class="form-control js-example-basic-single" name="archive_classification" style="width: 100%;">
                   <option value="">- Pilih -</option>
                   @foreach($classifications as $classification)
-                    <option value="{{ $classification->id }}">{{ $classification->classification_name }}</option>
+                    <option value="{{ $classification->id }}" @if($data->archive_classification == $classification->id) selected="selected" @endif>
+                      {{ $classification->classification_name }}
+                    </option>
                   @endforeach
                 </select>
               </div>
@@ -231,20 +246,20 @@
             <div class="col-md-3">
               <div class="form-group">
                 <label>Retensi Surat (Dari)</label>
-                <input type="date" name="mail_retention_from" value="{{ old('mail_retention_from') }}" class="form-control">
+                <input type="date" name="mail_retention_from" value="{{ \Carbon\Carbon::parse($data->mail_retention_from)->format('Y-m-d') }}" class="form-control">
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group">
                 <label>Retensi Surat (Hingga)</label>
-                <input type="date" name="mail_retention_to" value="{{ old('mail_retention_to') }}" class="form-control">
+                <input type="date" name="mail_retention_to" value="{{ \Carbon\Carbon::parse($data->mail_retention_to)->format('Y-m-d') }}" class="form-control">
               </div>
             </div>
             {{-- Lokasi Simpan --}}
             <div class="col-md-5">
               <div class="form-group">
                 <label>Lokasi Simpan</label>
-                <input type="text" name="save_location" id="saveLocation" value="{{ old('save_location') }}" class="form-control" placeholder="Pilih Lokasi Simpan.." readonly>
+                <input type="text" name="save_location" id="saveLocation" value="{{ $data->location_save }}" class="form-control" placeholder="Pilih Lokasi Simpan.." readonly>
               </div>
             </div>
             <div class="col-md-1">
@@ -260,7 +275,9 @@
                 <select class="form-control js-example-basic-single" name="received_via" style="width: 100%;">
                   <option value="">- Pilih -</option>
                   @foreach($receivedvias as $receivedvia)
-                    <option value="{{ $receivedvia->name_value }}">{{ $receivedvia->name_value }}</option>
+                    <option value="{{ $receivedvia->name_value }}" @if($data->received_via == $receivedvia->name_value) selected="selected" @endif>
+                      {{ $receivedvia->name_value }}
+                    </option>
                   @endforeach
                 </select>
               </div>
@@ -269,14 +286,14 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label>Nomor Referensi</label>
-                <input type="text" name="ref_number" value="{{ old('ref_number') }}" class="form-control" placeholder="Masukan Nomor Referensi..">
+                <input type="text" name="ref_number" value="{{ $data->ref_number }}" class="form-control" placeholder="Masukan Nomor Referensi..">
               </div>
             </div>
             {{-- Referensi Surat --}}
             <div class="col-md-5">
               <div class="form-group">
                 <label>Referensi Surat</label>
-                <input type="text" id="mail_ref" name="mail_ref" value="{{ old('mail_ref') }}" class="form-control" placeholder="Pilih Referensi Surat.." readonly>
+                <input type="text" id="mail_ref" name="mail_ref" value="{{ $data->ref_mail }}" class="form-control" placeholder="Pilih Referensi Surat.." readonly>
               </div>
             </div>
             <div class="col-md-1">
@@ -289,14 +306,14 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label>Lampiran</label>
-                <textarea class="form-control editor" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." value="{{ old('attachment_text') }}"></textarea>
+                <textarea class="form-control editor" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran..">{{ $data->attachment_text }}</textarea>
               </div>
             </div>
             {{-- Keterangan --}}
             <div class="col-md-6">
               <div class="form-group">
                 <label>Keterangan</label>
-                <textarea class="form-control editor" rows="3" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}"></textarea>
+                <textarea class="form-control editor" rows="3" type="text" name="information" placeholder="Masukkan Keterangan..">{{ $data->information }}</textarea>
               </div>
             </div>
 
@@ -548,7 +565,7 @@
                         var table = $('#server-side-table').DataTable({
                             processing: true,
                             serverSide: true,
-                            ajax: '{!! route('outgoingmail.create') !!}',
+                            ajax: '{!! route('outgoingmail.edit', encrypt($data->id)) !!}',
                             lengthMenu: [5],
                             columns: [
                                 { data: null,
@@ -587,7 +604,7 @@
           <div class="row">
             <div class="col-12" style="text-align: right">
               <a href="{{ route('outgoingmail.index') }}" type="button" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Kembali</a>
-              <button type="submit" class="btn btn-primary" id="sbFormOutgoingMail"><i class="fa fa-paper-plane"></i> Kirim Data</button>
+              <button type="submit" class="btn btn-primary" id="sbFormOutgoingMail"><i class="mdi mdi-update"></i> Ubah Data</button>
             </div>
           </div>
         </div>

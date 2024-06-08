@@ -183,8 +183,13 @@ Route::middleware(['auth'])->group(function () {
     Route::controller(OutgoingMailController::class)->group(function () {
         Route::prefix('surat-keluar')->group(function () {
             Route::get('/', 'index')->name('outgoingmail.index');
+            Route::post('/', 'index')->name('outgoingmail.index');
             Route::get('/tambah', 'create')->name('outgoingmail.create');
             Route::post('/store', 'store')->name('outgoingmail.store');
+            Route::post('/store/bulk', 'storebulk')->name('outgoingmail.storebulk');
+            Route::get('/detail/{id}', 'detail')->name('outgoingmail.detail');
+            Route::get('/ubah/{id}', 'edit')->name('outgoingmail.edit');
+            Route::post('/update/{id}', 'update')->name('outgoingmail.update');
         });
     });
 });
