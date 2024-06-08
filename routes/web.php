@@ -4,8 +4,12 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\ClassificationController;
 use App\Http\Controllers\ComplainController;
+use App\Http\Controllers\DaftarBarisController;
 use App\Http\Controllers\DaftarGedungController;
+use App\Http\Controllers\DaftarKolomController;
 use App\Http\Controllers\DaftarLantaiController;
+use App\Http\Controllers\DaftarRakController;
+use App\Http\Controllers\DaftarRuangController;
 use App\Http\Controllers\DropdownController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -25,6 +29,7 @@ use App\Http\Controllers\opd\AjuanAgenda;
 use App\Http\Controllers\front\SliderController;
 use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\LetterController;
+use App\Http\Controllers\MappingLokasiSimpanController;
 use App\Http\Controllers\PatternController;
 use App\Http\Controllers\SatorController;
 use App\Http\Controllers\TemplateController;
@@ -131,11 +136,30 @@ Route::group(['middleware' => 'cekopd'], function () {
     });
 });
 
-//mulai dari sini
+//Lokasi Simpan
 Route::resource('gedung', DaftarGedungController::class);
 Route::patch('/gedung/aktif/{id}', [DaftarGedungController::class, 'aktif']);
+
 Route::resource('lantai', DaftarLantaiController::class);
 Route::patch('/lantai/aktif/{id}', [DaftarLantaiController::class, 'aktif']);
+
+Route::resource('ruang', DaftarRuangController::class);
+Route::patch('/ruang/aktif/{id}', [DaftarRuangController::class, 'aktif']);
+
+Route::resource('rak', DaftarRakController::class);
+Route::patch('/rak/aktif/{id}', [DaftarRakController::class, 'aktif']);
+
+Route::resource('baris', DaftarBarisController::class);
+Route::patch('/baris/aktif/{id}', [DaftarBarisController::class, 'aktif']);
+
+Route::resource('kolom', DaftarKolomController::class);
+Route::patch('/kolom/aktif/{id}', [DaftarKolomController::class, 'aktif']);
+
+//ajax lokasi simpan
+Route::get('/mapping-lantai/{gedungId}', [MappingLokasiSimpanController::class, 'getLantai'])->name('mappingLantai');
+Route::get('/mapping-ruang/{lantaiId}', [MappingLokasiSimpanController::class, 'getRuang'])->name('mappingRuang');
+Route::get('/mapping-rak/{ruangId}', [MappingLokasiSimpanController::class, 'getRak'])->name('mappingRak');
+Route::get('/mapping-baris/{rakId}', [MappingLokasiSimpanController::class, 'getBaris'])->name('mappingBaris');
 
 //Parameters
 Route::resource('instansi', InstansiController::class);

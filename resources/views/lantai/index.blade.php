@@ -48,7 +48,7 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group">
-                                                            <label for="exampleFormControlSelect1">Nama Gedung</label>
+                                                            <label class="text-danger">Nama Gedung*</label>
                                                             <select class="form-control" id="nama_gedung" name="nama_gedung" required>
                                                                     <option value="">Pilih Gedung</option>
                                                                 @foreach ($gedungs as $gedung)
@@ -57,15 +57,15 @@
                                                             </select>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Kode Lantai</label>
+                                                            <label class="text-danger">Kode Lantai*</label>
                                                             <input type="text" class="form-control" id="" name="kode_lantai" required>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Nama Lantai</label>
+                                                            <label class="text-danger">Nama Lantai*</label>
                                                             <input type="text" class="form-control" id="" name="nama_lantai" required>
                                                         </div>
                                                         <div class="form-group">
-                                                            <label>Kapasitas (Ruang)</label>
+                                                            <label class="text-danger">Kapasitas (Ruang)*</label>
                                                             <input type="number" min="1" class="form-control w-25" id="" name="kapasitas" required>
                                                         </div>
                                                         <div class="form-group">
@@ -144,7 +144,7 @@
                                                         <form action="{{ url('/lantai/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
                                                             @csrf
                                                             @method('PATCH')
-                                                            <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Aktifkan lantai?')">Aktif Data</button>
+                                                            <button type="submit" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan lantai?')">Aktif Data</button>
                                                         </form>
                                                         {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
                                                     @endif
@@ -164,7 +164,7 @@
                                                                 </div>
                                                                 <div class="modal-body">
                                                                     <div class="form-group">
-                                                                        <label for="exampleFormControlSelect1">Nama Gedung</label>
+                                                                        <label class="text-danger">Nama Gedung*</label>
                                                                         <select class="form-control" id="nama_gedung" name="nama_gedung" required>
                                                                                 <option value="">Pilih Gedung</option>
                                                                             @foreach ($gedungs as $gedung)
@@ -173,15 +173,15 @@
                                                                         </select>
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label>Kode lantai</label>
+                                                                        <label class="text-danger">Kode lantai*</label>
                                                                         <input type="text" class="form-control" value="{{ $data->kode_lantai }}" name="kode_lantai" required>
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label>Nama lantai</label>
+                                                                        <label class="text-danger">Nama lantai*</label>
                                                                         <input type="text" class="form-control" value="{{ $data->nama_lantai }}" name="nama_lantai" required>
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <label>Kapasitas (Ruang)</label>
+                                                                        <label class="text-danger">Kapasitas (Ruang)*</label>
                                                                         <input type="number" min="1" class="form-control w-25" value="{{ $data->kapasitas_lantai }}" name="kapasitas" required>
                                                                     </div>
                                                                     <div class="form-group">

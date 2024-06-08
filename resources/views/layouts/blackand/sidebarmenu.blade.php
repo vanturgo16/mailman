@@ -52,7 +52,7 @@
           </a>
         </li>
         @can('master data')
-        {{-- <li class="nav-item">
+        <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-copy"></i>
             <p>
@@ -78,26 +78,26 @@
             </li>
 
             <li class="nav-item">
-              <a href="/opd" class="nav-link">
+              <a href="{{ url('/ruang') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Daftar Ruang </p>
               </a>
             </li>
 
             <li class="nav-item">
-              <a href="/data-jml-penduduk" class="nav-link">
+              <a href="{{ url('/rak') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Daftar Rak</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/data-jml-penduduk" class="nav-link">
+              <a href="{{ url('/baris') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Daftar Baris</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/data-jml-penduduk" class="nav-link">
+              <a href="{{ url('/kolom') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Daftar Kolom</p>
               </a>
@@ -110,7 +110,7 @@
             </li>
 
           </ul>
-        </li> --}}
+        </li>
         @endcan
         @can('benner')
         <li class="nav-item">
