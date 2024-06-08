@@ -91,13 +91,13 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="/data-jml-penduduk" class="nav-link">
+              <a href="{{ url('/baris') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Daftar Baris</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/data-jml-penduduk" class="nav-link">
+              <a href="{{ url('/kolom') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Daftar Kolom</p>
               </a>
