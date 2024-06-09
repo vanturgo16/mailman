@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Classification;
-use App\Models\Dropdown;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use DateTime;
+use Carbon\Carbon;
 
 // Model
 use App\Models\IncommingMail;
@@ -17,6 +16,16 @@ use App\Models\QueNumbOutMail;
 use App\Models\Sator;
 use App\Models\UnitLetter;
 use App\Models\WorkUnit;
+use App\Models\Classification;
+use App\Models\Dropdown;
+use App\Models\DaftarGedung;
+use App\Models\DaftarBaris;
+use App\Models\DaftarBox;
+use App\Models\DaftarKolom;
+use App\Models\DaftarLantai;
+use App\Models\DaftarRak;
+use App\Models\DaftarRuang;
+use App\Models\LastNumbering;
 
 class OutgoingMailController extends Controller
 {
@@ -86,6 +95,8 @@ class OutgoingMailController extends Controller
         $unitletters = UnitLetter::get();
         $classifications = Classification::get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
+        $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
+        $gedungs = DaftarGedung::get();
 
         $sators = Sator::orderBy('sator_name','asc')->get();
 
@@ -100,7 +111,7 @@ class OutgoingMailController extends Controller
         }
 
         return view('mail.outgoing.create', compact('letters', 'workunits', 'sators', 'unitletters', 'classifications', 'receivedvias',
-            'sators'));
+            'sators', 'archive_remains', 'gedungs'));
     }
 
     public function store(Request $request)
@@ -255,6 +266,8 @@ class OutgoingMailController extends Controller
         $classifications = Classification::get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
         $sators = Sator::orderBy('sator_name','asc')->get();
+        $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
+        $gedungs = DaftarGedung::get();
 
         $datas = IncommingMail::orderBy('created_at', 'desc')->get();
         if ($request->ajax()) {
@@ -271,8 +284,33 @@ class OutgoingMailController extends Controller
             ->where('outgoing_mails.id', $id)
             ->first();
 
+        $path = json_decode($data->location_save_route);
+        if($data->location_save != null){
+            $idGedung = $path->idGedung;
+            $idLantai = $path->idLantai;
+            $idRuang = $path->idRuang;
+            $idRak = $path->idRak;
+            $idBaris = $path->idBaris;
+            $idKolom = $path->idKolom;
+            $idBoks = $path->idBoks;
+        } else {
+            $idGedung = null;
+            $idLantai = null;
+            $idRuang = null;
+            $idRak = null;
+            $idBaris = null;
+            $idKolom = null;
+            $idBoks = null;
+        }
+        $listLantai = DaftarLantai::where('id_gedung', $idGedung)->get();
+        $listRuang = DaftarRuang::where('id_lantai', $idLantai)->get();
+        $listRak = DaftarRak::where('id_ruang', $idRuang)->get();
+        $listBaris = DaftarBaris::where('id_rak', $idRak)->get();
+        $listKolom = DaftarKolom::where('id_baris', $idBaris)->get();
+        $listBoks = DaftarBox::where('id_kolom', $idKolom)->get();
+
         return view('mail.outgoing.edit', compact('letters', 'workunits', 'sators', 'unitletters', 'classifications', 'receivedvias',
-            'sators', 'data'));
+            'sators', 'archive_remains', 'data', 'gedungs', 'path', 'listLantai', 'listRuang', 'listRak', 'listBaris', 'listKolom', 'listBoks'));
     }
 
     public function update(Request $request, $id)
@@ -389,5 +427,85 @@ class OutgoingMailController extends Controller
         else {
             return redirect()->route('outgoingmail.index')->with(['info' => 'Tidak ada perubahan, data sama dengan yang sebelumnya']);
         }
+    }
+
+    public function generateNumbering($pattern, $number)
+    {
+        // Current date for date replacements
+        $currentDate = Carbon::now();
+
+        // Replace the autonumber format (@)
+        if (preg_match('/@{\d+}/', $pattern, $matches)) {
+            $autonumberFormat = $matches[0];
+            $digits = (int) filter_var($autonumberFormat, FILTER_SANITIZE_NUMBER_INT);
+            $formattedNumber = str_pad($number, $digits, '0', STR_PAD_LEFT);
+            $pattern = str_replace($autonumberFormat, $formattedNumber, $pattern);
+        }
+
+        // Replace date placeholders (#MM, #DD, #YYYY)
+        $pattern = str_replace('#MM', $currentDate->format('m'), $pattern);
+        $pattern = str_replace('#DD', $currentDate->format('d'), $pattern);
+        $pattern = str_replace('#YYYY', $currentDate->format('Y'), $pattern);
+
+        // Replace Roman numeral format (^)
+        if (preg_match('/@\{\^\d+\}/', $pattern, $matches)) {
+            $romanNumeralFormat = $matches[0];
+            $digits = (int) filter_var($romanNumeralFormat, FILTER_SANITIZE_NUMBER_INT);
+            $formattedNumber = $this->toRoman($number);
+            $pattern = str_replace($romanNumeralFormat, $formattedNumber, $pattern);
+        }
+
+        // Remove single quotes
+        $pattern = str_replace("'", '', $pattern);
+
+        return $pattern;
+    }
+
+    private function toRoman($number)
+    {
+        $map = [
+            'M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400,
+            'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40,
+            'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4,
+            'I' => 1
+        ];
+        $result = '';
+        foreach ($map as $roman => $int) {
+            while ($number >= $int) {
+                $result .= $roman;
+                $number -= $int;
+            }
+        }
+        return $result;
+    }
+
+    public function generatenumber()
+    {
+        $que = QueNumbOutMail::select('que_numb_outgoing_mail.*', 'master_pattern.pat_simple', 'master_pattern.pat_mix', 'master_pattern.pat_type')
+            ->leftjoin('master_pattern', 'que_numb_outgoing_mail.id_mst_letter', 'master_pattern.let_id')
+            ->get();
+
+        dd($que);
+        foreach($que as $q){
+            if($q->pat_type == "Sederhana")
+            {
+                $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
+                $number = $lastnumber ? $lastnumber->last_number : 0;
+                $pattern = $q->pat_simple;
+                $number++;
+                $result = $this->generateNumbering($pattern, $number);
+                dd($result);
+            } 
+            elseif ($q->pat_type == "Perpaduan")
+            {
+
+            } 
+            elseif ($q->pat_type == "Tidak Ada Nomor")
+            {
+                
+            }
+        }
+
+        dd($que);
     }
 }

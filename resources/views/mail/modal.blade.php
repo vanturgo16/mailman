@@ -161,15 +161,15 @@
           <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
             <div class="form-group">
               <label class="text-danger">Nama Satuan Organisasi*</label>
-              <input type="text" class="form-control" id="" name="nama_satuan" required>
+              <input type="text" class="form-control" id="" name="nama_satuan" placeholder="Masukkan Nama Satuan Organisasi.." required>
             </div>
             <div class="form-group">
                 <label>Alamat</label>
-                <textarea class="form-control" id="" rows="2" name="alamat"></textarea>
+                <textarea class="form-control" id="" rows="2" name="alamat" placeholder="Masukkan Alamat.."></textarea>
             </div>
             <div class="form-group">
                 <label>keterangan</label>
-                <textarea class="form-control" id="" rows="2" name="keterangan"></textarea>
+                <textarea class="form-control" id="" rows="2" name="keterangan" placeholder="Masukkan Keterangan.."></textarea>
             </div>
           </div>
           <div class="modal-footer">
@@ -202,17 +202,21 @@
               <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form action="#" method="POST" enctype="multipart/form-data" id="modalForm5">
+        <form action="{{ route('dropdown.store') }}" method="POST" enctype="multipart/form-data" id="modalForm5">
           @csrf
           <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
+            <input type="hidden" class="form-control" name="category" value="Arsip Pertinggal" required>
+            <input type="hidden" class="form-control" name="code_format" value="AP" required>
+
             <div class="form-group">
               <label class="text-danger">Jenis Arsip Pertinggal*</label>
-              <input type="text" class="form-control" id="" name="archive_remain_type" placeholder="Masukkan Type Arsip.." required>
+              <input type="text" class="form-control" id="" name="name_value" placeholder="Masukkan Type Arsip.." required>
             </div>
-            <div class="form-group">
+            {{-- <div class="form-group">
                 <label>Keterangan</label>
                 <textarea class="form-control" id="" rows="3" name="information" placeholder="Masukkan Keterangan..(Opsional)"></textarea>
-            </div>
+            </div> --}}
+
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>

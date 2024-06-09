@@ -15,7 +15,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $now=Carbon::now()->format('YmdHis');
+
+        $schedule->command('GenerateMailNumber')
+            ->timezone('Asia/Jakarta')
+            ->dailyAt('08:00');
+            // ->everyMinute();
+            // ->sendOutputTo("storage/logs/LogAlertExpired_".$now.".txt");
     }
 
     /**

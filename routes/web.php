@@ -35,6 +35,7 @@ use App\Http\Controllers\OutgoingMailController;
 use App\Http\Controllers\MappingLokasiSimpanController;
 use App\Http\Controllers\PatternController;
 use App\Http\Controllers\SatorController;
+use App\Http\Controllers\SaveLocationMapController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UnitLetterController;
 use App\Http\Controllers\WorkUnitController;
@@ -220,6 +221,19 @@ Route::get('/list-template-keluar', [TemplateController::class, 'listTemplateKel
             Route::get('/detail/{id}', 'detail')->name('outgoingmail.detail');
             Route::get('/ubah/{id}', 'edit')->name('outgoingmail.edit');
             Route::post('/update/{id}', 'update')->name('outgoingmail.update');
+
+            Route::get('/dummygenerate', 'generatenumber')->name('outgoingmail.dummygenerate');
+        });
+    });
+    //MAP SAVE LOCATION
+    Route::controller(SaveLocationMapController::class)->group(function () {
+        Route::prefix('map-save-location')->group(function () {
+            Route::get('/listLantai/{id}', 'listLantai')->name('mapsaveloc.listLantai');
+            Route::get('/listRuang/{id}', 'listRuang')->name('mapsaveloc.listRuang');
+            Route::get('/listRak/{id}', 'listRak')->name('mapsaveloc.listRak');
+            Route::get('/listBaris/{id}', 'listBaris')->name('mapsaveloc.listBaris');
+            Route::get('/listKolom/{id}', 'listKolom')->name('mapsaveloc.listKolom');
+            Route::get('/listBoks/{id}', 'listBoks')->name('mapsaveloc.listBoks');
         });
     });
 });

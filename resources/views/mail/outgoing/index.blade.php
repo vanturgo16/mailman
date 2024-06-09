@@ -25,6 +25,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-start align-items-center">
                     <a href="{{ route('outgoingmail.create') }}" type="button" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tambah Baru</a>
+                    {{-- <a href="{{ route('outgoingmail.dummygenerate') }}" type="button" class="btn btn-sm btn-primary ml-1"> Generate</a> --}}
                     <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#addBulk"><i class="mdi mdi-plus-box-multiple"></i> Tambah Baru (Bulk) </a>
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
@@ -79,6 +80,7 @@
                         <th class="align-middle text-center">Perihal / Tentang</th>
                         <th class="align-middle text-center">Penerima</th>
                         <th class="align-middle text-center">Tgl. Perubahan</th>
+                        <th class="align-middle text-center">Tgl. Dibuat</th>
                         <th class="align-middle text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -218,6 +220,11 @@
 </div>
 
 <script>
+    function formatDateToDMY(dateString) {
+        const [datePart] = dateString.split(' ');
+        const [year, month, day] = datePart.split('-');
+        return `${day}-${month}-${year}`;
+    }
     $(function() {
         $('#server-side-table').DataTable({
             processing: true,
@@ -278,12 +285,14 @@
                     name: 'drafter_name',
                     orderable: true,
                     searchable: true,
+                    className: 'text-center',
                     render: function(data, type, row) {
                         var html
                         if(row.drafter_name == null){
-                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                            html = '<span class="badge bg-secondary">Null</span>';
                         } else {
-                            html = '<span class="text-bold">'+row.drafter_name+'</span>';
+                            html = row.drafter_name;
+                            // html = '<span class="text-bold">'+row.drafter_name+'</span>';
                         }
                         return html;
                     },
@@ -299,7 +308,9 @@
                         if(row.mail_date == null){
                             html = '<span class="badge bg-secondary">Null</span>';
                         } else {
-                            html = row.mail_date;
+                            const formattedDate = formatDateToDMY(row.mail_date);
+                            html = formattedDate;
+                            // html = row.mail_date;
                         }
                         return html;
                     },
@@ -369,6 +380,22 @@
                         } else {
                             var date = row.last_update.replace('T', ' ').split('.')[0];
                             html = date+'<br><b>'+row.updated_by;
+                        }
+                        return html;
+                    },
+                },
+                {
+                    data: 'created_at',
+                    name: 'created_at',
+                    orderable: true,
+                    searchable: true,
+                    render: function(data, type, row) {
+                        var html
+                        if(row.created_at == null){
+                            html = '<div class="text-center"><span class="badge bg-secondary text-white">Null</span></div>';
+                        } else {
+                            var date = row.created_at.replace('T', ' ').split('.')[0];
+                            html = date+'<br><b>'+row.created_by;
                         }
                         return html;
                     },

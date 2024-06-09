@@ -121,7 +121,7 @@
             <div class="col-md-12">
               <div class="form-group">
                 <label  class="text-danger">Perihal / Tentang *</label>
-                <textarea class="form-control editor" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat.." value="{{ old('mail_regarding') }}" required></textarea>
+                <textarea class="form-control editor" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat.." value=""></textarea>
               </div>
             </div>
             {{-- Tanggal --}}
@@ -134,7 +134,7 @@
             <div class="col-md-3">
               <div class="form-group">
                 <label  class="text-danger">Tanggal Surat *</label>
-                <input type="datetime-local" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
+                <input type="date" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
               </div>
             </div>
             {{-- Penandatanganan --}}
@@ -199,7 +199,9 @@
                 <label  class="text-danger">Arsip Pertinggal *</label>
                 <select class="form-control js-example-basic-single" name="archive_remain" style="width: 100%;" required>
                   <option value="">- Pilih -</option>
-                  <option value="Test">Test</option>
+                  @foreach($archive_remains as $archive_remain)
+                    <option value="{{ $archive_remain->name_value }}">{{ $archive_remain->name_value }}</option>
+                  @endforeach
                 </select>
               </div>
             </div>
@@ -273,7 +275,7 @@
               </div>
             </div>
             {{-- Referensi Surat --}}
-            <div class="col-md-5">
+            {{-- <div class="col-md-5">
               <div class="form-group">
                 <label>Referensi Surat</label>
                 <input type="text" id="mail_ref" name="mail_ref" value="{{ old('mail_ref') }}" class="form-control" placeholder="Pilih Referensi Surat.." readonly>
@@ -283,6 +285,12 @@
               <div class="form-group">
                 <label>&nbsp;</label>
                 <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#refMail">...</button>
+              </div>
+            </div> --}}
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Referensi Surat</label>
+                <input type="text" id="mail_ref" name="mail_ref" value="{{ old('mail_ref') }}" class="form-control" placeholder="Masukkan Referensi Surat..">
               </div>
             </div>
             {{-- Lampiran --}}
@@ -317,8 +325,9 @@
                     <label class="text-danger">Nama Gedung*</label>
                     <select class="form-control js-example-basic-single" name="namaGedung" id="namaGedung" style="width: 100%;">
                       <option value="">- Pilih -</option>
-                      <option value="1">Gedung A</option>
-                      <option value="2">Gedung B</option>
+                      @foreach($gedungs as $gedung)
+                        <option value="{{ $gedung->id }}">{{ $gedung->nama_gedung }}</option>
+                      @endforeach
                     </select>
                   </div>
                   <div class="form-group">
@@ -363,70 +372,30 @@
                   <button type="button" class="btn btn-primary" id="chooseLocSave" disabled>Pilih</button>
                 </div>
                 <script>
-                  function populateSelect($select, data, idField, textField) {
-                    $select.empty().append('<option value="">- Pilih -</option>');
-                    $.each(data, function(index, item) {
-                      $select.append($('<option>', { 
-                        value: item[idField],
-                        'data-Text': item[textField],
-                        text : item[textField],
-                      }));
-                    });
-                  }
-        
-                  const lantais = [
-                    { id: 1, gedungId: 1, name: "Lantai 1" },
-                    { id: 2, gedungId: 1, name: "Lantai 2" },
-                    { id: 3, gedungId: 2, name: "Lantai 1" },
-                    { id: 4, gedungId: 2, name: "Lantai 2" }
-                  ];
-        
-                  const ruangs = [
-                    { id: 1, lantaiId: 1, name: "Ruang 101" },
-                    { id: 2, lantaiId: 1, name: "Ruang 102" },
-                    { id: 3, lantaiId: 2, name: "Ruang 201" },
-                    { id: 4, lantaiId: 2, name: "Ruang 202" },
-                    { id: 5, lantaiId: 3, name: "Ruang 101" },
-                    { id: 6, lantaiId: 3, name: "Ruang 102" },
-                    { id: 7, lantaiId: 4, name: "Ruang 201" },
-                    { id: 8, lantaiId: 4, name: "Ruang 202" }
-                  ];
-        
-                  const raks = [
-                    { id: 1, ruangId: 1, name: "Rak 1" },
-                    { id: 2, ruangId: 1, name: "Rak 2" },
-                    { id: 3, ruangId: 2, name: "Rak 1" },
-                    { id: 4, ruangId: 2, name: "Rak 2" },
-                    { id: 5, ruangId: 3, name: "Rak 1" },
-                    { id: 6, ruangId: 3, name: "Rak 2" }
-                  ];
-        
-                  const bariss = [
-                    { id: 1, rakId: 1, name: "Baris 1" },
-                    { id: 2, rakId: 1, name: "Baris 2" },
-                    { id: 3, rakId: 2, name: "Baris 1" },
-                    { id: 4, rakId: 2, name: "Baris 2" }
-                  ];
-        
-                  const koloms = [
-                    { id: 1, barisId: 1, name: "Kolom 1" },
-                    { id: 2, barisId: 1, name: "Kolom 2" },
-                    { id: 3, barisId: 2, name: "Kolom 1" },
-                    { id: 4, barisId: 2, name: "Kolom 2" }
-                  ];
-        
-                  const boks = [
-                    { id: 1, kolomId: 1, name: "Boks 1" },
-                    { id: 2, kolomId: 1, name: "Boks 2" },
-                    { id: 3, kolomId: 2, name: "Boks 1" },
-                    { id: 4, kolomId: 2, name: "Boks 2" }
-                  ];
-        
                   $('select[id="namaGedung"]').on('change', function() {
                     $('#saveLocation').val("");
                     const gedungId = $(this).val();
-                    const filteredLantais = lantais.filter(lantai => lantai.gedungId == gedungId);
-                    populateSelect($('#namaLantai'), filteredLantais, 'id', 'name');
+                    var url = '{{ route("mapsaveloc.listLantai", ":id") }}';
+                    url = url.replace(':id', gedungId);
+                    if (gedungId) {
+                        $.ajax({
+                            url: url,
+                            type: "GET",
+                            dataType: "json",
+                            success: function(data) {
+                                $('#namaLantai').empty().append('<option value="">- Pilih -</option>');
+
+                                $.each(data, function(div, value) {
+                                    $('#namaLantai').append(
+                                        '<option value="' +
+                                        value.id + '" data-Text="' + value.nama_lantai +
+                                        '">' + value.nama_lantai + '</option>');
+                                });
+                            }
+                        });
+                    } else {
+                        $('#namaLantai').empty().append('<option value="">- Pilih -</option>');
+                    }
                     
                     $('#namaRuang').empty().append('<option value="">- Pilih -</option>');
                     $('#namaRak').empty().append('<option value="">- Pilih -</option>');
@@ -438,8 +407,27 @@
                   $('select[id="namaLantai"]').on('change', function() {
                     $('#saveLocation').val("");
                     const lantaiId = $(this).val();
-                    const filteredRuangs = ruangs.filter(ruang => ruang.lantaiId == lantaiId);
-                    populateSelect($('#namaRuang'), filteredRuangs, 'id', 'name');
+                    var url = '{{ route("mapsaveloc.listRuang", ":id") }}';
+                    url = url.replace(':id', lantaiId);
+                    if (lantaiId) {
+                        $.ajax({
+                            url: url,
+                            type: "GET",
+                            dataType: "json",
+                            success: function(data) {
+                                $('#namaRuang').empty().append('<option value="">- Pilih -</option>');
+
+                                $.each(data, function(div, value) {
+                                    $('#namaRuang').append(
+                                        '<option value="' +
+                                        value.id + '" data-Text="' + value.nama_ruang +
+                                        '">' + value.nama_ruang + '</option>');
+                                });
+                            }
+                        });
+                    } else {
+                        $('#namaRuang').empty().append('<option value="">- Pilih -</option>');
+                    }
                     
                     $('#namaRak').empty().append('<option value="">- Pilih -</option>');
                     $('#namaBaris').empty().append('<option value="">- Pilih -</option>');
@@ -450,8 +438,27 @@
                   $('select[id="namaRuang"]').on('change', function() {
                     $('#saveLocation').val("");
                     const ruangId = $(this).val();
-                    const filteredRaks = raks.filter(rak => rak.ruangId == ruangId);
-                    populateSelect($('#namaRak'), filteredRaks, 'id', 'name');
+                    var url = '{{ route("mapsaveloc.listRak", ":id") }}';
+                    url = url.replace(':id', ruangId);
+                    if (ruangId) {
+                        $.ajax({
+                            url: url,
+                            type: "GET",
+                            dataType: "json",
+                            success: function(data) {
+                                $('#namaRak').empty().append('<option value="">- Pilih -</option>');
+
+                                $.each(data, function(div, value) {
+                                    $('#namaRak').append(
+                                        '<option value="' +
+                                        value.id + '" data-Text="' + value.nama_rak +
+                                        '">' + value.nama_rak + '</option>');
+                                });
+                            }
+                        });
+                    } else {
+                        $('#namaRak').empty().append('<option value="">- Pilih -</option>');
+                    }
                     
                     $('#namaBaris').empty().append('<option value="">- Pilih -</option>');
                     $('#namaKolom').empty().append('<option value="">- Pilih -</option>');
@@ -461,8 +468,27 @@
                   $('select[id="namaRak"]').on('change', function() {
                     $('#saveLocation').val("");
                     const rakId = $(this).val();
-                    const filteredBariss = bariss.filter(baris => baris.rakId == rakId);
-                    populateSelect($('#namaBaris'), filteredBariss, 'id', 'name');
+                    var url = '{{ route("mapsaveloc.listBaris", ":id") }}';
+                    url = url.replace(':id', rakId);
+                    if (rakId) {
+                        $.ajax({
+                            url: url,
+                            type: "GET",
+                            dataType: "json",
+                            success: function(data) {
+                                $('#namaBaris').empty().append('<option value="">- Pilih -</option>');
+
+                                $.each(data, function(div, value) {
+                                    $('#namaBaris').append(
+                                        '<option value="' +
+                                        value.id + '" data-Text="' + value.nama_baris +
+                                        '">' + value.nama_baris + '</option>');
+                                });
+                            }
+                        });
+                    } else {
+                        $('#namaBaris').empty().append('<option value="">- Pilih -</option>');
+                    }
                     
                     $('#namaKolom').empty().append('<option value="">- Pilih -</option>');
                     $('#namaBoks').empty().append('<option value="">- Pilih -</option>');
@@ -471,8 +497,27 @@
                   $('select[id="namaBaris"]').on('change', function() {
                     $('#saveLocation').val("");
                     const barisId = $(this).val();
-                    const filteredKoloms = koloms.filter(kolom => kolom.barisId == barisId);
-                    populateSelect($('#namaKolom'), filteredKoloms, 'id', 'name');
+                    var url = '{{ route("mapsaveloc.listKolom", ":id") }}';
+                    url = url.replace(':id', barisId);
+                    if (barisId) {
+                        $.ajax({
+                            url: url,
+                            type: "GET",
+                            dataType: "json",
+                            success: function(data) {
+                                $('#namaKolom').empty().append('<option value="">- Pilih -</option>');
+
+                                $.each(data, function(div, value) {
+                                    $('#namaKolom').append(
+                                        '<option value="' +
+                                        value.id + '" data-Text="' + value.nama_kolom +
+                                        '">' + value.nama_kolom + '</option>');
+                                });
+                            }
+                        });
+                    } else {
+                        $('#namaKolom').empty().append('<option value="">- Pilih -</option>');
+                    }
         
                     $('#namaBoks').empty().append('<option value="">- Pilih -</option>');
                     $('#chooseLocSave').attr('disabled', 'disabled');
@@ -480,8 +525,27 @@
                   $('select[id="namaKolom"]').on('change', function() {
                     $('#saveLocation').val("");
                     const kolomId = $(this).val();
-                    const filteredBoks = boks.filter(boks => boks.kolomId == kolomId);
-                    populateSelect($('#namaBoks'), filteredBoks, 'id', 'name');
+                    var url = '{{ route("mapsaveloc.listBoks", ":id") }}';
+                    url = url.replace(':id', kolomId);
+                    if (kolomId) {
+                        $.ajax({
+                            url: url,
+                            type: "GET",
+                            dataType: "json",
+                            success: function(data) {
+                                $('#namaBoks').empty().append('<option value="">- Pilih -</option>');
+
+                                $.each(data, function(div, value) {
+                                    $('#namaBoks').append(
+                                        '<option value="' +
+                                        value.id + '" data-Text="' + value.nama_box +
+                                        '">' + value.nama_box + '</option>');
+                                });
+                            }
+                        });
+                    } else {
+                        $('#namaBoks').empty().append('<option value="">- Pilih -</option>');
+                    }
         
                     $('#chooseLocSave').attr('disabled', 'disabled');
                   });
@@ -505,7 +569,7 @@
           </div>
         </div>
         {{-- Referensi Surat --}}
-        <div class="modal fade" id="refMail" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
+        {{-- <div class="modal fade" id="refMail" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
           <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #0074F1; color: white;">
@@ -582,7 +646,8 @@
             </div>
 
           </div>
-        </div>
+        </div> --}}
+
         <div class="card-footer">
           <div class="row">
             <div class="col-12" style="text-align: right">
