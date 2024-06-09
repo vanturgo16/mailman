@@ -21,6 +21,12 @@ class TemplateController extends Controller
         return view('parameter.template.index',compact('datas','classifications'));
     }
 
+    public function listTemplateKeluar(){
+        $classifications = Classification::get();
+        $datas = Template::orderBy('template_name','asc')->get();
+        return view('parameter.template.list',compact('datas','classifications'));
+    }
+
     /**
      * Show the form for creating a new resource.
      *
