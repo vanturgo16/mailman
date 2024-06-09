@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DaftarBaris;
+use App\Models\DaftarKolom;
 use App\Models\DaftarLantai;
 use App\Models\DaftarRak;
 use App\Models\DaftarRuang;
@@ -32,5 +33,11 @@ class MappingLokasiSimpanController extends Controller
     {
         $rows = DaftarBaris::where('id_rak', $rakId)->get();
         return response()->json($rows);
+    }
+
+    public function getKolom($barisId)
+    {
+        $columns = DaftarKolom::where('id_baris', $barisId)->get();
+        return response()->json($columns);
     }
 }
