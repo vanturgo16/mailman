@@ -192,6 +192,7 @@ Route::patch('/satnas/aktif/{id}', [UnitLetterController::class, 'aktif']);
 
 Route::resource('template', TemplateController::class);
 Route::patch('/template/aktif/{id}', [TemplateController::class, 'aktif']);
+Route::get('/list-template-keluar', [TemplateController::class, 'listTemplateKeluar']);
 
 Route::resource('dropdown', DropdownController::class);
 Route::patch('/dropdown/aktif/{id}', [DropdownController::class, 'aktif']);

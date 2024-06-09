@@ -200,9 +200,9 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="/agenda-pejabat" class="nav-link">
+              <a href="{{ url('list-template-keluar') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Informasi Templet</p>
+                <p>Info Template Keluar</p>
               </a>
             </li>
             <li class="nav-item">
