@@ -5,6 +5,7 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\ClassificationController;
 use App\Http\Controllers\ComplainController;
 use App\Http\Controllers\DaftarBarisController;
+use App\Http\Controllers\DaftarBoxController;
 use App\Http\Controllers\DaftarGedungController;
 use App\Http\Controllers\DaftarKolomController;
 use App\Http\Controllers\DaftarLantaiController;
@@ -155,11 +156,15 @@ Route::patch('/baris/aktif/{id}', [DaftarBarisController::class, 'aktif']);
 Route::resource('kolom', DaftarKolomController::class);
 Route::patch('/kolom/aktif/{id}', [DaftarKolomController::class, 'aktif']);
 
+Route::resource('boks', DaftarBoxController::class);
+Route::patch('/boks/aktif/{id}', [DaftarBoxController::class, 'aktif']);
+
 //ajax lokasi simpan
 Route::get('/mapping-lantai/{gedungId}', [MappingLokasiSimpanController::class, 'getLantai'])->name('mappingLantai');
 Route::get('/mapping-ruang/{lantaiId}', [MappingLokasiSimpanController::class, 'getRuang'])->name('mappingRuang');
 Route::get('/mapping-rak/{ruangId}', [MappingLokasiSimpanController::class, 'getRak'])->name('mappingRak');
 Route::get('/mapping-baris/{rakId}', [MappingLokasiSimpanController::class, 'getBaris'])->name('mappingBaris');
+Route::get('/mapping-kolom/{barisId}', [MappingLokasiSimpanController::class, 'getKolom'])->name('mappingKolom');
 
 //Parameters
 Route::resource('instansi', InstansiController::class);
@@ -187,6 +192,7 @@ Route::patch('/satnas/aktif/{id}', [UnitLetterController::class, 'aktif']);
 
 Route::resource('template', TemplateController::class);
 Route::patch('/template/aktif/{id}', [TemplateController::class, 'aktif']);
+Route::get('/list-template-keluar', [TemplateController::class, 'listTemplateKeluar']);
 
 Route::resource('dropdown', DropdownController::class);
 Route::patch('/dropdown/aktif/{id}', [DropdownController::class, 'aktif']);
