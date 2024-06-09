@@ -28,11 +28,14 @@ use App\Http\Controllers\opd\AjuanAgenda;
 
 
 use App\Http\Controllers\front\SliderController;
+use App\Http\Controllers\IncommingMailController;
 use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\LetterController;
+use App\Http\Controllers\OutgoingMailController;
 use App\Http\Controllers\MappingLokasiSimpanController;
 use App\Http\Controllers\PatternController;
 use App\Http\Controllers\SatorController;
+use App\Http\Controllers\SaveLocationMapController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UnitLetterController;
 use App\Http\Controllers\WorkUnitController;
@@ -138,11 +141,13 @@ Route::group(['middleware' => 'cekopd'], function () {
 });
 
 //Lokasi Simpan
-Route::resource('gedung', DaftarGedungController::class);
-Route::patch('/gedung/aktif/{id}', [DaftarGedungController::class, 'aktif']);
-
+Route::middleware(['auth'])->group(function () {
+    // MASTER
+    Route::resource('gedung', DaftarGedungController::class);
+    Route::patch('/gedung/aktif/{id}', [DaftarGedungController::class, 'aktif']);
+    
 Route::resource('lantai', DaftarLantaiController::class);
-Route::patch('/lantai/aktif/{id}', [DaftarLantaiController::class, 'aktif']);
+    Route::patch('/lantai/aktif/{id}', [DaftarLantaiController::class, 'aktif']);
 
 Route::resource('ruang', DaftarRuangController::class);
 Route::patch('/ruang/aktif/{id}', [DaftarRuangController::class, 'aktif']);
@@ -166,35 +171,71 @@ Route::get('/mapping-rak/{ruangId}', [MappingLokasiSimpanController::class, 'get
 Route::get('/mapping-baris/{rakId}', [MappingLokasiSimpanController::class, 'getBaris'])->name('mappingBaris');
 Route::get('/mapping-kolom/{barisId}', [MappingLokasiSimpanController::class, 'getKolom'])->name('mappingKolom');
 
-//Parameters
-Route::resource('instansi', InstansiController::class);
-Route::patch('/instansi/aktif/{id}', [InstansiController::class, 'aktif']);
+    //Parameters
+    Route::resource('instansi', InstansiController::class);
+    Route::patch('/instansi/aktif/{id}', [InstansiController::class, 'aktif']);
 
-Route::resource('sator', SatorController::class);
-Route::patch('/sator/aktif/{id}', [SatorController::class, 'aktif']);
+    Route::resource('sator', SatorController::class);
+    Route::patch('/sator/aktif/{id}', [SatorController::class, 'aktif']);
 
-Route::resource('unitkerja', WorkUnitController::class);
-Route::patch('/unitkerja/aktif/{id}', [WorkUnitController::class, 'aktif']);
+    Route::resource('unitkerja', WorkUnitController::class);
+    Route::patch('/unitkerja/aktif/{id}', [WorkUnitController::class, 'aktif']);
 
-Route::resource('klasifikasi', ClassificationController::class);
-Route::patch('/klasifikasi/aktif/{id}', [ClassificationController::class, 'aktif']);
+    Route::resource('klasifikasi', ClassificationController::class);
+    Route::patch('/klasifikasi/aktif/{id}', [ClassificationController::class, 'aktif']);
 
-Route::resource('naskah', LetterController::class);
-Route::patch('/naskah/aktif/{id}', [LetterController::class, 'aktif']);
-Route::post('/pattern/store/{id}', [LetterController::class, 'storePattern']);
-Route::get('/pattern/create/{id}', [LetterController::class, 'createPattern']);
+    Route::resource('naskah', LetterController::class);
+    Route::patch('/naskah/aktif/{id}', [LetterController::class, 'aktif']);
+    Route::post('/pattern/store/{id}', [LetterController::class, 'storePattern']);
+    Route::get('/pattern/create/{id}', [LetterController::class, 'createPattern']);
 
-Route::resource('pengaduan', ComplainController::class);
-Route::patch('/pengaduan/aktif/{id}', [ComplainController::class, 'aktif']);
+    Route::resource('pengaduan', ComplainController::class);
+    Route::patch('/pengaduan/aktif/{id}', [ComplainController::class, 'aktif']);
 
-Route::resource('satnas', UnitLetterController::class);
-Route::patch('/satnas/aktif/{id}', [UnitLetterController::class, 'aktif']);
+    Route::resource('satnas', UnitLetterController::class);
+    Route::patch('/satnas/aktif/{id}', [UnitLetterController::class, 'aktif']);
 
-Route::resource('template', TemplateController::class);
-Route::patch('/template/aktif/{id}', [TemplateController::class, 'aktif']);
+    Route::resource('template', TemplateController::class);
+    Route::patch('/template/aktif/{id}', [TemplateController::class, 'aktif']);
 Route::get('/list-template-keluar', [TemplateController::class, 'listTemplateKeluar']);
 
-Route::resource('dropdown', DropdownController::class);
-Route::patch('/dropdown/aktif/{id}', [DropdownController::class, 'aktif']);
+    Route::resource('dropdown', DropdownController::class);
+    Route::patch('/dropdown/aktif/{id}', [DropdownController::class, 'aktif']);
+
+    //SURAT
+    //SURAT MASUK
+    Route::controller(IncommingMailController::class)->group(function () {
+        Route::prefix('surat-masuk')->group(function () {
+            Route::get('/', 'index')->name('incommingmail.index');
+            Route::get('/tambah', 'create')->name('incommingmail.create');
+        });
+    });
+    //SURAT KELUAR
+    Route::controller(OutgoingMailController::class)->group(function () {
+        Route::prefix('surat-keluar')->group(function () {
+            Route::get('/', 'index')->name('outgoingmail.index');
+            Route::post('/', 'index')->name('outgoingmail.index');
+            Route::get('/tambah', 'create')->name('outgoingmail.create');
+            Route::post('/store', 'store')->name('outgoingmail.store');
+            Route::post('/store/bulk', 'storebulk')->name('outgoingmail.storebulk');
+            Route::get('/detail/{id}', 'detail')->name('outgoingmail.detail');
+            Route::get('/ubah/{id}', 'edit')->name('outgoingmail.edit');
+            Route::post('/update/{id}', 'update')->name('outgoingmail.update');
+
+            Route::get('/dummygenerate', 'generatenumber')->name('outgoingmail.dummygenerate');
+        });
+    });
+    //MAP SAVE LOCATION
+    Route::controller(SaveLocationMapController::class)->group(function () {
+        Route::prefix('map-save-location')->group(function () {
+            Route::get('/listLantai/{id}', 'listLantai')->name('mapsaveloc.listLantai');
+            Route::get('/listRuang/{id}', 'listRuang')->name('mapsaveloc.listRuang');
+            Route::get('/listRak/{id}', 'listRak')->name('mapsaveloc.listRak');
+            Route::get('/listBaris/{id}', 'listBaris')->name('mapsaveloc.listBaris');
+            Route::get('/listKolom/{id}', 'listKolom')->name('mapsaveloc.listKolom');
+            Route::get('/listBoks/{id}', 'listBoks')->name('mapsaveloc.listBoks');
+        });
+    });
+});
 
 require __DIR__.'/auth.php';

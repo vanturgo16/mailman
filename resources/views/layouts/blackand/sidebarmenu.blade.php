@@ -188,13 +188,13 @@
           <ul class="nav nav-treeview">
 
             <li class="nav-item">
-              <a href="/agenda-pejabat" class="nav-link">
+              <a href="{{ route('incommingmail.index') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Surat Masuk</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="/agenda-pejabat" class="nav-link">
+              <a href="{{ route('outgoingmail.index') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Surat Keluar</p>
               </a>
