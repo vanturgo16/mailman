@@ -103,7 +103,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="/data-jml-penduduk" class="nav-link">
+              <a href="{{ url('/boks') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Daftar Boks</p>
               </a>
