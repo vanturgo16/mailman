@@ -25,7 +25,7 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-start align-items-center">
                     <a href="{{ route('outgoingmail.create') }}" type="button" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tambah Baru</a>
-                    {{-- <a href="{{ route('outgoingmail.dummygenerate') }}" type="button" class="btn btn-sm btn-primary ml-1"> Generate</a> --}}
+                    <a href="{{ route('outgoingmail.dummygenerate') }}" type="button" class="btn btn-sm btn-primary ml-1"> Generate</a>
                     <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#addBulk"><i class="mdi mdi-plus-box-multiple"></i> Tambah Baru (Bulk) </a>
                 </div>
                 <div class="d-flex justify-content-end align-items-center">

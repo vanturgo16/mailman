@@ -152,7 +152,15 @@ class OutgoingMailController extends Controller
                     'idBoks' => $request->input('namaBoks'),
                 ]);
             } else {
-                $location_save_route = null;
+                $location_save_route = json_encode([
+                    'idGedung' => null,
+                    'idLantai' => null,
+                    'idRuang' => null,
+                    'idRak' => null,
+                    'idBaris' => null,
+                    'idKolom' => null,
+                    'idBoks' => null,
+                ]);
             }
 
             // Store Outgoing Mail
@@ -214,9 +222,21 @@ class OutgoingMailController extends Controller
         DB::beginTransaction();
         try {
             for ($i = 0; $i < $amountLetter; $i++) {
+
+                $location_save_route = json_encode([
+                    'idGedung' => null,
+                    'idLantai' => null,
+                    'idRuang' => null,
+                    'idRak' => null,
+                    'idBaris' => null,
+                    'idKolom' => null,
+                    'idBoks' => null,
+                ]);
+
                 // Store Outgoing Mail
                 $store = OutgoingMail::create([
                     'id_mst_letter' => $idMstLetter,
+                    'location_save_route' => $location_save_route,
                     'status' => null,
                     'created_by' => auth()->user()->email,
                 ]);
@@ -485,7 +505,7 @@ class OutgoingMailController extends Controller
             ->leftjoin('master_pattern', 'que_numb_outgoing_mail.id_mst_letter', 'master_pattern.let_id')
             ->get();
 
-        dd($que);
+        // dd($que);
         foreach($que as $q){
             if($q->pat_type == "Sederhana")
             {
