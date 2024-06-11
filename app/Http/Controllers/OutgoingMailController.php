@@ -622,7 +622,6 @@ class OutgoingMailController extends Controller
                             $value = strtoupper(Letter::where('id', $q->id_mst_letter)->first()->let_code);
                             $mail_number[] = $value;
                         } elseif($pat == "Unit Kerja") {
-                            dd($q->org_unit);
                             $value = strtoupper(Sator::where('id', $q->org_unit)->first()->sator_name);
                             $mail_number[] = $value;
                         } elseif($pat == "Sifat Surat") {
