@@ -20,9 +20,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('GenerateMailNumber')
             ->timezone('Asia/Jakarta')
-            ->everyFiveMinutes();
+            ->everyMinute();
+            // ->everyFiveMinutes();
             // ->dailyAt('08:00');
-            // ->everyMinute();
             // ->sendOutputTo("storage/logs/LogAlertExpired_".$now.".txt");
     }
 
