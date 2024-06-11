@@ -222,7 +222,7 @@ Route::get('/list-template-keluar', [TemplateController::class, 'listTemplateKel
             Route::get('/ubah/{id}', 'edit')->name('outgoingmail.edit');
             Route::post('/update/{id}', 'update')->name('outgoingmail.update');
 
-            Route::get('/dummygenerate', 'generatenumber')->name('outgoingmail.dummygenerate');
+            Route::post('/generate', 'generatenumber')->name('outgoingmail.generate');
         });
     });
     //MAP SAVE LOCATION

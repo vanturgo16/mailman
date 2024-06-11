@@ -271,7 +271,7 @@
                     </span>
                 </div>
             </div>
-            <div class="col-lg-4">
+            {{-- <div class="col-lg-4">
                 <div class="form-group">
                     <div><span class="text-bold">Referensi Surat :</span></div>
                     <span>
@@ -282,7 +282,7 @@
                         @endif
                     </span>
                 </div>
-            </div>
+            </div> --}}
             <div class="col-lg-6">
                 <div class="form-group">
                     <div><span class="text-bold">Lampiran :</span></div>

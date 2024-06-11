@@ -39,6 +39,7 @@ class OutgoingMailController extends Controller
         $archive_remains = $request->get('archive_remains');
 
         $letters = Letter::get();
+        $sators = Sator::orderBy('sator_name','asc')->get();
         
         $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'draft.work_name as drafter_name', 'master_letter.let_name')
             ->leftjoin('master_workunit as draft', 'draft.id', 'outgoing_mails.drafter')
@@ -84,7 +85,7 @@ class OutgoingMailController extends Controller
             return $data;
         }
 
-        return view('mail.outgoing.index', compact('letters', 'datas', 'out_date', 'mail_date', 'mail_number', 'id_mst_letter', 'archive_remains'));
+        return view('mail.outgoing.index', compact('letters', 'sators', 'datas', 'out_date', 'mail_date', 'mail_number', 'id_mst_letter', 'archive_remains'));
     }
 
     public function create(Request $request)
@@ -152,7 +153,15 @@ class OutgoingMailController extends Controller
                     'idBoks' => $request->input('namaBoks'),
                 ]);
             } else {
-                $location_save_route = null;
+                $location_save_route = json_encode([
+                    'idGedung' => null,
+                    'idLantai' => null,
+                    'idRuang' => null,
+                    'idRak' => null,
+                    'idBaris' => null,
+                    'idKolom' => null,
+                    'idBoks' => null,
+                ]);
             }
 
             // Store Outgoing Mail
@@ -180,7 +189,7 @@ class OutgoingMailController extends Controller
                 'ref_mail' => $request->mail_ref,
                 'information' => $request->information,
                 'status' => null,
-                'created_by' => auth()->user()->email,
+                'created_by' => auth()->user()->name,
             ]);
 
             // Register Que
@@ -202,23 +211,39 @@ class OutgoingMailController extends Controller
         // dd($request->all());
         $request->validate([
             "id_mst_letter" => "required",
+            "mail_date" => "required",
             "amount_letter" => "required",
         ], [
             'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
+            'mail_date.required' => 'Tanggal Surat Wajib Untuk Diisi.',
             'amount_letter.required' => 'Jumlah Naskah Wajib Untuk Diisi.',
         ]);
 
         $idMstLetter = $request->id_mst_letter;
+        $mail_date = $request->mail_date;
         $amountLetter = $request->amount_letter;
         
         DB::beginTransaction();
         try {
             for ($i = 0; $i < $amountLetter; $i++) {
+
+                $location_save_route = json_encode([
+                    'idGedung' => null,
+                    'idLantai' => null,
+                    'idRuang' => null,
+                    'idRak' => null,
+                    'idBaris' => null,
+                    'idKolom' => null,
+                    'idBoks' => null,
+                ]);
+
                 // Store Outgoing Mail
                 $store = OutgoingMail::create([
                     'id_mst_letter' => $idMstLetter,
+                    'mail_date' => $mail_date,
+                    'location_save_route' => $location_save_route,
                     'status' => null,
-                    'created_by' => auth()->user()->email,
+                    'created_by' => auth()->user()->name,
                 ]);
                 // Register Que
                 QueNumbOutMail::create([
@@ -414,7 +439,7 @@ class OutgoingMailController extends Controller
                     'ref_mail' => $request->mail_ref,
                     'information' => $request->information,
                     'status' => null,
-                    'updated_by' => auth()->user()->email,
+                    'updated_by' => auth()->user()->name,
                 ]);
     
                 DB::commit();
@@ -443,9 +468,69 @@ class OutgoingMailController extends Controller
         }
 
         // Replace date placeholders (#MM, #DD, #YYYY)
-        $pattern = str_replace('#MM', $currentDate->format('m'), $pattern);
-        $pattern = str_replace('#DD', $currentDate->format('d'), $pattern);
-        $pattern = str_replace('#YYYY', $currentDate->format('Y'), $pattern);
+        if (strpos($pattern, '#^MM') !== false) {
+            $romanMonth = $this->toRoman((int) $currentDate->format('m'));
+            $pattern = str_replace('#^MM', $romanMonth, $pattern);
+        } else {
+            $pattern = str_replace('#MM', $currentDate->format('m'), $pattern);
+        }
+        if (strpos($pattern, '#^DD') !== false) {
+            $romanDay = $this->toRoman((int) $currentDate->format('d'));
+            $pattern = str_replace('#^DD', $romanDay, $pattern);
+        } else {
+            $pattern = str_replace('#MM', $currentDate->format('d'), $pattern);
+        }
+        if (strpos($pattern, '#^YYYY') !== false) {
+            $romanYear = $this->toRoman((int) $currentDate->format('Y'));
+            $pattern = str_replace('#^YYYY', $romanYear, $pattern);
+        } else {
+            $pattern = str_replace('#YYYY', $currentDate->format('Y'), $pattern);
+        }
+
+        // Replace Roman numeral format (^)
+        if (preg_match('/@\{\^\d+\}/', $pattern, $matches)) {
+            $romanNumeralFormat = $matches[0];
+            $digits = (int) filter_var($romanNumeralFormat, FILTER_SANITIZE_NUMBER_INT);
+            $formattedNumber = $this->toRoman($number);
+            $pattern = str_replace($romanNumeralFormat, $formattedNumber, $pattern);
+        }
+
+        // Remove single quotes
+        $pattern = str_replace("'", '', $pattern);
+
+        return $pattern;
+    }
+
+    public function generateNumberingWithout($pattern, $number)
+    {
+        // Current date for date replacements
+        $currentDate = Carbon::now();
+
+        // Replace the autonumber format (@)
+        if (preg_match('/@{\d+}/', $pattern, $matches)) {
+            $autonumberFormat = $matches[0];
+            $pattern = str_replace($autonumberFormat, $number, $pattern);
+        }
+
+        // Replace date placeholders (#MM, #DD, #YYYY)
+        if (strpos($pattern, '#^MM') !== false) {
+            $romanMonth = $this->toRoman((int) $currentDate->format('m'));
+            $pattern = str_replace('#^MM', $romanMonth, $pattern);
+        } else {
+            $pattern = str_replace('#MM', $currentDate->format('m'), $pattern);
+        }
+        if (strpos($pattern, '#^DD') !== false) {
+            $romanDay = $this->toRoman((int) $currentDate->format('d'));
+            $pattern = str_replace('#^DD', $romanDay, $pattern);
+        } else {
+            $pattern = str_replace('#MM', $currentDate->format('d'), $pattern);
+        }
+        if (strpos($pattern, '#^YYYY') !== false) {
+            $romanYear = $this->toRoman((int) $currentDate->format('Y'));
+            $pattern = str_replace('#^YYYY', $romanYear, $pattern);
+        } else {
+            $pattern = str_replace('#YYYY', $currentDate->format('Y'), $pattern);
+        }
 
         // Replace Roman numeral format (^)
         if (preg_match('/@\{\^\d+\}/', $pattern, $matches)) {
@@ -485,27 +570,116 @@ class OutgoingMailController extends Controller
             ->leftjoin('master_pattern', 'que_numb_outgoing_mail.id_mst_letter', 'master_pattern.let_id')
             ->get();
 
-        dd($que);
-        foreach($que as $q){
-            if($q->pat_type == "Sederhana")
-            {
-                $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
-                $number = $lastnumber ? $lastnumber->last_number : 0;
-                $pattern = $q->pat_simple;
-                $number++;
-                $result = $this->generateNumbering($pattern, $number);
-                dd($result);
-            } 
-            elseif ($q->pat_type == "Perpaduan")
-            {
-
-            } 
-            elseif ($q->pat_type == "Tidak Ada Nomor")
-            {
-                
-            }
+        if($que->isEmpty()){
+            return redirect()->back()->with(['info' => 'Tidak Ada Aksi, Semua Nomor Email Telah Digenerate']);
         }
 
-        dd($que);
+        DB::beginTransaction();
+        try {
+            $error = false;
+            foreach($que as $q){
+                if($q->pat_type == "Sederhana")
+                {
+                    $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
+                    $number = $lastnumber ? $lastnumber->last_number : 0;
+                    $pattern = $q->pat_simple;
+                    $number++;
+                    $mail_number_with = $this->generateNumbering($pattern, $number);
+                    $mail_number = $this->generateNumberingWithout($pattern, $number);
+    
+                    //Update Mail Number
+                    OutgoingMail::where('id', $q->id_mail)->update(["mail_number" => $mail_number, "mail_number_with" => $mail_number_with]);
+                    //Update Last Number
+                    $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
+                    if($lastnumber){
+                        LastNumbering::where('id_mst_letter', $q->id_mst_letter)->update(["last_number" => $number]);
+                    } else {
+                        LastNumbering::create([
+                            'id_mst_letter' => $q->id_mst_letter,
+                            'last_number' => $number,
+                        ]);
+                    }
+                    //Delete Que
+                    QueNumbOutMail::where('id_mail', $q->id_mail)->delete();
+                } 
+                elseif ($q->pat_type == "Perpaduan")
+                {
+                    $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
+                    $number = $lastnumber ? $lastnumber->last_number : 0;
+                    $number++;
+    
+                    $pattern = $q->pat_mix;
+                    $patterns = json_decode($pattern, true);
+    
+                    $mail_number = [];
+    
+                    foreach($patterns as $pat){
+                        if($pat == "Naskah Dinas"){
+                            $value = strtoupper(Letter::where('id', $q->id_mst_letter)->first()->let_code);
+                            $mail_number[] = $value;
+                        } elseif($pat == "Unit Kerja") {
+                            $value = strtoupper(Sator::where('id', $q->org_unit)->first()->sator_name);
+                            $mail_number[] = $value;
+                        } elseif($pat == "Sifat Surat") {
+                            $value = "Null";
+                            $mail_number[] = $value;
+                        } elseif($pat == "Nomor Urut") {
+                            $value = $number;
+                            $mail_number[] = $value;
+                            // Update Last Number
+                            $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
+                            if($lastnumber){
+                                LastNumbering::where('id_mst_letter', $q->id_mst_letter)->update(["last_number" => $number]);
+                            } else {
+                                LastNumbering::create([
+                                    'id_mst_letter' => $q->id_mst_letter,
+                                    'last_number' => $number,
+                                ]);
+                            }
+                        } elseif($pat == "Bulan Terbit") {
+                            $timestamp = strtotime($q->mail_date);
+                            $value = date('m', $timestamp);
+                            $mail_number[] = $value;
+                        } elseif($pat == "Tahun Terbit") {
+                            $timestamp = strtotime($q->mail_date);
+                            $value = date('Y', $timestamp);
+                            $mail_number[] = $value;
+                        } else {
+                            $value = "Null";
+                            $mail_number[] = $value;
+                        }
+                    }
+                    $mail_number = implode('/', $mail_number);
+    
+                    //Update Mail Number
+                    OutgoingMail::where('id', $q->id_mail)->update(["mail_number" => $mail_number]);
+                    //Delete Que
+                    QueNumbOutMail::where('id_mail', $q->id_mail)->delete();
+                } 
+                elseif ($q->pat_type == "Tidak Ada Nomor")
+                {
+                    $mail_number = "Tidak Ada Nomor";
+    
+                    //Update Mail Number
+                    OutgoingMail::where('id', $q->id_mail)->update(["mail_number" => $mail_number]);
+                    //Delete Que
+                    QueNumbOutMail::where('id_mail', $q->id_mail)->delete();
+                } else {
+                    $error = true;
+                    //Update Que
+                    QueNumbOutMail::where('id_mail', $q->id_mail)->update(["status" => 1]);
+                }
+            }
+
+            DB::commit();
+            if($error){
+                return redirect()->route('outgoingmail.index')->with(['success' => 'Sukses Generate Nomor Email, Namun Ada Nomor Yang Gagal Tergenerate']);
+            } else {
+                return redirect()->route('outgoingmail.index')->with(['success' => 'Sukses Generate Nomor Email']);
+            }
+        } catch (Throwable $th) {
+            DB::rollback();
+            return redirect()->back()->with(['fail' => 'Gagal Generate Nomor Email!']);
+        }
     }
 }
