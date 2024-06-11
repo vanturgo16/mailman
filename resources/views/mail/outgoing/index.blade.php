@@ -107,7 +107,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                             <label  class="text-danger">Jenis Naskah *</label>
-                            <select class="form-control js-example-basic-single" name="id_mst_letter" style="width: 100%;" required>
+                            <select class="form-control js-example-basic-single" id="mst_letter" name="id_mst_letter" style="width: 100%;" required>
                                 <option value="">- Pilih -</option>
                                 @foreach($letters as $letter)
                                 <option value="{{ $letter->id }}">{{ $letter->let_name }}</option>
@@ -123,7 +123,7 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label>Kode Satuan Organisasi</label>
+                                <label id="labelkso">Kode Satuan Organisasi</label>
                                 <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
                                     <option value="">- Pilih -</option>
                                     @foreach($sators as $sator)
@@ -160,6 +160,34 @@
         </div>
     </div>
 </div>
+
+<script>
+    $('select[id="mst_letter"]').on('change', function() {
+        const id_mst_letter = $(this).val();
+        var url = '{{ route("outgoingmail.checkpattern", ":id") }}';
+        url = url.replace(':id', id_mst_letter);
+        if (id_mst_letter) {
+            $.ajax({
+                url: url,
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    const label = document.getElementById('labelkso');
+                    const select = document.querySelector('select[name="org_unit"]');
+                    if (data === "R") {
+                        label.classList.add('text-danger');
+                        label.textContent = "Kode Satuan Organisasi *";
+                        select.setAttribute('required', 'required');
+                    } else {
+                        label.classList.remove('text-danger');
+                        label.textContent = "Kode Satuan Organisasi";
+                        select.removeAttribute('required');
+                    }
+                }
+            });
+        }
+    });
+</script>
 
 {{-- Modal Generate Mail Number --}}
 <div class="modal fade" id="genNumber" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">

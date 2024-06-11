@@ -72,7 +72,7 @@
                     <tr>
                       <td><label class="text-danger">Jenis Naskah *</label></td>
                       <td>
-                        <select class="form-control js-example-basic-single" name="id_mst_letter" style="width: 100%;" required>
+                        <select class="form-control js-example-basic-single" id="mst_letter" name="id_mst_letter" style="width: 100%;" required>
                           <option value="">- Pilih -</option>
                           @foreach($letters as $letter)
                             <option value="{{ $letter->id }}">{{ $letter->let_name }}</option>
@@ -94,7 +94,7 @@
                     </tr>
                     {{-- Kode Satuan Organisasi --}}
                     <tr>
-                      <td><label>Kode Satuan Organisasi</label></td>
+                      <td><label id="labelkso">Kode Satuan Organisasi</label></td>
                       <td>
                         <div class="row">
                           <div class="col-md-9">
@@ -629,6 +629,35 @@
 <script>
   $(".js-example-basic-single").select2().on("select2:open", function () {
       document.querySelector(".select2-search__field").focus();
+  });
+</script>
+
+
+<script>
+  $('select[id="mst_letter"]').on('change', function() {
+      const id_mst_letter = $(this).val();
+      var url = '{{ route("outgoingmail.checkpattern", ":id") }}';
+      url = url.replace(':id', id_mst_letter);
+      if (id_mst_letter) {
+          $.ajax({
+              url: url,
+              type: "GET",
+              dataType: "json",
+              success: function(data) {
+                  const label = document.getElementById('labelkso');
+                  const select = document.querySelector('select[name="org_unit"]');
+                  if (data === "R") {
+                      label.classList.add('text-danger');
+                      label.textContent = "Kode Satuan Organisasi *";
+                      select.setAttribute('required', 'required');
+                  } else {
+                      label.classList.remove('text-danger');
+                      label.textContent = "Kode Satuan Organisasi";
+                      select.removeAttribute('required');
+                  }
+              }
+          });
+      }
   });
 </script>
 
