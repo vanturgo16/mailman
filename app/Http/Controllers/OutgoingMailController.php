@@ -569,7 +569,8 @@ class OutgoingMailController extends Controller
 
     public function generatenumber()
     {
-        $que = QueNumbOutMail::select('que_numb_outgoing_mail.*', 'master_pattern.pat_simple', 'master_pattern.pat_mix', 'master_pattern.pat_type')
+        $que = QueNumbOutMail::select('que_numb_outgoing_mail.*', 'outgoing_mails.org_unit', 'outgoing_mails.mail_date', 'master_pattern.pat_simple', 'master_pattern.pat_mix', 'master_pattern.pat_type')
+            ->leftjoin('outgoing_mails', 'que_numb_outgoing_mail.id_mail', 'outgoing_mails.id')
             ->leftjoin('master_pattern', 'que_numb_outgoing_mail.id_mst_letter', 'master_pattern.let_id')
             ->get();
 
@@ -621,6 +622,7 @@ class OutgoingMailController extends Controller
                             $value = strtoupper(Letter::where('id', $q->id_mst_letter)->first()->let_code);
                             $mail_number[] = $value;
                         } elseif($pat == "Unit Kerja") {
+                            dd($q->org_unit);
                             $value = strtoupper(Sator::where('id', $q->org_unit)->first()->sator_name);
                             $mail_number[] = $value;
                         } elseif($pat == "Sifat Surat") {
