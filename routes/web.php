@@ -221,6 +221,7 @@ Route::get('/list-template-keluar', [TemplateController::class, 'listTemplateKel
             Route::get('/detail/{id}', 'detail')->name('outgoingmail.detail');
             Route::get('/ubah/{id}', 'edit')->name('outgoingmail.edit');
             Route::post('/update/{id}', 'update')->name('outgoingmail.update');
+            Route::get('/checkpattern/{id}', 'checkpattern')->name('outgoingmail.checkpattern');
 
             Route::post('/generate', 'generatenumber')->name('outgoingmail.generate');
         });

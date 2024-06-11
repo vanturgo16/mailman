@@ -26,6 +26,7 @@ use App\Models\DaftarLantai;
 use App\Models\DaftarRak;
 use App\Models\DaftarRuang;
 use App\Models\LastNumbering;
+use App\Models\Pattern;
 
 class OutgoingMailController extends Controller
 {
@@ -221,6 +222,7 @@ class OutgoingMailController extends Controller
 
         $idMstLetter = $request->id_mst_letter;
         $mail_date = $request->mail_date;
+        $org_unit = $request->org_unit;
         $amountLetter = $request->amount_letter;
         
         DB::beginTransaction();
@@ -241,6 +243,7 @@ class OutgoingMailController extends Controller
                 $store = OutgoingMail::create([
                     'id_mst_letter' => $idMstLetter,
                     'mail_date' => $mail_date,
+                    'org_unit' => $org_unit,
                     'location_save_route' => $location_save_route,
                     'status' => null,
                     'created_by' => auth()->user()->name,
@@ -681,5 +684,25 @@ class OutgoingMailController extends Controller
             DB::rollback();
             return redirect()->back()->with(['fail' => 'Gagal Generate Nomor Email!']);
         }
+    }
+
+    public function checkpattern($id)
+    {
+        $pattern = Pattern::where('let_id', $id)->first();
+        if($pattern == null){
+            $pat_mix = null;
+        } else {
+            $pat_mix = $pattern->pat_mix;
+        }
+        if($pat_mix == null){
+            $rule = "NR";
+        } else {
+            if (strpos($pat_mix, "Unit Kerja") !== false) {
+                $rule = "R";
+            } else {
+                $rule = "NR";
+            }
+        }
+        return response()->json($rule);
     }
 }
