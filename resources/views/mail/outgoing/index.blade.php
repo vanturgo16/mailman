@@ -26,7 +26,7 @@
                 <div class="d-flex justify-content-start align-items-center">
                     <a href="{{ route('outgoingmail.create') }}" type="button" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tambah Baru</a>
                     <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#addBulk"><i class="mdi mdi-plus-box-multiple"></i> Tambah Baru (Bulk) </a>
-                    <a href="" type="button" class="btn btn-sm btn-warning ml-1" data-toggle="modal" data-target="#genNumber"><i class="mdi mdi-reload-alert"></i> Generate No. Surat</a>
+                    {{-- <a href="" type="button" class="btn btn-sm btn-warning ml-1" data-toggle="modal" data-target="#genNumber"><i class="mdi mdi-reload-alert"></i> Generate No. Surat</a> --}}
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
                     <form action="{{ route('outgoingmail.index') }}" method="POST" id="resetForm" enctype="multipart/form-data">
@@ -190,7 +190,7 @@
 </script>
 
 {{-- Modal Generate Mail Number --}}
-<div class="modal fade" id="genNumber" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
+{{-- <div class="modal fade" id="genNumber" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #0074F1; color: white;">
@@ -229,7 +229,7 @@
             </script>
         </div>
     </div>
-</div>
+</div> --}}
 
 {{-- Filter & Search --}}
 <div class="modal fade" id="search" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">

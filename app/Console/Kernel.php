@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
+use Carbon\Carbon;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -19,7 +20,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('GenerateMailNumber')
             ->timezone('Asia/Jakarta')
-            ->dailyAt('08:00');
+            ->everyFiveMinutes();
+            // ->dailyAt('08:00');
             // ->everyMinute();
             // ->sendOutputTo("storage/logs/LogAlertExpired_".$now.".txt");
     }
