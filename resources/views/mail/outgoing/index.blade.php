@@ -25,8 +25,8 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-start align-items-center">
                     <a href="{{ route('outgoingmail.create') }}" type="button" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tambah Baru</a>
-                    {{-- <a href="{{ route('outgoingmail.dummygenerate') }}" type="button" class="btn btn-sm btn-primary ml-1"> Generate</a> --}}
                     <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#addBulk"><i class="mdi mdi-plus-box-multiple"></i> Tambah Baru (Bulk) </a>
+                    <a href="" type="button" class="btn btn-sm btn-warning ml-1" data-toggle="modal" data-target="#genNumber"><i class="mdi mdi-reload-alert"></i> Generate No. Surat</a>
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
                     <form action="{{ route('outgoingmail.index') }}" method="POST" id="resetForm" enctype="multipart/form-data">
@@ -93,129 +93,188 @@
 {{-- Add Bulk --}}
 <div class="modal fade" id="addBulk" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
-      <div class="modal-content">
-          <div class="modal-header" style="background-color: #0074F1; color: white;">
-            <h5 class="modal-title font-weight-bold" id="modalAddLabel">Tambah Surat Keluar Baru (Dalam Jumlah Besar)</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
-                <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <form action="{{ route('outgoingmail.storebulk') }}" method="POST" enctype="multipart/form-data" id="modalFormBulk">
-            @csrf
-            <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                          <label  class="text-danger">Jenis Naskah *</label>
-                          <select class="form-control js-example-basic-single" name="id_mst_letter" style="width: 100%;" required>
-                            <option value="">- Pilih -</option>
-                            @foreach($letters as $letter)
-                              <option value="{{ $letter->id }}">{{ $letter->let_name }}</option>
-                            @endforeach
-                          </select>
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #0074F1; color: white;">
+                <h5 class="modal-title font-weight-bold" id="modalAddLabel">Tambah Surat Keluar Baru (Dalam Jumlah Besar)</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('outgoingmail.storebulk') }}" method="POST" enctype="multipart/form-data" id="modalFormBulk">
+                @csrf
+                <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label  class="text-danger">Jenis Naskah *</label>
+                            <select class="form-control js-example-basic-single" name="id_mst_letter" style="width: 100%;" required>
+                                <option value="">- Pilih -</option>
+                                @foreach($letters as $letter)
+                                <option value="{{ $letter->id }}">{{ $letter->let_name }}</option>
+                                @endforeach
+                            </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-group">
-                          <label  class="text-danger">Jumlah Naskah *</label>
-                          <input type="number" name="amount_letter" class="form-control" placeholder="Masukkan Jumlah Naskah Dalam Angka.." required>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="text-danger">Tanggal Surat *</label>
+                                <input type="date" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Kode Satuan Organisasi</label>
+                                <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
+                                    <option value="">- Pilih -</option>
+                                    @foreach($sators as $sator)
+                                        <option value="{{ $sator->id }}">{{ $sator->sator_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label  class="text-danger">Jumlah Naskah *</label>
+                            <input type="number" name="amount_letter" class="form-control" placeholder="Masukkan Jumlah Naskah Dalam Angka.." required>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="submit" class="btn btn-primary" id="sbFormBulk">Tambah</button>
+                </div>
+            </form>
+            <script>
+                document.getElementById('modalFormBulk').addEventListener('submit', function(event) {
+                    if (!this.checkValidity()) {
+                        event.preventDefault();
+                        return false;
+                    }
+                    var submitButton = this.querySelector('button[id="sbFormBulk"]');
+                    submitButton.disabled = true;
+                    submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
+                    return true;
+                });
+            </script>
+        </div>
+    </div>
+</div>
+
+{{-- Modal Generate Mail Number --}}
+<div class="modal fade" id="genNumber" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #0074F1; color: white;">
+                <h5 class="modal-title font-weight-bold" id="modalAddLabel">Generate Nomor Surat</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-              <button type="submit" class="btn btn-primary" id="sbFormBulk">Tambah</button>
-            </div>
-          </form>
-          <script>
-              document.getElementById('modalFormBulk').addEventListener('submit', function(event) {
-                  if (!this.checkValidity()) {
-                      event.preventDefault();
-                      return false;
-                  }
-                  var submitButton = this.querySelector('button[id="sbFormBulk"]');
-                  submitButton.disabled = true;
-                  submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
-                  return true;
-              });
-          </script>
-      </div>
+            <form action="{{ route('outgoingmail.generate') }}" method="POST" enctype="multipart/form-data" id="modalGenNumber">
+                @csrf
+                <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <br>
+                            <h6 class="text-center">Generate Nomor Surat Yang Belum Ada ?</h6>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="submit" class="btn btn-primary" id="sbGenNumber">Generate</button>
+                </div>
+            </form>
+            <script>
+                document.getElementById('modalGenNumber').addEventListener('submit', function(event) {
+                    if (!this.checkValidity()) {
+                        event.preventDefault();
+                        return false;
+                    }
+                    var submitButton = this.querySelector('button[id="sbGenNumber"]');
+                    submitButton.disabled = true;
+                    submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
+                    return true;
+                });
+            </script>
+        </div>
     </div>
 </div>
 
 {{-- Filter & Search --}}
 <div class="modal fade" id="search" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
-      <div class="modal-content">
-          <div class="modal-header" style="background-color: #0074F1; color: white;">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #0074F1; color: white;">
             <h5 class="modal-title font-weight-bold" id="modalAddLabel">Filter & Cari</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
                 <span aria-hidden="true">&times;</span>
             </button>
-          </div>
-          <form action="{{ route('outgoingmail.index') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
-            @csrf
-            <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Tanggal Keluar</label>
-                            <input type="date" name="out_date" value="{{ $out_date }}" class="form-control">
+            </div>
+            <form action="{{ route('outgoingmail.index') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
+                @csrf
+                <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tanggal Keluar</label>
+                                <input type="date" name="out_date" value="{{ $out_date }}" class="form-control">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Tanggal Surat</label>
-                            <input type="date" name="mail_date" value="{{ $mail_date }}" class="form-control">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tanggal Surat</label>
+                                <input type="date" name="mail_date" value="{{ $mail_date }}" class="form-control">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-group">
-                          <label>Nomor Surat</label>
-                          <input type="text" name="mail_number" value="{{ $mail_number }}" class="form-control" placeholder="Masukkan Kata Kunci Nomor Surat..">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label>Nomor Surat</label>
+                            <input type="text" name="mail_number" value="{{ $mail_number }}" class="form-control" placeholder="Masukkan Kata Kunci Nomor Surat..">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-group">
-                          <label>Jenis Naskah</label>
-                          <select class="form-control js-example-basic-single" name="id_mst_letter" style="width: 100%;">
-                            <option value="">- Pilih -</option>
-                            @foreach($letters as $letter)
-                              <option value="{{ $letter->id }}" @if($id_mst_letter == $letter->id) selected="selected" @endif>{{ $letter->let_name }}</option>
-                            @endforeach
-                          </select>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label>Jenis Naskah</label>
+                            <select class="form-control js-example-basic-single" name="id_mst_letter" style="width: 100%;">
+                                <option value="">- Pilih -</option>
+                                @foreach($letters as $letter)
+                                <option value="{{ $letter->id }}" @if($id_mst_letter == $letter->id) selected="selected" @endif>{{ $letter->let_name }}</option>
+                                @endforeach
+                            </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-group">
-                          <label>Arsip Pertinggal</label>
-                          <select class="form-control js-example-basic-single" name="archive_remain" style="width: 100%;">
-                            <option value="">- Pilih -</option>
-                            <option value="Test" @if($archive_remains == 'Test') selected="selected" @endif>Test</option>
-                          </select>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label>Arsip Pertinggal</label>
+                            <select class="form-control js-example-basic-single" name="archive_remain" style="width: 100%;">
+                                <option value="">- Pilih -</option>
+                                <option value="Test" @if($archive_remains == 'Test') selected="selected" @endif>Test</option>
+                            </select>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-              <button type="submit" class="btn btn-primary" id="sbSearch">Cari</button>
-            </div>
-          </form>
-          <script>
-              document.getElementById('modalSearch').addEventListener('submit', function(event) {
-                  if (!this.checkValidity()) {
-                      event.preventDefault();
-                      return false;
-                  }
-                  var submitButton = this.querySelector('button[id="sbSearch"]');
-                  submitButton.disabled = true;
-                  submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
-                  return true;
-              });
-          </script>
-      </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="submit" class="btn btn-primary" id="sbSearch">Cari</button>
+                </div>
+            </form>
+            <script>
+                document.getElementById('modalSearch').addEventListener('submit', function(event) {
+                    if (!this.checkValidity()) {
+                        event.preventDefault();
+                        return false;
+                    }
+                    var submitButton = this.querySelector('button[id="sbSearch"]');
+                    submitButton.disabled = true;
+                    submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
+                    return true;
+                });
+            </script>
+        </div>
     </div>
 </div>
 

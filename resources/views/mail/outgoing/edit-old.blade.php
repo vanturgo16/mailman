@@ -65,274 +65,266 @@
         <div class="card-body" style="max-height: 65vh; overflow-y: auto;">
           <div class="card p-3" style="background-color:rgb(240, 240, 240);">
             <div class="row">
-              <div class="col-md-12">
-                <table class="table table-bordered">
-                  <tbody>
-                    {{-- Jenis Naskah --}}
-                    <tr>
-                      <td><label class="text-danger">Jenis Naskah *</label></td>
-                      <td>
-                        <input type="hidden" name="id_mst_letter" value="{{ $data->id_mst_letter }}" class="form-control">
-                        <input type="text" value="{{ $data->let_name }}" class="form-control" readonly>
-                      </td>
-                    </tr>
-                    {{-- Konseptor --}}
-                    <tr>
-                      <td><label class="text-danger">Konseptor *</label></td>
-                      <td>
-                        <select class="form-control js-example-basic-single" name="drafter" style="width: 100%;" required>
-                          <option value="">- Pilih -</option>
-                          @foreach($workunits as $workunit)
-                            <option value="{{ $workunit->id }}" @if($data->drafter == $workunit->id) selected="selected" @endif>
-                              {{ $workunit->work_name }}
-                            </option>
-                          @endforeach
-                        </select>
-                      </td>
-                    </tr>
-                    {{-- Kode Satuan Organisasi --}}
-                    <tr>
-                      <td><label>Kode Satuan Organisasi</label></td>
-                      <td>
-                        <div class="row">
-                          <div class="col-md-9">
-                            <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
-                              <option value="">- Pilih -</option>
-                              @foreach($sators as $sator)
-                                <option value="{{ $sator->id }}" @if($data->org_unit == $sator->id) selected="selected" @endif>
-                                  {{ $sator->sator_name }}
-                                </option>
-                              @endforeach
-                            </select>
-                          </div>
-                          <div class="col-md-3">
-                            <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#satuanOrg"><i class="fa fa-plus"></i> Tambah Baru</button>
-                          </div>
-                        </div>
-                        <small>* (Harus diisi khusus untuk Jenis Naskah Surat, Nota Dinas, Surat Pengantar dan Telaahan Staf jika bukan ditandatangani oleh Kapolri/Wakapolri)</small>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              {{-- Jenis Naskah --}}
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label  class="text-danger">Jenis Naskah *</label>
+                  <input type="hidden" name="id_mst_letter" value="{{ $data->id_mst_letter }}" class="form-control">
+                  <input type="text" value="{{ $data->let_name }}" class="form-control" readonly>
+
+                  {{-- <select class="form-control js-example-basic-single" name="id_mst_letter" style="width: 100%;" required>
+                    <option value="">- Pilih -</option>
+                    @foreach($letters as $letter)
+                      <option value="{{ $letter->id }}" @if($data->id_mst_letter == $letter->id) selected="selected" @endif>
+                        {{ $letter->let_name }}
+                      </option>
+                    @endforeach
+                  </select> --}}
+                </div>
+              </div>
+              <div class="col-md-6"></div>
+              {{-- Konseptor --}}
+              <div class="col-md-6">
+                <label  class="text-danger">Konseptor *</label>
+                <div class="row">
+                  <div class="col-md-8">
+                    <select class="form-control js-example-basic-single" name="drafter" style="width: 100%;" required>
+                      <option value="">- Pilih -</option>
+                      @foreach($workunits as $workunit)
+                        <option value="{{ $workunit->id }}" @if($data->drafter == $workunit->id) selected="selected" @endif>
+                          {{ $workunit->work_name }}
+                        </option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#unitKerja"><i class="fa fa-plus"></i> Tambah Baru</button>
+                  </div>
+                </div>
+              </div>
+              {{-- Kode Satuan Organisasi --}}
+              <div class="col-md-6 mb-3">
+                <label>Kode Satuan Organisasi</label>
+                <div class="row">
+                  <div class="col-md-8">
+                    <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
+                      <option value="">- Pilih -</option>
+                      @foreach($sators as $sator)
+                        <option value="{{ $sator->id }}" @if($data->org_unit == $sator->id) selected="selected" @endif>
+                          {{ $sator->sator_name }}
+                        </option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#satuanOrg"><i class="fa fa-plus"></i> Tambah Baru</button>
+                  </div>
+                </div>
+                <small>(Harus diisi khusus untuk Jenis Naskah Surat, Nota Dinas, Surat Pengantar dan Telaahan Staf jika bukan ditandatangani oleh Kapolri/Wakapolri)</small>
               </div>
             </div>
           </div>
           <hr>
           <div class="row px-1">
+            {{-- Perihal --}}
             <div class="col-md-12">
-              <table class="table table-bordered">
-                <tbody>
-                  {{-- Perihal --}}
-                  <tr>
-                    <td><label class="text-danger">Perihal / Tentang *</label></td>
-                    <td>
-                      <textarea class="form-control editor" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat..">{{ $data->mail_regarding }}</textarea>
-                    </td>
-                  </tr>
-                  {{-- Tanggal --}}
-                  <tr>
-                    <td><label class="text-danger">Tanggal *</label></td>
-                    <td>
-                      <div class="row">
-                        <div class="col-6">
-                          <label  class="text-danger">Tanggal Keluar *</label>
-                          <input type="date" name="out_date" value="{{ \Carbon\Carbon::parse($data->out_date)->format('Y-m-d') }}" class="form-control" required>
-                        </div>
-                        <div class="col-6">
-                          <label  class="text-danger">Tanggal Surat *</label>
-                          <input type="date" name="mail_date" value="{{ \Carbon\Carbon::parse($data->mail_date)->format('Y-m-d') }}" class="form-control" required readonly>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {{-- Penandatanganan --}}
-                  <tr>
-                    <td><label class="text-danger">Penandatanganan *</label></td>
-                    <td>
-                      <div class="row">
-                        <div class="col-md-9">
-                          <select class="form-control js-example-basic-single" name="signing" style="width: 100%;" required>
-                            <option value="">- Pilih -</option>
-                            @foreach($workunits as $workunit)
-                              <option value="{{ $workunit->id }}" @if($data->signing == $workunit->id) selected="selected" @endif>
-                                {{ $workunit->work_name }}
-                              </option>
-                            @endforeach
-                          </select>
-                        </div>
-                        <div class="col-md-3">
-                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#unitKerja"><i class="fa fa-plus"></i> Tambah Baru</button>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {{-- Penandatanganan Pihak Instansi Lain --}}
-                  <tr>
-                    <td><label>Penandatanganan Pihak Instansi Lain</label></td>
-                    <td>
-                      <textarea class="form-control" rows="3" type="text" name="signing_other" placeholder="Masukkan Pihak Instansi Lain..">{{ $data->signing_other }}</textarea>
-                    </td>
-                  </tr>
-                  {{-- Penerima --}}
-                  <tr>
-                    <td><label class="text-danger">Penerima *</label></td>
-                    <td>
-                      <textarea class="form-control" rows="3" type="text" name="receiver" placeholder="Masukkan Penerima..">{{ $data->receiver }}</textarea>
-                    </td>
-                  </tr>
-                  {{-- Jumlah --}}
-                  <tr>
-                    <td><label class="text-danger">Jumlah *</label></td>
-                    <td>
-                      <div class="row">
-                        <div class="col-md-5">
-                          <div class="form-group">
-                            <label  class="text-danger">Jumlah *</label>
-                            <input type="number" name="mail_quantity" value="{{ $data->mail_quantity }}" class="form-control" placeholder="Masukkan Jumlah.." required>
-                          </div>
-                        </div>
-                        {{-- Satuan --}}
-                        <div class="col-md-4">
-                          <div class="form-group">
-                            <label  class="text-danger">Satuan *</label>
-                            <select class="form-control js-example-basic-single" name="mail_unit" style="width: 100%;" required>
-                              <option value="">- Pilih -</option>
-                              @foreach($unitletters as $unitletter)
-                                <option value="{{ $unitletter->id }}" @if($data->mail_unit == $unitletter->id) selected="selected" @endif>
-                                  {{ $unitletter->unit_name }}
-                                </option>
-                              @endforeach
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-md-3">
-                          <div class="form-group">
-                            <label>&nbsp;</label>
-                            <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#satuan"><i class="fa fa-plus"></i> Tambah Baru</button>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {{-- Arsip Pertinggal --}}
-                  <tr>
-                    <td><label class="text-danger">Arsip Pertinggal *</label></td>
-                    <td>
-                      <div class="row">
-                        <div class="col-md-9">
-                          <div class="form-group">
-                            <select class="form-control js-example-basic-single" name="archive_remain" style="width: 100%;" required>
-                              <option value="">- Pilih -</option>
-                              @foreach($archive_remains as $archive_remain)
-                                <option value="{{ $archive_remain->name_value }}" @if($data->archive_remains == $archive_remain->name_value) selected="selected" @endif>{{ $archive_remain->name_value }}</option>
-                              @endforeach
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-md-3">
-                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#archiveRemain"><i class="fa fa-plus"></i> Tambah Baru</button>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {{-- Klasifikasi Arsip --}}
-                  <tr>
-                    <td><label>Klasifikasi Arsip</label></td>
-                    <td>
-                      <div class="row">
-                        <div class="col-md-9">
-                          <div class="form-group">
-                            <select class="form-control js-example-basic-single" name="archive_classification" style="width: 100%;">
-                              <option value="">- Pilih -</option>
-                              @foreach($classifications as $classification)
-                                <option value="{{ $classification->id }}" @if($data->archive_classification == $classification->id) selected="selected" @endif>
-                                  {{ $classification->classification_name }}
-                                </option>
-                              @endforeach
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-md-3">
-                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#klasifikasi"><i class="fa fa-plus"></i> Tambah Baru</button>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {{-- Retensi Surat --}}
-                  <tr>
-                    <td><label>Retensi Surat</label></td>
-                    <td>
-                      <div class="row">
-                        <div class="col-6">
-                          <label>Dari</label>
-                          <input type="date" name="mail_retention_from" value="{{ \Carbon\Carbon::parse($data->mail_retention_from)->format('Y-m-d') }}" class="form-control">
-                        </div>
-                        <div class="col-6">
-                          <label>Hingga</label>
-                          <input type="date" name="mail_retention_to" value="{{ \Carbon\Carbon::parse($data->mail_retention_to)->format('Y-m-d') }}" class="form-control">
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {{-- Lokasi Simpan --}}
-                  <tr>
-                    <td><label>Lokasi Simpan</label></td>
-                    <td>
-                      <div class="row">
-                        <div class="col-md-9">
-                          <input type="text" name="save_location" id="saveLocation" value="{{ $data->location_save }}" class="form-control" placeholder="Pilih Lokasi Simpan.." readonly>
-                        </div>
-                        <div class="col-md-3">
-                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#locSave">...</button>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  {{-- Dikirim Via --}}
-                  <tr>
-                    <td><label>Dikirim Via</label></td>
-                    <td>
-                      <select class="form-control js-example-basic-single" name="received_via" style="width: 100%;">
-                        <option value="">- Pilih -</option>
-                        @foreach($receivedvias as $receivedvia)
-                          <option value="{{ $receivedvia->name_value }}" @if($data->received_via == $receivedvia->name_value) selected="selected" @endif>
-                            {{ $receivedvia->name_value }}
-                          </option>
-                        @endforeach
-                      </select>
-                    </td>
-                  </tr>
-                  {{-- Nomor Referensi --}}
-                  <tr>
-                    <td><label>Nomor Referensi</label></td>
-                    <td>
-                      <input type="text" name="ref_number" value="{{ $data->ref_number }}" class="form-control" placeholder="Masukan Nomor Referensi..">
-                    </td>
-                  </tr>
-                  {{-- Referensi Surat --}}
-                  {{-- <tr>
-                    <td><label>Referensi Surat</label></td>
-                    <td>
-                      <input type="text" id="mail_ref" name="mail_ref" value="{{ $data->ref_mail }}" class="form-control" placeholder="Masukkan Referensi Surat..">
-                    </td>
-                  </tr> --}}
-                  {{-- Lampiran --}}
-                  <tr>
-                    <td><label>Lampiran</label></td>
-                    <td>
-                      <textarea class="form-control editor" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran..">{{ $data->attachment_text }}</textarea>
-                    </td>
-                  </tr>
-                  {{-- Keterangan --}}
-                  <tr>
-                    <td><label>Keterangan</label></td>
-                    <td>
-                      <textarea class="form-control editor" rows="3" type="text" name="information" placeholder="Masukkan Keterangan..">{{ $data->information }}</textarea>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="form-group">
+                <label  class="text-danger">Perihal / Tentang *</label>
+                <textarea class="form-control editor" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat..">{{ $data->mail_regarding }}</textarea>
+              </div>
             </div>
+            {{-- Tanggal --}}
+            <div class="col-md-3">
+              <div class="form-group">
+                <label  class="text-danger">Tanggal Keluar *</label>
+                <input type="date" name="out_date" value="{{ \Carbon\Carbon::parse($data->out_date)->format('Y-m-d') }}" class="form-control" required>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label  class="text-danger">Tanggal Surat *</label>
+                <input type="date" name="mail_date" value="{{ \Carbon\Carbon::parse($data->mail_date)->format('Y-m-d') }}" class="form-control" required>
+              </div>
+            </div>
+            {{-- Penandatanganan --}}
+            <div class="col-md-6">
+              <label  class="text-danger">Penandatanganan *</label>
+              <div class="row">
+                <div class="col-md-8">
+                  <select class="form-control js-example-basic-single" name="signing" style="width: 100%;" required>
+                    <option value="">- Pilih -</option>
+                    @foreach($workunits as $workunit)
+                      <option value="{{ $workunit->id }}" @if($data->signing == $workunit->id) selected="selected" @endif>
+                        {{ $workunit->work_name }}
+                      </option>
+                    @endforeach
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#unitKerja"><i class="fa fa-plus"></i> Tambah Baru</button>
+                </div>
+              </div>
+            </div>
+            {{-- Penandatanganan Pihak Instansi Lain --}}
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Penandatanganan Pihak Instansi Lain</label>
+                <textarea class="form-control" rows="3" type="text" name="signing_other" placeholder="Masukkan Pihak Instansi Lain..">{{ $data->signing_other }}</textarea>
+              </div>
+            </div>
+            {{-- Penerima --}}
+            <div class="col-md-6">
+              <div class="form-group">
+                <label  class="text-danger">Penerima *</label>
+                <textarea class="form-control" rows="3" type="text" name="receiver" placeholder="Masukkan Penerima..">{{ $data->receiver }}</textarea>
+              </div>
+            </div>
+            {{-- Jumlah --}}
+            <div class="col-md-2">
+              <div class="form-group">
+                <label  class="text-danger">Jumlah *</label>
+                <input type="number" name="mail_quantity" value="{{ $data->mail_quantity }}" class="form-control" placeholder="Masukkan Jumlah.." required>
+              </div>
+            </div>
+            {{-- Satuan --}}
+            <div class="col-md-2">
+              <div class="form-group">
+                <label  class="text-danger">Satuan *</label>
+                <select class="form-control js-example-basic-single" name="mail_unit" style="width: 100%;" required>
+                  <option value="">- Pilih -</option>
+                  @foreach($unitletters as $unitletter)
+                    <option value="{{ $unitletter->id }}" @if($data->mail_unit == $unitletter->id) selected="selected" @endif>
+                      {{ $unitletter->unit_name }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#satuan"><i class="fa fa-plus"></i> Tambah Baru</button>
+              </div>
+            </div>
+            {{-- Arsip Pertinggal --}}
+            <div class="col-md-4">
+              <div class="form-group">
+                <label  class="text-danger">Arsip Pertinggal *</label>
+                <select class="form-control js-example-basic-single" name="archive_remain" style="width: 100%;" required>
+                  <option value="">- Pilih -</option>
+                  @foreach($archive_remains as $archive_remain)
+                    <option value="{{ $archive_remain->name_value }}" @if($data->archive_remains == $archive_remain->name_value) selected="selected" @endif>{{ $archive_remain->name_value }}</option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#archiveRemain"><i class="fa fa-plus"></i> Tambah Baru</button>
+              </div>
+            </div>
+            {{-- Klasifikasi Arsip --}}
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Klasifikasi Arsip</label>
+                <select class="form-control js-example-basic-single" name="archive_classification" style="width: 100%;">
+                  <option value="">- Pilih -</option>
+                  @foreach($classifications as $classification)
+                    <option value="{{ $classification->id }}" @if($data->archive_classification == $classification->id) selected="selected" @endif>
+                      {{ $classification->classification_name }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#klasifikasi"><i class="fa fa-plus"></i> Tambah Baru</button>
+              </div>
+            </div>
+            {{-- Retensi Surat --}}
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Retensi Surat (Dari)</label>
+                <input type="date" name="mail_retention_from" value="{{ \Carbon\Carbon::parse($data->mail_retention_from)->format('Y-m-d') }}" class="form-control">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Retensi Surat (Hingga)</label>
+                <input type="date" name="mail_retention_to" value="{{ \Carbon\Carbon::parse($data->mail_retention_to)->format('Y-m-d') }}" class="form-control">
+              </div>
+            </div>
+            {{-- Lokasi Simpan --}}
+            <div class="col-md-5">
+              <div class="form-group">
+                <label>Lokasi Simpan</label>
+                <input type="text" name="save_location" id="saveLocation" value="{{ $data->location_save }}" class="form-control" placeholder="Pilih Lokasi Simpan.." readonly>
+              </div>
+            </div>
+            <div class="col-md-1">
+              <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#locSave">...</button>
+              </div>
+            </div>
+            {{-- Dikirim Via --}}
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Dikirim Via</label>
+                <select class="form-control js-example-basic-single" name="received_via" style="width: 100%;">
+                  <option value="">- Pilih -</option>
+                  @foreach($receivedvias as $receivedvia)
+                    <option value="{{ $receivedvia->name_value }}" @if($data->received_via == $receivedvia->name_value) selected="selected" @endif>
+                      {{ $receivedvia->name_value }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            {{-- Nomor Referensi --}}
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Nomor Referensi</label>
+                <input type="text" name="ref_number" value="{{ $data->ref_number }}" class="form-control" placeholder="Masukan Nomor Referensi..">
+              </div>
+            </div>
+            {{-- Referensi Surat --}}
+            {{-- <div class="col-md-5">
+              <div class="form-group">
+                <label>Referensi Surat</label>
+                <input type="text" id="mail_ref" name="mail_ref" value="{{ $data->ref_mail }}" class="form-control" placeholder="Pilih Referensi Surat.." readonly>
+              </div>
+            </div>
+            <div class="col-md-1">
+              <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#refMail">...</button>
+              </div>
+            </div> --}}
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Referensi Surat</label>
+                <input type="text" id="mail_ref" name="mail_ref" value="{{ $data->ref_mail }}" class="form-control" placeholder="Masukkan Referensi Surat..">
+              </div>
+            </div>
+            {{-- Lampiran --}}
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Lampiran</label>
+                <textarea class="form-control editor" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran..">{{ $data->attachment_text }}</textarea>
+              </div>
+            </div>
+            {{-- Keterangan --}}
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Keterangan</label>
+                <textarea class="form-control editor" rows="3" type="text" name="information" placeholder="Masukkan Keterangan..">{{ $data->information }}</textarea>
+              </div>
+            </div>
+
           </div>
         </div>
         {{-- Lokasi Simpan --}}
@@ -609,6 +601,85 @@
                   });
                 </script>
             </div>
+          </div>
+        </div>
+        {{-- Referensi Surat --}}
+        <div class="modal fade" id="refMail" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
+          <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #0074F1; color: white;">
+                  <h5 class="modal-title font-weight-bold" id="modalAddLabel">Pilih Referensi Surat</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" style="height: 70vh">
+                  <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label>Nomor Dokumen / Perihal</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="searchInput" placeholder="Masukkan Nomor Dokumen / Perihal.." aria-describedby="button-addon2">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-primary btn-primary text-white" type="button" id="button-addon2">Gunakan Filter & Cari</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="col-12" style="height: 50vh; overflow-y: auto;">
+                        <table id="server-side-table" class="table table-bordered" style="font-size: small; width:100%;">
+                            <thead>
+                                <tr>
+                                    <th scope="col">No.</th>
+                                    <th scope="col">Perihal / Tentang</th>
+                                    <th scope="col">Tipe</th>
+                                    <th scope="col">Tgl. Perubahan</th>
+                                    <th scope="col">Pengubah</th>
+                                    <th scope="col">Aksi</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <script>
+                    $(function() {
+                        var table = $('#server-side-table').DataTable({
+                            processing: true,
+                            serverSide: true,
+                            ajax: '{!! route('outgoingmail.edit', encrypt($data->id)) !!}',
+                            lengthMenu: [5],
+                            columns: [
+                                { data: null,
+                                    render: function(data, type, row, meta) {
+                                        return meta.row + meta.settings._iDisplayStart + 1;
+                                    },
+                                    orderable: false,
+                                    searchable: false,
+                                    className: 'align-middle text-center',
+                                },
+                                { data: 'mail_regarding', name: 'mail_regarding', orderable: true, searchable: true, className: 'align-middle text-center' },
+                                { data: 'receiver', name: 'receiver', orderable: true, searchable: true, className: 'align-middle text-center' },
+                                { data: 'updated_at', name: 'updated_at', orderable: true, searchable: true, className: 'align-middle text-center' },
+                                { data: 'created_by', name: 'created_by', orderable: true, searchable: true, className: 'align-middle text-center' },
+                                { data: 'action', name: 'action', orderable: false, searchable: false, className: 'align-middle text-center' },
+                            ],
+                        });
+                        $('.dataTables_wrapper .dataTables_length').hide();
+                        $('.dataTables_wrapper .dataTables_filter').hide();
+                
+                        $('#button-addon2').on('click', function() {
+                            var searchTerm = $('#searchInput').val();
+                            table.search(searchTerm).draw();
+                        });
+                    });
+                </script>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeRef">Tutup</button>
+                </div>
+            </div>
+
           </div>
         </div>
         <div class="card-footer">
