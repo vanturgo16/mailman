@@ -498,16 +498,21 @@
                     searchable: false,
                     className: 'text-center',
                 },
+                {
+                    data: 'id', // Ensure that 'id' is included in your data source
+                    visible: false, // Hide the 'id' column
+                },
             ],
         });
 
-        setTimeout(checkForChanges, 1000);
+        setTimeout(checkForChanges, 10);
     });
 
     function checkForChanges() {
         let lastChecked = new Date().toISOString();
         var url = '{{ route("outgoingmail.checkChanges", ":id") }}';
         url = url.replace(':id', lastChecked);
+        
         $.ajax({
             url: url,
             method: 'GET',
@@ -517,7 +522,7 @@
                 }
             },
             complete: function() {
-                setTimeout(checkForChanges, 1000);
+                setTimeout(checkForChanges, 10);
             }
         });
     }

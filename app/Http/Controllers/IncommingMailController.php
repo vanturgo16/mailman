@@ -19,18 +19,19 @@ class IncommingMailController extends Controller
 {
     public function index(Request $request)
     {
-        $datas = IncommingMail::orderBy('created_at', 'desc')->get();
+        // $datas = IncommingMail::orderBy('created_at', 'desc')->get();
 
-        if ($request->ajax()) {
-            $data = DataTables::of($datas)
-            ->addColumn('action', function ($data) {
-                return view('mail.incomming.action', compact('data'));
-            })
-            ->toJson();
-            return $data;
-        }
+        // if ($request->ajax()) {
+        //     $data = DataTables::of($datas)
+        //     ->addColumn('action', function ($data) {
+        //         return view('mail.incomming.action', compact('data'));
+        //     })
+        //     ->toJson();
+        //     return $data;
+        // }
+        // return view('mail.incomming.index', compact('datas'));
 
-        return view('mail.incomming.index', compact('datas'));
+        return view('mail.incomming.cs');
     }
 
     public function create(Request $request)
