@@ -55,11 +55,11 @@
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        @can('user.edit') 
+                                        {{-- @can('user.edit')  --}}
                                         <a href="/user/edit/{{ $user->id }}" class="btn btn-xs btn-primary">
                                             <i class="fa fa-edit"> Ubah</i>
                                         </a>
-                                        @endcan 
+                                        {{-- @endcan  --}}
                                         @can('user.delete') 
                                         <button onClick="Delete(this.id)" class="btn btn-xs btn-danger" id="{{ $user->id }}">
                                             <i class="fa fa-trash"> Hapus</i>
