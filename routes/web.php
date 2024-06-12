@@ -107,69 +107,34 @@ Route::group(['middleware' => 'cekadmin'], function () {
         Route::patch('/role/update/{role}', 'update');
     }); 
 
-});
-
-Route::group(['middleware' => 'cekopd'], function () {
-    
-    Route::controller(ProfileOpdController::class)->group(function () {
-        Route::get('/user/profile', 'index')->middleware(['auth', 'verified'])->name('useropd');
-        Route::get('/profile/edit', 'edit_profil');
-        Route::patch('/profile/update', 'update');
-        Route::patch('/foto-profile/update', 'update_image');
-       
-    });
-
-    // ajuan agenda dari opd
-    Route::controller(AjuanAgenda::class)->group(function () {
-        Route::get('/ajuan-agenda', 'index');
-        Route::get('/create-ajuan-agenda', 'create');
-        Route::post('/ajuan-agenda', 'store');
-        Route::get('/ajuan-agenda/edit/{id}', 'edit');
-        Route::post('/download-opd-surat', 'download_surat_opd');  
-        Route::post('/download-opd-acara', 'download_acara_opd');  
-        Route::post('/download-opd-sambutan', 'download_sambutan_opd'); 
-       
-    });
-    Route::controller(BenneropdController::class)->group(function () {
-        Route::get('/ajuan-benner', 'index');
-        Route::get('/create-ajuan-benner', 'create');
-        Route::post('/ajuan-benner', 'store');
-        Route::get('/ajuan-benner/edit/{id}', 'edit');
-        Route::delete('/ajuan-benner/{id}/destroy', 'destroy');
-       
-    });
-});
-
-//Lokasi Simpan
-Route::middleware(['auth'])->group(function () {
-    // MASTER
+// master
     Route::resource('gedung', DaftarGedungController::class);
     Route::patch('/gedung/aktif/{id}', [DaftarGedungController::class, 'aktif']);
-    
-Route::resource('lantai', DaftarLantaiController::class);
-    Route::patch('/lantai/aktif/{id}', [DaftarLantaiController::class, 'aktif']);
+        
+    Route::resource('lantai', DaftarLantaiController::class);
+        Route::patch('/lantai/aktif/{id}', [DaftarLantaiController::class, 'aktif']);
 
-Route::resource('ruang', DaftarRuangController::class);
-Route::patch('/ruang/aktif/{id}', [DaftarRuangController::class, 'aktif']);
+    Route::resource('ruang', DaftarRuangController::class);
+    Route::patch('/ruang/aktif/{id}', [DaftarRuangController::class, 'aktif']);
 
-Route::resource('rak', DaftarRakController::class);
-Route::patch('/rak/aktif/{id}', [DaftarRakController::class, 'aktif']);
+    Route::resource('rak', DaftarRakController::class);
+    Route::patch('/rak/aktif/{id}', [DaftarRakController::class, 'aktif']);
 
-Route::resource('baris', DaftarBarisController::class);
-Route::patch('/baris/aktif/{id}', [DaftarBarisController::class, 'aktif']);
+    Route::resource('baris', DaftarBarisController::class);
+    Route::patch('/baris/aktif/{id}', [DaftarBarisController::class, 'aktif']);
 
-Route::resource('kolom', DaftarKolomController::class);
-Route::patch('/kolom/aktif/{id}', [DaftarKolomController::class, 'aktif']);
+    Route::resource('kolom', DaftarKolomController::class);
+    Route::patch('/kolom/aktif/{id}', [DaftarKolomController::class, 'aktif']);
 
-Route::resource('boks', DaftarBoxController::class);
-Route::patch('/boks/aktif/{id}', [DaftarBoxController::class, 'aktif']);
+    Route::resource('boks', DaftarBoxController::class);
+    Route::patch('/boks/aktif/{id}', [DaftarBoxController::class, 'aktif']);
 
-//ajax lokasi simpan
-Route::get('/mapping-lantai/{gedungId}', [MappingLokasiSimpanController::class, 'getLantai'])->name('mappingLantai');
-Route::get('/mapping-ruang/{lantaiId}', [MappingLokasiSimpanController::class, 'getRuang'])->name('mappingRuang');
-Route::get('/mapping-rak/{ruangId}', [MappingLokasiSimpanController::class, 'getRak'])->name('mappingRak');
-Route::get('/mapping-baris/{rakId}', [MappingLokasiSimpanController::class, 'getBaris'])->name('mappingBaris');
-Route::get('/mapping-kolom/{barisId}', [MappingLokasiSimpanController::class, 'getKolom'])->name('mappingKolom');
+    //ajax lokasi simpan
+    Route::get('/mapping-lantai/{gedungId}', [MappingLokasiSimpanController::class, 'getLantai'])->name('mappingLantai');
+    Route::get('/mapping-ruang/{lantaiId}', [MappingLokasiSimpanController::class, 'getRuang'])->name('mappingRuang');
+    Route::get('/mapping-rak/{ruangId}', [MappingLokasiSimpanController::class, 'getRak'])->name('mappingRak');
+    Route::get('/mapping-baris/{rakId}', [MappingLokasiSimpanController::class, 'getBaris'])->name('mappingBaris');
+    Route::get('/mapping-kolom/{barisId}', [MappingLokasiSimpanController::class, 'getKolom'])->name('mappingKolom');
 
     //Parameters
     Route::resource('instansi', InstansiController::class);
@@ -197,7 +162,7 @@ Route::get('/mapping-kolom/{barisId}', [MappingLokasiSimpanController::class, 'g
 
     Route::resource('template', TemplateController::class);
     Route::patch('/template/aktif/{id}', [TemplateController::class, 'aktif']);
-Route::get('/list-template-keluar', [TemplateController::class, 'listTemplateKeluar']);
+    Route::get('/list-template-keluar', [TemplateController::class, 'listTemplateKeluar']);
 
     Route::resource('dropdown', DropdownController::class);
     Route::patch('/dropdown/aktif/{id}', [DropdownController::class, 'aktif']);
@@ -237,6 +202,16 @@ Route::get('/list-template-keluar', [TemplateController::class, 'listTemplateKel
             Route::get('/listBoks/{id}', 'listBoks')->name('mapsaveloc.listBoks');
         });
     });
+
+    //     Route::controller(ProfileOpdController::class)->group(function () {
+    //     Route::get('/user/profile', 'index')->middleware(['auth', 'verified'])->name('useropd');
+    //     Route::get('/profile/edit', 'edit_profil');
+    //     Route::patch('/profile/update', 'update');
+    //     Route::patch('/foto-profile/update', 'update_image');
+       
+    // });
+
 });
+
 
 require __DIR__.'/auth.php';

@@ -30,6 +30,11 @@ use App\Models\Pattern;
 
 class OutgoingMailController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth'); 
+        $this->middleware(['permission:surat_keluar']);
+    } 
     public function index(Request $request)
     {
         // Initiate Variable Filter

@@ -42,6 +42,8 @@
             </p>
           </a>
         </li>
+        
+        @can('master dropdown')
         <li class="nav-item">
           <a href="{{ url('/dropdown') }}" class="nav-link">
             <i class="nav-icon fas fa-caret-square-down"></i>
@@ -51,7 +53,8 @@
             </p>
           </a>
         </li>
-        @can('master data')
+        @endcan
+        @can('lokasi simpan')
         <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-copy"></i>
@@ -112,7 +115,7 @@
           </ul>
         </li>
         @endcan
-        @can('benner')
+        @can('master parameter')
         <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-file"></i>
@@ -175,7 +178,7 @@
           </ul>
         </li>
         @endcan
-        @can('agenda pimpinan')
+        @can('naskah dinas')
         <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-folder-open"></i>
@@ -187,31 +190,39 @@
           </a>
           <ul class="nav nav-treeview">
 
+            @can('surat_masuk')
             <li class="nav-item">
               <a href="{{ route('incommingmail.index') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Surat Masuk</p>
               </a>
             </li>
+            @endcan
+            @can('surat_keluar')
             <li class="nav-item">
               <a href="{{ route('outgoingmail.index') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Surat Keluar</p>
               </a>
             </li>
+            @endcan
+
+            @can('info_templet_keluar')
             <li class="nav-item">
               <a href="{{ url('list-template-keluar') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Info Template Keluar</p>
               </a>
             </li>
+            @endcan
+            @can('data_retensi_surat')
             <li class="nav-item">
               <a href="/agenda-pejabat" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Data Retensi Surat</p>
               </a>
             </li>
-          
+            @endcan
 
           </ul>
         </li>
@@ -252,18 +263,12 @@
                 <p>Role</p>
               </a>
             </li>
-            <li class="nav-item">
-              <a href="/role" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Jabatan</p>
-              </a>
-            </li>
             @endcan
 
           </ul>
         </li>
         @endcan
-        @can('portal_berita')
+        @can('pbekup_data')
         <li class="nav-item">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-file-download"></i>
@@ -292,9 +297,6 @@
         </li>
 
         @endcan
-
-
-
       </ul>
     </nav>
     <!-- /.sidebar-menu -->
