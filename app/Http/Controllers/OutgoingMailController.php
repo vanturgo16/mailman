@@ -101,8 +101,18 @@ class OutgoingMailController extends Controller
 
     public function checkChanges($lastcheck)
     {
+        // $lastChecked = $lastcheck;
+        // $formatted_time = date('Y-m-d H:i:s', strtotime($lastChecked));
+        // $latestUpdate = DB::table('outgoing_mails')
+        // ->orderBy('updated_at', 'desc')
+        // ->value('updated_at');
+        // $changes = $latestUpdate > $formatted_time;
+        // $a = [$latestUpdate, $formatted_time, $changes];
+
         $lastChecked = $lastcheck;
-        $formatted_time = date('Y-m-d H:i:s', strtotime($lastChecked));
+        $decreasedTime = strtotime('-1 second', strtotime($lastChecked));
+        $formatted_time = date('Y-m-d H:i:s', $decreasedTime);
+
         $changes = OutgoingMail::where('updated_at', '>', $formatted_time)->exists();
 
         return response()->json(['changes' => $changes]);
