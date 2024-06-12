@@ -17,6 +17,12 @@ use App\Models\WorkUnit;
 
 class IncommingMailController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth'); 
+        $this->middleware(['permission:surat_masuk']);
+    } 
+    
     public function index(Request $request)
     {
         $datas = IncommingMail::orderBy('created_at', 'desc')->get();

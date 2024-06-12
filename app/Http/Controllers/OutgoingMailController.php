@@ -32,6 +32,11 @@ use Hamcrest\Arrays\IsArray;
 
 class OutgoingMailController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth'); 
+        $this->middleware(['permission:surat_keluar']);
+    } 
     
     public function cleanText($text) {
         $text = strip_tags($text);

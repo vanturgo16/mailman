@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\DB;
 
 class DaftarBoxController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth'); 
+        $this->middleware(['permission:lokasi simpan']);
+    }
     /**
      * Display a listing of the resource.
      *

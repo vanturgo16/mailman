@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\DB;
 
 class UnitLetterController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth'); 
+        $this->middleware(['permission:master parameter']);
+    } 
     /**
      * Display a listing of the resource.
      *
