@@ -179,7 +179,8 @@ Route::group(['middleware' => 'cekadmin'], function () {
     Route::controller(OutgoingMailController::class)->group(function () {
         Route::prefix('surat-keluar')->group(function () {
             Route::get('/', 'index')->name('outgoingmail.index');
-            Route::post('/', 'index')->name('outgoingmail.index');
+            Route::get('/check-table-changes/{lastcheck}', 'checkChanges')->name('outgoingmail.checkChanges');
+            Route::get('/', 'index')->name('outgoingmail.index');
             Route::get('/tambah', 'create')->name('outgoingmail.create');
             Route::post('/store', 'store')->name('outgoingmail.store');
             Route::post('/store/bulk', 'storebulk')->name('outgoingmail.storebulk');
@@ -187,6 +188,9 @@ Route::group(['middleware' => 'cekadmin'], function () {
             Route::get('/ubah/{id}', 'edit')->name('outgoingmail.edit');
             Route::post('/update/{id}', 'update')->name('outgoingmail.update');
             Route::get('/checkpattern/{id}', 'checkpattern')->name('outgoingmail.checkpattern');
+            Route::get('/rekapitulasi', 'rekapitulasi')->name('outgoingmail.rekapitulasi');
+            Route::post('/rekapitulasi', 'rekapitulasi')->name('outgoingmail.rekapitulasi');
+            Route::post('/rekapitulasi/Cetak', 'rekapitulasiPrint')->name('outgoingmail.rekapitulasiPrint');
 
             // Route::post('/generate', 'generatenumber')->name('outgoingmail.generate');
         });
