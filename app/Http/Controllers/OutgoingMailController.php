@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use DateTime;
+use PDF;
 use Carbon\Carbon;
 
 // Model
@@ -27,9 +28,17 @@ use App\Models\DaftarRak;
 use App\Models\DaftarRuang;
 use App\Models\LastNumbering;
 use App\Models\Pattern;
+use Hamcrest\Arrays\IsArray;
 
 class OutgoingMailController extends Controller
 {
+    
+    public function cleanText($text) {
+        $text = strip_tags($text);
+        $text = str_replace('&nbsp;', ' ', $text);
+        return $text;
+    }
+
     public function index(Request $request)
     {
         // Initiate Variable Filter
@@ -37,10 +46,11 @@ class OutgoingMailController extends Controller
         $mail_date = $request->get('mail_date');
         $mail_number = $request->get('mail_number');
         $id_mst_letter = $request->get('id_mst_letter');
-        $archive_remains = $request->get('archive_remains');
+        $archive_remain = $request->get('archive_remain');
 
         $letters = Letter::get();
         $sators = Sator::orderBy('sator_name','asc')->get();
+        $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
         
         $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'draft.work_name as drafter_name', 'master_letter.let_name')
             ->leftjoin('master_workunit as draft', 'draft.id', 'outgoing_mails.drafter')
@@ -60,20 +70,15 @@ class OutgoingMailController extends Controller
         if ($id_mst_letter != null) {
             $datas->where('id_mst_letter', $id_mst_letter);
         }
-        if ($archive_remains != null) {
-            $datas->where('outgoing_mails.archive_remains', $archive_remains);
+        if ($archive_remain != null) {
+            $datas->where('outgoing_mails.archive_remains', $archive_remain);
         }
     
         // Get Query
         $datas = $datas->get();
 
-        function cleanText($text) {
-            $text = strip_tags($text);
-            $text = str_replace('&nbsp;', ' ', $text);
-            return $text;
-        }
         $datas = $datas->map(function($item) {
-            $item->mail_regarding_filtered = cleanText($item->mail_regarding);
+            $item->mail_regarding_filtered = $this->cleanText($item->mail_regarding);
             return $item;
         });
 
@@ -86,7 +91,165 @@ class OutgoingMailController extends Controller
             return $data;
         }
 
-        return view('mail.outgoing.index', compact('letters', 'sators', 'datas', 'out_date', 'mail_date', 'mail_number', 'id_mst_letter', 'archive_remains'));
+        return view('mail.outgoing.index', compact('letters', 'sators', 'archive_remains', 'datas', 'out_date', 'mail_date', 'mail_number', 'id_mst_letter', 'archive_remain'));
+    }
+
+    public function checkChanges($lastcheck)
+    {
+        $lastChecked = $lastcheck;
+        $formatted_time = date('Y-m-d H:i:s', strtotime($lastChecked));
+        $changes = OutgoingMail::where('updated_at', '>', $formatted_time)->exists();
+
+        return response()->json(['changes' => $changes]);
+    }
+
+    public function rekapitulasi(Request $request)
+    {
+        // Initiate Variable Filter
+        $startdate = $request->get('startdate');
+        $enddate = $request->get('enddate');
+        $mail_number = $request->get('mail_number');
+        $id_mst_letter = $request->get('id_mst_letter');
+        $workunit = $request->get('workunits');
+        $archive_remain = $request->get('archive_remain');
+
+        $letters = Letter::get();
+        $workunits = WorkUnit::get();
+        $sators = Sator::orderBy('sator_name','asc')->get();
+        $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
+        
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($id_mst_letter) || isset($workunit) || isset($archive_remain)) 
+        {
+            $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'draft.work_name as drafter_name')
+            ->leftjoin('master_workunit as draft', 'draft.id', 'outgoing_mails.drafter')
+            ->orderBy('created_at', 'desc');
+
+            // FIlter
+            if ($startdate != null) {
+                $datas->where('outgoing_mails.mail_date', '>=', $startdate);
+            }
+            if ($enddate != null) {
+                $datas->where('outgoing_mails.mail_date', '<=', $enddate);
+            }
+            if ($mail_number != null) {
+                $datas->where('outgoing_mails.mail_number', 'like', '%' . $mail_number . '%');
+            }
+            if ($id_mst_letter != null) {
+                $datas->where('outgoing_mails.id_mst_letter', $id_mst_letter);
+            }
+            if ($workunit != null) {
+                $datas->where('outgoing_mails.signing', $workunit);
+            }
+            if ($archive_remain != null) {
+                $datas->where('outgoing_mails.archive_remain', $archive_remain);
+            }
+        
+            // Get Query
+            $datas = $datas->get();
+
+            $datas = $datas->map(function($item) {
+                $item->mail_regarding_filtered = $this->cleanText($item->mail_regarding);
+                return $item;
+            });
+
+            $datas = $datas->map(function($item) {
+                $item->attachment_text_filtered = $this->cleanText($item->attachment_text);
+                return $item;
+            });
+
+            $datas = $datas->map(function($item) {
+                $item->information_filtered = $this->cleanText($item->information);
+                return $item;
+            });
+        } else {
+            $datas = [];
+        }
+
+        if ($request->ajax()) {
+            $data = DataTables::of($datas)->toJson();
+            return $data;
+        }
+
+        return view('mail.outgoing.rekapitulasi', compact('letters', 'sators', 'workunits', 'archive_remains',
+            'datas', 'startdate', 'enddate', 'mail_number', 'id_mst_letter', 'workunit', 'archive_remain'));
+    }
+
+    public function rekapitulasiPrint(Request $request)
+    {
+        // Initiate Variable Filter
+        $startdate = $request->get('startdate');
+        $enddate = $request->get('enddate');
+        $mail_number = $request->get('mail_number');
+        $id_mst_letter = $request->get('id_mst_letter');
+        $workunit = $request->get('workunits');
+        $archive_remain = $request->get('archive_remain');
+
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($id_mst_letter) || isset($workunit) || isset($archive_remain)) 
+        {
+            $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'draft.work_name as drafter_name')
+            ->leftjoin('master_workunit as draft', 'draft.id', 'outgoing_mails.drafter')
+            ->orderBy('created_at', 'desc');
+
+            // FIlter
+            if ($startdate != null) {
+                $datas->where('outgoing_mails.mail_date', '>=', $startdate);
+            }
+            if ($enddate != null) {
+                $datas->where('outgoing_mails.mail_date', '<=', $enddate);
+            }
+            if ($mail_number != null) {
+                $datas->where('outgoing_mails.mail_number', 'like', '%' . $mail_number . '%');
+            }
+            if ($id_mst_letter != null) {
+                $datas->where('outgoing_mails.id_mst_letter', $id_mst_letter);
+            }
+            if ($workunit != null) {
+                $datas->where('outgoing_mails.signing', $workunit);
+            }
+            if ($archive_remain != null) {
+                $datas->where('outgoing_mails.archive_remain', $archive_remain);
+            }
+        
+            // Get Query
+            $datas = $datas->get();
+
+            $datas = $datas->map(function($item) {
+                $item->mail_regarding_filtered = $this->cleanText($item->mail_regarding);
+                return $item;
+            });
+
+            $datas = $datas->map(function($item) {
+                $item->attachment_text_filtered = $this->cleanText($item->attachment_text);
+                return $item;
+            });
+
+            $datas = $datas->map(function($item) {
+                $item->information_filtered = $this->cleanText($item->information);
+                return $item;
+            });
+        } else {
+            $datas = [];
+        }
+
+        $now=Carbon::now()->format('YmdHis');
+
+        if($id_mst_letter != null){
+            $letter = Letter::where('id', $id_mst_letter)->first()->let_name;
+        } else {
+            $letter = null;
+        }
+        
+        $pdf = PDF::loadView('pdf.rekapitulasi', [
+            'startdate' => $startdate,
+            'enddate' => $enddate,
+            'print_date' => $now,
+            'letter' => $letter,
+            'user' => auth()->user()->name,
+            'datas' => $datas,
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->stream('Print Rekapitulasi.pdf', array("Attachment" => false));
+
     }
 
     public function create(Request $request)

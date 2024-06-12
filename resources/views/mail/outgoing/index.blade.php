@@ -27,6 +27,7 @@
                     <a href="{{ route('outgoingmail.create') }}" type="button" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tambah Baru</a>
                     <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#addBulk"><i class="mdi mdi-plus-box-multiple"></i> Tambah Baru (Bulk) </a>
                     {{-- <a href="" type="button" class="btn btn-sm btn-warning ml-1" data-toggle="modal" data-target="#genNumber"><i class="mdi mdi-reload-alert"></i> Generate No. Surat</a> --}}
+                    <a href="{{ route('outgoingmail.rekapitulasi') }}" type="button" class="btn btn-sm btn-primary ml-1"><i class="mdi mdi-printer-search"></i> Rekapitulasi</a>
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
                     <form action="{{ route('outgoingmail.index') }}" method="POST" id="resetForm" enctype="multipart/form-data">
@@ -35,7 +36,7 @@
                         <input type="hidden" name="mail_date" value="">
                         <input type="hidden" name="mail_number" value="">
                         <input type="hidden" name="id_mst_letter" value="">
-                        <input type="hidden" name="archive_remains" value="">
+                        <input type="hidden" name="archive_remain" value="">
                         <button type="submit" class="btn btn-sm btn-secondary" id="resetbtn"><i class="mdi mdi-reload"></i> Reset Filter</button>
                     </form>
                     <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#search"><span class="mdi mdi-filter"></span> Filter & Cari </a>
@@ -279,7 +280,9 @@
                             <label>Arsip Pertinggal</label>
                             <select class="form-control js-example-basic-single" name="archive_remain" style="width: 100%;">
                                 <option value="">- Pilih -</option>
-                                <option value="Test" @if($archive_remains == 'Test') selected="selected" @endif>Test</option>
+                                @foreach($archive_remains as $item)
+                                    <option value="{{ $item->name_value }}" @if($archive_remain == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
+                                @endforeach
                             </select>
                             </div>
                         </div>
@@ -312,6 +315,7 @@
         const [year, month, day] = datePart.split('-');
         return `${day}-${month}-${year}`;
     }
+    
     $(function() {
         $('#server-side-table').DataTable({
             processing: true,
@@ -324,7 +328,7 @@
                     mail_date: '{{ $mail_date }}',
                     mail_number: '{{ $mail_number }}',
                     id_mst_letter: '{{ $id_mst_letter }}',
-                    archive_remains: '{{ $archive_remains }}'
+                    archive_remain: '{{ $archive_remain }}'
                 }
             },
             columns: [{
@@ -496,7 +500,27 @@
                 },
             ],
         });
+
+        setTimeout(checkForChanges, 1000);
     });
+
+    function checkForChanges() {
+        let lastChecked = new Date().toISOString();
+        var url = '{{ route("outgoingmail.checkChanges", ":id") }}';
+        url = url.replace(':id', lastChecked);
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function(response) {
+                if (response.changes) {
+                    $("#server-side-table").DataTable().ajax.reload();
+                }
+            },
+            complete: function() {
+                setTimeout(checkForChanges, 1000);
+            }
+        });
+    }
 </script>
 
 <script>
