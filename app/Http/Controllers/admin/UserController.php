@@ -14,7 +14,7 @@ class UserController extends Controller
      public function __construct()
     {
          $this->middleware('auth'); 
-        //  $this->middleware(['permission:manajemen_pengguna|data_pengguna|user.edit|user.delete']);
+         $this->middleware(['permission:manajemen_pengguna|data_pengguna|user.edit|user.delete']);
     }
 
     /**

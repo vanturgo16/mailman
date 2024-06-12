@@ -23,12 +23,10 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                      @can('roles.create')
                         <h3 class="card-title">
                             <a href="/role/create"><i class="fa fa-plus"></i> </a>
                             Tambah Role
                         </h3>
-                        @endcan
                     </div>
                     <div class="card-body">
                         <table id="example1" class="table table-bordered">
@@ -53,16 +51,16 @@
                                         </div>
                                     </td>
                                     <td class="text-center">
-                                         {{-- @can('roles.edit')  --}}
+                                         @can('roles.edit') 
                                         <a href="/role/edit/{{ $role->id }}" class="btn btn-sm btn-primary">
                                             <i class="fa fa-edit"></i>
                                         </a>
-                                         {{-- @endcan  --}}
-                                         {{-- @can('roles.delete')  --}}
+                                         @endcan 
+                                         @can('roles.delete') 
                                         {{--  <button onClick="Delete(this.id)" class="btn btn-sm btn-danger" id="{{ $role->id }}">
                                             <i class="fa fa-trash"></i>
                                         </button>  --}}
-                                         {{-- @endcan  --}}
+                                         @endcan 
                                     </td>
                                 </tr>
                                 @endforeach
