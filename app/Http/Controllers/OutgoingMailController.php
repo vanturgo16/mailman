@@ -109,21 +109,17 @@ class OutgoingMailController extends Controller
         $latestUpdate = DB::table('outgoing_mails')
         ->orderBy('updated_at', 'desc')
         ->value('updated_at');
-
-    //     $lastTime = strtotime($latestUpdate);
-    //     $newTime = strtotime($formatted_time);
-
-    //     $changes = $lastTime > $newTime;
-    //     $result = [$lastTime, $newTime, $changes];
-
-    //     return response()->json(['changes' => $result]);
-
+        $latestUpdate = Carbon::parse($latestUpdate);
+        $latestUpdate = $latestUpdate->addSeconds(30);
+        $latestUpdate = strtotime($latestUpdate);
+        $latestUpdate = date('Y-m-d H:i:s', $latestUpdate);
 
         $lastChecked = $lastcheck;
         $decreasedTime = strtotime('-5 second', strtotime($lastChecked));
         $formatted_time = date('Y-m-d H:i:s', $decreasedTime);
 
-        $changes = OutgoingMail::where('updated_at', '>', $formatted_time)->exists();
+        // $changes = OutgoingMail::where('updated_at', '>', $formatted_time)->exists();
+        $changes = $latestUpdate > $formatted_time;
         
         return response()->json(['changes' => $changes, 'latestUpdate' => $latestUpdate, 'timeNow' => $formatted_time]);
     }
