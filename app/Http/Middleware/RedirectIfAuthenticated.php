@@ -29,7 +29,7 @@ class RedirectIfAuthenticated
 
         }
             else{
-            return redirect(RouteServiceProvider::ADMIN_HOME);
+            return redirect(RouteServiceProvider::HOME);
 
         }
             }
