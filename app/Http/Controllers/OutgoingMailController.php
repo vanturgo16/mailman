@@ -57,7 +57,8 @@ class OutgoingMailController extends Controller
         $sators = Sator::orderBy('sator_name','asc')->get();
         $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
         
-        $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'draft.work_name as drafter_name', 'master_letter.let_name')
+        $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'outgoing_mails.created_at as created',
+                'draft.work_name as drafter_name', 'master_letter.let_name')
             ->leftjoin('master_workunit as draft', 'draft.id', 'outgoing_mails.drafter')
             ->leftjoin('master_letter', 'master_letter.id', 'outgoing_mails.id_mst_letter')
             ->orderBy('created_at', 'desc');
@@ -101,21 +102,30 @@ class OutgoingMailController extends Controller
 
     public function checkChanges($lastcheck)
     {
-        // $lastChecked = $lastcheck;
-        // $formatted_time = date('Y-m-d H:i:s', strtotime($lastChecked));
-        // $latestUpdate = DB::table('outgoing_mails')
-        // ->orderBy('updated_at', 'desc')
-        // ->value('updated_at');
-        // $changes = $latestUpdate > $formatted_time;
-        // $a = [$latestUpdate, $formatted_time, $changes];
+    //     $lastChecked = $lastcheck;
+    //     $decreasedTime = strtotime('-30 second', strtotime($lastChecked));
+    //     $formatted_time = date('Y-m-d H:i:s', $decreasedTime);
+
+        $latestUpdate = DB::table('outgoing_mails')
+        ->orderBy('updated_at', 'desc')
+        ->value('updated_at');
+
+    //     $lastTime = strtotime($latestUpdate);
+    //     $newTime = strtotime($formatted_time);
+
+    //     $changes = $lastTime > $newTime;
+    //     $result = [$lastTime, $newTime, $changes];
+
+    //     return response()->json(['changes' => $result]);
+
 
         $lastChecked = $lastcheck;
-        $decreasedTime = strtotime('-1 second', strtotime($lastChecked));
+        $decreasedTime = strtotime('-5 second', strtotime($lastChecked));
         $formatted_time = date('Y-m-d H:i:s', $decreasedTime);
 
         $changes = OutgoingMail::where('updated_at', '>', $formatted_time)->exists();
-
-        return response()->json(['changes' => $changes]);
+        
+        return response()->json(['changes' => $changes, 'latestUpdate' => $latestUpdate, 'timeNow' => $formatted_time]);
     }
 
     public function rekapitulasi(Request $request)

@@ -476,16 +476,16 @@
                     },
                 },
                 {
-                    data: 'created_at',
-                    name: 'created_at',
+                    data: 'created',
+                    name: 'created',
                     orderable: true,
                     searchable: true,
                     render: function(data, type, row) {
                         var html
-                        if(row.created_at == null){
+                        if(row.created == null){
                             html = '<div class="text-center"><span class="badge bg-secondary text-white">Null</span></div>';
                         } else {
-                            var date = row.created_at.replace('T', ' ').split('.')[0];
+                            var date = row.created.replace('T', ' ').split('.')[0];
                             html = date+'<br><b>'+row.created_by;
                         }
                         return html;
@@ -517,6 +517,7 @@
             url: url,
             method: 'GET',
             success: function(response) {
+                console.log(response);
                 if (response.changes) {
                     $("#server-side-table").DataTable().ajax.reload();
                 }

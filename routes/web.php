@@ -179,8 +179,8 @@ Route::group(['middleware' => 'cekadmin'], function () {
     Route::controller(OutgoingMailController::class)->group(function () {
         Route::prefix('surat-keluar')->group(function () {
             Route::get('/', 'index')->name('outgoingmail.index');
+            Route::post('/', 'index')->name('outgoingmail.index');
             Route::get('/check-table-changes/{lastcheck}', 'checkChanges')->name('outgoingmail.checkChanges');
-            Route::get('/', 'index')->name('outgoingmail.index');
             Route::get('/tambah', 'create')->name('outgoingmail.create');
             Route::post('/store', 'store')->name('outgoingmail.store');
             Route::post('/store/bulk', 'storebulk')->name('outgoingmail.storebulk');
