@@ -100,28 +100,20 @@ class OutgoingMailController extends Controller
         return view('mail.outgoing.index', compact('letters', 'sators', 'archive_remains', 'datas', 'out_date', 'mail_date', 'mail_number', 'id_mst_letter', 'archive_remain'));
     }
 
-    public function checkChanges($lastcheck)
+    public function checkChanges($timenow)
     {
-    //     $lastChecked = $lastcheck;
-    //     $decreasedTime = strtotime('-30 second', strtotime($lastChecked));
-    //     $formatted_time = date('Y-m-d H:i:s', $decreasedTime);
+        $timenow = date('Y-m-d H:i:s', strtotime($timenow));
 
         $latestUpdate = DB::table('outgoing_mails')
-        ->orderBy('updated_at', 'desc')
-        ->value('updated_at');
+            ->orderBy('updated_at', 'desc')
+            ->value('updated_at');
         $latestUpdate = Carbon::parse($latestUpdate);
-        $latestUpdate = $latestUpdate->addSeconds(160);
-        $latestUpdate = strtotime($latestUpdate);
-        $latestUpdate = date('Y-m-d H:i:s', $latestUpdate);
+        $latestUpdate = $latestUpdate->addSeconds(10);
+        $latestUpdate = date('Y-m-d H:i:s', strtotime($latestUpdate));
 
-        $lastChecked = $lastcheck;
-        $decreasedTime = strtotime('-10 second', strtotime($lastChecked));
-        $formatted_time = date('Y-m-d H:i:s', $decreasedTime);
-
-        // $changes = OutgoingMail::where('updated_at', '>', $formatted_time)->exists();
-        $changes = $latestUpdate > $formatted_time;
+        $changes = $latestUpdate > $timenow;
         
-        return response()->json(['changes' => $changes, 'latestUpdate' => $latestUpdate, 'timeNow' => $formatted_time]);
+        return response()->json(['changes' => $changes, 'latestUpdate' => $latestUpdate, 'timeNow' => $timenow]);
     }
 
     public function rekapitulasi(Request $request)
