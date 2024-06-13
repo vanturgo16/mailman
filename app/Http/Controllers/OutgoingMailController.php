@@ -110,12 +110,12 @@ class OutgoingMailController extends Controller
         ->orderBy('updated_at', 'desc')
         ->value('updated_at');
         $latestUpdate = Carbon::parse($latestUpdate);
-        $latestUpdate = $latestUpdate->addSeconds(30);
+        $latestUpdate = $latestUpdate->addSeconds(160);
         $latestUpdate = strtotime($latestUpdate);
         $latestUpdate = date('Y-m-d H:i:s', $latestUpdate);
 
         $lastChecked = $lastcheck;
-        $decreasedTime = strtotime('-5 second', strtotime($lastChecked));
+        $decreasedTime = strtotime('-10 second', strtotime($lastChecked));
         $formatted_time = date('Y-m-d H:i:s', $decreasedTime);
 
         // $changes = OutgoingMail::where('updated_at', '>', $formatted_time)->exists();
