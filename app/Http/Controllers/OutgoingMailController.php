@@ -102,18 +102,25 @@ class OutgoingMailController extends Controller
 
     public function checkChanges($timenow)
     {
-        $timenow = date('Y-m-d H:i:s', strtotime($timenow));
+        // $timenow = date('Y-m-d H:i:s', strtotime($timenow));
 
-        $latestUpdate = DB::table('outgoing_mails')
-            ->orderBy('updated_at', 'desc')
-            ->value('updated_at');
-        $latestUpdate = Carbon::parse($latestUpdate);
-        $latestUpdate = $latestUpdate->addSeconds(10);
-        $latestUpdate = date('Y-m-d H:i:s', strtotime($latestUpdate));
+        // $latestUpdate = DB::table('outgoing_mails')
+        //     ->orderBy('updated_at', 'desc')
+        //     ->value('updated_at');
+        // $latestUpdate = Carbon::parse($latestUpdate);
+        // $latestUpdate = $latestUpdate->addSeconds(10);
+        // $latestUpdate = date('Y-m-d H:i:s', strtotime($latestUpdate));
 
-        $changes = $latestUpdate > $timenow;
+        // $changes = $latestUpdate > $timenow;
         
-        return response()->json(['changes' => $changes, 'latestUpdate' => $latestUpdate, 'timeNow' => $timenow]);
+        // return response()->json(['changes' => $changes, 'latestUpdate' => $latestUpdate, 'timeNow' => $timenow]);
+
+        $firstque = QueNumbOutMail::count();
+        sleep(3);
+        $secondque = QueNumbOutMail::count();
+        $changes = ($firstque == $secondque);
+
+        return response()->json(['changes' => $changes, 'firstque' => $firstque, 'secondque' => $secondque]);
     }
 
     public function rekapitulasi(Request $request)
