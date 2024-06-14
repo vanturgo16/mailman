@@ -506,6 +506,7 @@
         });
 
         setTimeout(checkForChanges, 10);
+        setTimeout(checkForChanges, 20);
     });
 
     function checkForChanges() {
