@@ -118,7 +118,7 @@ class OutgoingMailController extends Controller
         $firstque = QueNumbOutMail::count();
         sleep(3);
         $secondque = QueNumbOutMail::count();
-        $changes = ($firstque == $secondque);
+        $changes = ($firstque != $secondque);
 
         return response()->json(['changes' => $changes, 'firstque' => $firstque, 'secondque' => $secondque]);
     }
