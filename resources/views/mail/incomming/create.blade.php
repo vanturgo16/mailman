@@ -1,6 +1,7 @@
 @extends('layouts.blackand.app')
 @section('content')
-@extends('mail.head')
+
+@include('mail.head')
 
 <div class="content-header">
   <div class="container-fluid">
@@ -37,6 +38,21 @@
 </div>
 @endif
 
+<!--validasi form with $validate-->
+@if (count($errors)>0)
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+  <i class="mdi mdi-block-helper label-icon"></i><strong>&nbsp; Data Gagal Disimpan!</strong>
+  <ul class="mb-0">
+    @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+    @endforeach
+  </ul>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+@endif
+
 <div class="container-fluid">
   <div class="card card-primary card-outline">
       <div class="card-header">
@@ -44,343 +60,398 @@
               Formulir Tambah Surat Masuk
           </h3>
       </div>
-      <form action="#" method="POST" enctype="multipart/form-data">
+      <form action="#" method="POST" enctype="multipart/form-data" id="formIncommingMail">
         @csrf
         <div class="card-body" style="max-height: 65vh; overflow-y: auto;">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Pejabat / Naskah<i style="color: red;"> *</i></label>
-                  <select class="form-control js-example-basic-single" name="placeman" style="width: 100%;" required>
-                    <option value="">- Pilih -</option>
-                    <option value="KAPOLRI">KAPOLRI</option>
-                    <option value="WAKAPOLRI">WAKAPOLRI</option>
-                    <option value="LITNADIN">LITNADIN</option>
-                    <option value="PENGADUAN">PENGADUAN</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Jenis Naskah<i style="color: red;"> *</i></label>
-                  <select class="form-control js-example-basic-single" name="scripture_type" style="width: 100%;" required>
-                    <option value="">- Pilih -</option>
-                    @foreach($letters as $letter)
-                      <option value="{{ $letter->id }}" @if(old('sender') == $letter->id) selected="selected" @endif>{{ $letter->let_name }}</option>
-                    @endforeach
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Pengirim<i style="color: red;"> *</i></label>
-                  <input type="text" name="sender" value="{{ old('sender') }}" class="form-control" placeholder="Masukan Pengirim.." required>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Nomor Surat</label>
-                  <input type="text" name="mail_number" value="{{ old('mail_number') }}" class="form-control" placeholder="Masukan Nomor Surat.." required>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Perihal / Tentang<i style="color: red;"> *</i></label>
-                  <textarea class="form-control" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat.." value="{{ old('mail_regarding') }}" required></textarea>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label>Tanggal Masuk<i style="color: red;"> *</i></label>
-                  <input type="date" name="entry_date" value="{{ old('entry_date') }}" class="form-control" required>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label>Tanggal Surat<i style="color: red;"> *</i></label>
-                  <input type="datetime-local" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Penerima<i style="color: red;"> *</i></label>
-                  <select class="form-control js-example-basic-single" name="receiver" style="width: 100%;" required>
-                    <option value="">- Pilih -</option>
-                    @foreach($workunits as $workunit)
-                      <option value="{{ $workunit->id }}" @if(old('receiver') == $workunit->id) selected="selected" @endif>{{ $workunit->work_name }}</option>
-                    @endforeach
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label>&nbsp;</label>
-                  <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#unitKerja"><i class="fa fa-plus"></i> Tambah Baru</button>
-                </div>
-              </div>
+          <div class="row px-1">
+            <div class="col-md-12">
+              <table class="table table-bordered">
+                <tbody>
+                  {{-- Pejabat / Naskah --}}
+                  <tr>
+                    <td><label class="text-danger">Pejabat / Naskah *</label></td>
+                    <td>
+                      <select class="form-control js-example-basic-single" id="placeman" name="placeman" style="width: 100%;" required>
+                        <option value="">- Pilih -</option>
+                        @foreach($placemans as $item)
+                          <option value="{{ $item->name_value }}">{{ $item->name_value }}</option>
+                        @endforeach
+                      </select>
+                    </td>
+                  </tr>
+                  {{-- Jenis Naskah --}}
+                  <tr>
+                    <td><label class="text-danger" id="labeljenisNaskah">Jenis Naskah *</label></td>
+                    <td>
+                      <div id="jenisNaskah">
+                        <select class="form-control js-example-basic-single" id="mst_letter" name="id_mst_letter" style="width: 100%;" required>
+                          <option value="">- Pilih -</option>
+                          @foreach($letters as $letter)
+                            <option value="{{ $letter->id }}">{{ $letter->let_name }}</option>
+                          @endforeach
+                        </select>
+                      </div>
 
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label>Jumlah<i style="color: red;"> *</i></label>
-                  <input type="number" name="mail_quantity" value="{{ old('mail_quantity') }}" class="form-control" placeholder="Masukkan Jumlah.." required>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label>Satuan<i style="color: red;"> *</i></label>
-                  <select class="form-control js-example-basic-single" name="mail_unit" style="width: 100%;" required>
-                    <option value="">- Pilih -</option>
-                    @foreach($unitletters as $unitletter)
-                      <option value="{{ $unitletter->id }}" @if(old('mail_unit') == $unitletter->id) selected="selected" @endif>{{ $unitletter->unit_name }}</option>
-                    @endforeach
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label>&nbsp;</label>
-                  <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#satuan"><i class="fa fa-plus"></i> Tambah Baru</button>
-                </div>
-              </div>
-              
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Klasifikasi Arsip</label>
-                  <select class="form-control js-example-basic-single" name="archive_classification" style="width: 100%;">
-                    <option value="">- Pilih -</option>
-                    @foreach($classifications as $classification)
-                      <option value="{{ $classification->id }}" @if(old('archive_classification') == $classification->id) selected="selected" @endif>{{ $classification->classification_name }}</option>
-                    @endforeach
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label>&nbsp;</label>
-                  <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#klasifikasi"><i class="fa fa-plus"></i> Tambah Baru</button>
-                </div>
-              </div>
-              
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label>Retensi Surat (Dari)</label>
-                  <input type="date" name="Retensi Surat (Dari)" value="{{ old('Retensi Surat (Dari)') }}" class="form-control">
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label>Retensi Surat (Hingga)</label>
-                  <input type="datetime-local" name="Retensi Surat (Dari)" value="{{ old('Retensi Surat (Dari)') }}" class="form-control">
-                </div>
-              </div>
-
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Jenis Surat</label>
-                  <select class="form-control js-example-basic-single" name="mail_type" style="width: 100%;">
-                    <option value="">- Pilih -</option>
-                    <option value="-">-</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label>&nbsp;</label>
-                  <button type="button" class="btn btn-secondary" style="width: 100%"><i class="fa fa-plus"></i> Tambah Baru</button>
-                </div>
-              </div>
-
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Diterima Via</label>
-                  <select class="form-control js-example-basic-single" name="received_via" style="width: 100%;">
-                    <option value="">- Pilih -</option>
-                    @foreach($receivedvias as $receivedvia)
-                      <option value="{{ $receivedvia->name_value }}" @if(old('received_via') == $receivedvia->name_value) selected="selected" @endif>{{ $receivedvia->name_value }}</option>
-                    @endforeach
-                  </select>
-                </div>
-              </div>
-
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Lampiran</label>
-                  <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." value="{{ old('attachment_text') }}"></textarea>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Keterangan</label>
-                  <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Keterangan.." value="{{ old('attachment_text') }}"></textarea>
-                </div>
-              </div>
-
+                      <div id="jenisPengaduan" hidden>
+                        <select class="form-control js-example-basic-single" id="mst_complain" name="id_mst_complain" style="width: 100%;" required>
+                          <option value="">- Pilih -</option>
+                          @foreach($complains as $item)
+                            <option value="{{ $item->id }}">{{ $item->com_name }}</option>
+                          @endforeach
+                        </select>
+                      </div>
+                    </td>
+                  </tr>
+                  {{-- Pengirim --}}
+                  <tr>
+                    <td><label class="text-danger" id="labelpengirim">Pengirim *</label></td>
+                    <td>
+                      <input type="text" name="sender" id="pengirim1" value="{{ old('sender') }}" class="form-control" placeholder="Masukkan Pengirim.." required>
+                      
+                      <div class="row" id="pengirim2" hidden>
+                        <div class="col-md-9">
+                          <select class="form-control js-example-basic-single" name="sender" style="width: 100%;" required>
+                            <option value="">- Pilih -</option>
+                            @foreach($workunits as $workunit)
+                              <option value="{{ $workunit->id }}">{{ $workunit->work_name }}</option>
+                            @endforeach
+                          </select>
+                        </div>
+                        <div class="col-md-3">
+                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#unitKerja"><i class="fa fa-plus"></i> Tambah Baru</button>
+                        </div>
+                      </div>
+                    </td>
+                    </td>
+                  </tr>
+                  {{-- No Surat --}}
+                  <tr>
+                    <td><label id="labelnoSurat">Nomor Surat</label></td>
+                    <td>
+                      <input type="text" name="mail_number" value="{{ old('mail_number') }}" placeholder="Masukkan Nomor Surat.." class="form-control">
+                    </td>
+                  </tr>
+                  {{-- Perihal --}}
+                  <tr>
+                    <td><label class="text-danger">Perihal / Tentang *</label></td>
+                    <td>
+                      <textarea class="form-control editor" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat.." value=""></textarea>
+                    </td>
+                  </tr>
+                  {{-- Tanggal --}}
+                  <tr>
+                    <td><label class="text-danger">Tanggal *</label></td>
+                    <td>
+                      <div class="row">
+                        <div class="col-6">
+                          <label  class="text-danger">Tanggal Masuk *</label>
+                          <input type="date" name="entry_date" value="{{ old('entry_date') }}" class="form-control" required>
+                        </div>
+                        <div class="col-6">
+                          <label  class="text-danger">Tanggal Surat *</label>
+                          <input type="datetime-local" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {{-- Penerima / Penandatanganan --}}
+                  <tr>
+                    <td><label class="text-danger" id="labelPenerima">Penerima *</label></td>
+                    <td>
+                      <div class="row">
+                        <div class="col-md-9">
+                          <select class="form-control js-example-basic-single" name="receiver" style="width: 100%;" required>
+                            <option value="">- Pilih -</option>
+                            @foreach($workunits as $workunit)
+                              <option value="{{ $workunit->id }}">{{ $workunit->work_name }}</option>
+                            @endforeach
+                          </select>
+                        </div>
+                        <div class="col-md-3">
+                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#unitKerja"><i class="fa fa-plus"></i> Tambah Baru</button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {{-- Jumlah --}}
+                  <tr>
+                    <td><label class="text-danger">Jumlah *</label></td>
+                    <td>
+                      <div class="row">
+                        <div class="col-md-5">
+                          <div class="form-group">
+                            <label  class="text-danger">Jumlah *</label>
+                            <input type="number" name="mail_quantity" value="{{ old('mail_quantity') }}" class="form-control" placeholder="Masukkan Jumlah.." required>
+                          </div>
+                        </div>
+                        {{-- Satuan --}}
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label  class="text-danger">Satuan *</label>
+                            <select class="form-control js-example-basic-single" name="mail_unit" style="width: 100%;" required>
+                              <option value="">- Pilih -</option>
+                              @foreach($unitletters as $unitletter)
+                                <option value="{{ $unitletter->id }}">{{ $unitletter->unit_name }}</option>
+                              @endforeach
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#satuan"><i class="fa fa-plus"></i> Tambah Baru</button>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {{-- Klasifikasi Arsip --}}
+                  <tr>
+                    <td><label>Klasifikasi Arsip</label></td>
+                    <td>
+                      <div class="row">
+                        <div class="col-md-9">
+                          <div class="form-group">
+                            <select class="form-control js-example-basic-single" name="archive_classification" style="width: 100%;">
+                              <option value="">- Pilih -</option>
+                              @foreach($classifications as $classification)
+                                <option value="{{ $classification->id }}">{{ $classification->classification_name }}</option>
+                              @endforeach
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#klasifikasi"><i class="fa fa-plus"></i> Tambah Baru</button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {{-- Retensi Surat --}}
+                  <tr>
+                    <td><label>Retensi Surat</label></td>
+                    <td>
+                      <div class="row">
+                        <div class="col-6">
+                          <label>Dari</label>
+                          <input type="date" name="mail_retention_from" value="{{ old('mail_retention_from') }}" class="form-control">
+                        </div>
+                        <div class="col-6">
+                          <label>Hingga</label>
+                          <input type="date" name="mail_retention_to" value="{{ old('mail_retention_to') }}" class="form-control">
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {{-- Jenis Surat --}}
+                  <tr id="jenisSurat">
+                    <td><label>Jenis Surat</label></td>
+                    <td>
+                      <div class="row">
+                        <div class="col-md-9">
+                          <div class="form-group">
+                            <select class="form-control js-example-basic-single" name="mail_type" style="width: 100%;">
+                              <option value="">- Pilih -</option>
+                              @foreach($mailtypes as $item)
+                                <option value="{{ $item->name_value }}">{{ $item->name_value }}</option>
+                              @endforeach
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#mailType"><i class="fa fa-plus"></i> Tambah Baru</button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {{-- Hasil Penelitian --}}
+                  <tr id="hasilPenelitian" hidden>
+                    <td><label>Hasil Penelitian</label></td>
+                    <td>
+                      <select class="form-control js-example-basic-single" name="result" style="width: 100%;">
+                        <option value="">- Pilih -</option>
+                        @foreach($results as $item)
+                          <option value="{{ $item->name_value }}">{{ $item->name_value }}</option>
+                        @endforeach
+                      </select>
+                    </td>
+                  </tr>
+                  {{-- Disetujui Oleh --}}
+                  <tr id="disetujuiOleh" hidden>
+                    <td><label>Disetujui Oleh</label></td>
+                    <td>
+                      <div class="row">
+                        <div class="col-md-9">
+                          <div class="form-group">
+                            <select class="form-control js-example-basic-single" name="approved_by" style="width: 100%;">
+                              <option value="">- Pilih -</option>
+                              @foreach($approveds as $item)
+                                <option value="{{ $item->name_value }}">{{ $item->name_value }}</option>
+                              @endforeach
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#approved"><i class="fa fa-plus"></i> Tambah Baru</button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {{-- Diterima Via --}}
+                  <tr>
+                    <td><label>Diterima Via</label></td>
+                    <td>
+                      <div id="selectDiterimaVia">
+                        <select class="form-control js-example-basic-single" name="received_via" style="width: 100%;">
+                          <option value="">- Pilih -</option>
+                          @foreach($receivedvias as $receivedvia)
+                            <option value="{{ $receivedvia->name_value }}">{{ $receivedvia->name_value }}</option>
+                          @endforeach
+                        </select>
+                      </div>
+                      <textarea id="inputDiterimaVia" class="form-control" rows="2" type="text" name="received_via" placeholder="Diterima Via.." value="{{ old('received_via') }}" hidden></textarea>
+                    </td>
+                  </tr>
+                  {{-- Lampiran --}}
+                  <tr>
+                    <td><label>Lampiran</label></td>
+                    <td>
+                      <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." value="{{ old('attachment_text') }}"></textarea>
+                    </td>
+                  </tr>
+                  {{-- Keterangan --}}
+                  <tr>
+                    <td><label>Keterangan</label></td>
+                    <td>
+                      <textarea class="form-control" rows="3" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}"></textarea>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
+          </div>
         </div>
+
         <div class="card-footer">
           <div class="row">
             <div class="col-12" style="text-align: right">
-              <button type="reset" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Kembali</button>
-              <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i> Kirim Data</button>
+              <a href="{{ route('incommingmail.index') }}" type="button" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Kembali</a>
+              <button type="submit" class="btn btn-primary" id="sbFormIncommingMail"><i class="fa fa-paper-plane"></i> Kirim Data</button>
             </div>
           </div>
         </div>
       </form>
+      <script>
+          document.getElementById('formIncommingMail').addEventListener('submit', function(event) {
+              if (!this.checkValidity()) {
+                  event.preventDefault();
+                  return false;
+              }
+              var submitButton = this.querySelector('button[id="sbFormIncommingMail"]');
+              submitButton.disabled = true;
+              submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
+              return true;
+          });
+      </script>
   </div>
 </div>
 
 {{-- MODAL ADD --}}
-{{-- Unit Kerja --}}
-<div class="modal fade" id="unitKerja" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
-  <div class="modal-dialog modal-md">
-    <div class="modal-content">
-        <div class="modal-header" style="background-color: #0074F1; color: white;">
-          <h5 class="modal-title font-weight-bold" id="modalAddLabel">Tambah Daftar Unit Kerja Internal</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
-              <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form action="{{ route('unitkerja.store') }}" method="POST" enctype="multipart/form-data" id="modalForm1">
-          @csrf
-          <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
-              <div class="form-group">
-                <label class="text-danger">Kode Unit Kerja*</label>
-                <select class="form-control js-example-basic-single" name="kode_unit" style="width: 100%;" required>
-                  <option value="">- Pilih -</option>
-                  @foreach($sators as $sator)
-                    <option value="{{ $sator->sator_name }}">{{ $sator->sator_name }}</option>
-                  @endforeach
-                </select>
-              </div>
-              <div class="form-group">
-                  <label class="text-danger">Nama Unit Kerja*</label>
-                  <input type="text" class="form-control" id="" name="nama_unit" placeholder="Masukkan Unit Kerja.." required>
-              </div>
-              <div class="form-group">
-                  <label class="text-danger">Nama Kepala Unit Kerja*</label>
-                  <input type="text" class="form-control" id="" name="nama_kepala_unit" placeholder="Masukkan Kepala Unit Kerja.." required>
-              </div>  
-              <div class="form-group">
-                  <label>Keterangan</label>
-                  <textarea class="form-control" id="" rows="3" name="keterangan" placeholder="Keterangan..(Opsional)"></textarea>
-              </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-            <button type="submit" class="btn btn-primary" id="sbForm1">Simpan</button>
-          </div>
-        </form>
-        <script>
-            document.getElementById('modalForm1').addEventListener('submit', function(event) {
-                if (!this.checkValidity()) {
-                    event.preventDefault();
-                    return false;
-                }
-                var submitButton = this.querySelector('button[id="sbForm1"]');
-                submitButton.disabled = true;
-                submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
-                return true;
-            });
-        </script>
-    </div>
-  </div>
-</div>
-{{-- Satuan --}}
-<div class="modal fade" id="satuan" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
-  <div class="modal-dialog modal-md">
-    <div class="modal-content">
-        <div class="modal-header" style="background-color: #0074F1; color: white;">
-          <h5 class="modal-title font-weight-bold" id="modalAddLabel">Tambah Daftar Satuan Naskah</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
-              <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form action="{{ route('satnas.store') }}" method="POST" enctype="multipart/form-data" id="modalForm2">
-          @csrf
-          <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
-            <div class="form-group">
-              <label class="text-danger">Nama Satuan*</label>
-              <input type="text" class="form-control" name="nama_satuan_naskah" placeholder="Masukkan Nama Satuan.." required>
-            </div>
-            <div class="form-group">
-                <label>Keterangan</label>
-                <textarea class="form-control" rows="3" name="keterangan" placeholder="Masukkan Keterangan..(Opsional)"></textarea>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-            <button type="submit" class="btn btn-primary" id="sbForm2">Simpan</button>
-          </div>
-        </form>
-        <script>
-            document.getElementById('modalForm2').addEventListener('submit', function(event) {
-                if (!this.checkValidity()) {
-                    event.preventDefault();
-                    return false;
-                }
-                var submitButton = this.querySelector('button[id="sbForm2"]');
-                submitButton.disabled = true;
-                submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
-                return true;
-            });
-        </script>
-    </div>
-  </div>
-</div>
-{{-- Klasifikasi --}}
-<div class="modal fade" id="klasifikasi" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
-  <div class="modal-dialog modal-md">
-    <div class="modal-content">
-        <div class="modal-header" style="background-color: #0074F1; color: white;">
-          <h5 class="modal-title font-weight-bold" id="modalAddLabel">Tambah Daftar Klasifikasi Arsip</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
-              <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form action="{{ route('klasifikasi.store') }}" method="POST" enctype="multipart/form-data" id="modalForm3">
-          @csrf
-          <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
-            <div class="form-group">
-              <label class="text-danger">Nama Klasifikasi Arsip*</label>
-              <input type="text" class="form-control" name="nama_klasifikasi" placeholder="Masukkan Nama.." required>
-            </div>
-            <div class="form-group">
-                <label>Retensi (Tahun)</label>
-                <input type="number" min="0" class="form-control" name="tahun_retensi" placeholder="Retensi Tahun..(Opsional)" required>
-            </div>
-            <div class="form-group">
-                <label>Retensi (Bulan)</label>
-                <input type="text" min="0" class="form-control" name="bulan_retensi" placeholder="Retensi Bulan..(Opsional)" required>
-            </div>
-            <div class="form-group">
-                <label>Keterangan</label>
-                <textarea class="form-control" rows="3" name="keterangan" placeholder="Masukkan Keterangan..(Opsional)"></textarea>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-            <button type="submit" class="btn btn-primary" id="sbForm3">Simpan</button>
-          </div>
-        </form>
-        <script>
-            document.getElementById('modalForm3').addEventListener('submit', function(event) {
-                if (!this.checkValidity()) {
-                    event.preventDefault();
-                    return false;
-                }
-                var submitButton = this.querySelector('button[id="sbForm3"]');
-                submitButton.disabled = true;
-                submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
-                return true;
-            });
-        </script>
-    </div>
-  </div>
-</div>
+@include('mail.modal')
 
 <script>
   $(".js-example-basic-single").select2().on("select2:open", function () {
       document.querySelector(".select2-search__field").focus();
+  });
+</script>
+
+<script>
+  const labelpengirim = document.getElementById('labelpengirim');
+  const pengirim1 = document.getElementById('pengirim1');
+  const pengirim2 = document.getElementById('pengirim2');
+  const labeljenisNaskah = document.getElementById('labeljenisNaskah');
+  const jenisNaskah = document.getElementById('jenisNaskah');
+  const jenisPengaduan = document.getElementById('jenisPengaduan');
+  const labelnoSurat = document.getElementById('labelnoSurat');
+  const labelPenerima = document.getElementById('labelPenerima');
+  const jenisSurat = document.getElementById('jenisSurat');
+  const hasilPenelitian = document.getElementById('hasilPenelitian');
+  const disetujuiOleh = document.getElementById('disetujuiOleh');
+  const selectDiterimaVia = document.getElementById('selectDiterimaVia');
+  const inputDiterimaVia = document.getElementById('inputDiterimaVia');
+  
+  $('select[id="placeman"]').on('change', function() {
+      const placeman = $(this).val();
+      if (placeman == 'LITNADIN') {
+        labelpengirim.textContent = "Pengirim / Konseptor *";
+        pengirim1.hidden = true;
+        pengirim2.hidden = false;
+        labeljenisNaskah.textContent = "Jenis Naskah *";
+        jenisNaskah.hidden = false;
+        jenisPengaduan.hidden = true;
+        labelnoSurat.textContent = "Nomor Surat Pengantar";
+        labelPenerima.textContent = "Penandatanganan *";
+        jenisSurat.hidden = true;
+        hasilPenelitian.hidden = false;
+        disetujuiOleh.hidden = false;
+        selectDiterimaVia.hidden = true;
+        inputDiterimaVia.hidden = false;
+      } else if (placeman == 'PENGADUAN') {
+        labelpengirim.textContent = "Pengirim *";
+        pengirim1.hidden = false;
+        pengirim2.hidden = true;
+        labeljenisNaskah.textContent = "Jenis Pengaduan *";
+        jenisNaskah.hidden = true;
+        jenisPengaduan.hidden = false;
+        labelnoSurat.textContent = "Nomor Surat";
+        labelPenerima.textContent = "Penerima *";
+        jenisSurat.hidden = false;
+        hasilPenelitian.hidden = true;
+        disetujuiOleh.hidden = true;
+        selectDiterimaVia.hidden = false;
+        inputDiterimaVia.hidden = true;
+      } else {
+        labelpengirim.textContent = "Pengirim *";
+        pengirim1.hidden = false;
+        pengirim2.hidden = true;
+        labeljenisNaskah.textContent = "Jenis Naskah *";
+        jenisNaskah.hidden = false;
+        jenisPengaduan.hidden = true;
+        labelnoSurat.textContent = "Nomor Surat";
+        labelPenerima.textContent = "Penerima *";
+        jenisSurat.hidden = false;
+        hasilPenelitian.hidden = true;
+        disetujuiOleh.hidden = true;
+        selectDiterimaVia.hidden = false;
+        inputDiterimaVia.hidden = true;
+      }
+  });
+</script>
+
+<script>
+  $('select[id="mst_letter"]').on('change', function() {
+      const id_mst_letter = $(this).val();
+      var url = '{{ route("outgoingmail.checkpattern", ":id") }}';
+      url = url.replace(':id', id_mst_letter);
+      if (id_mst_letter) {
+          $.ajax({
+              url: url,
+              type: "GET",
+              dataType: "json",
+              success: function(data) {
+                  const label = document.getElementById('labelkso');
+                  const select = document.querySelector('select[name="org_unit"]');
+                  if (data === "R") {
+                      label.classList.add('text-danger');
+                      label.textContent = "Kode Satuan Organisasi *";
+                      select.setAttribute('required', 'required');
+                  } else {
+                      label.classList.remove('text-danger');
+                      label.textContent = "Kode Satuan Organisasi";
+                      select.removeAttribute('required');
+                  }
+              }
+          });
+      }
   });
 </script>
 

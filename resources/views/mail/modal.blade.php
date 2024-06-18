@@ -238,3 +238,95 @@
     </div>
   </div>
 </div>
+{{-- Disetujui Oleh --}}
+<div class="modal fade" id="approved" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+        <div class="modal-header" style="background-color: #0074F1; color: white;">
+          <h5 class="modal-title font-weight-bold" id="modalAddLabel">Tambah Daftar Penyetuju Naskah</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
+              <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{{ route('dropdown.store') }}" method="POST" enctype="multipart/form-data" id="modalForm6">
+          @csrf
+          <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
+            <input type="hidden" class="form-control" name="category" value="Disetujui Oleh" required>
+            <input type="hidden" class="form-control" name="code_format" value="DO" required>
+
+            <div class="form-group">
+              <label class="text-danger">Disetujui Oleh *</label>
+              <input type="text" class="form-control" id="" name="name_value" placeholder="Masukkan Penyetuju.." required>
+            </div>
+            <div class="form-group">
+                <label>Keterangan</label>
+                <textarea class="form-control" id="" rows="3" name="information" placeholder="Masukkan Keterangan..(Opsional)"></textarea>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            <button type="submit" class="btn btn-primary" id="sbForm6">Simpan</button>
+          </div>
+        </form>
+        <script>
+            document.getElementById('modalForm6').addEventListener('submit', function(event) {
+                if (!this.checkValidity()) {
+                    event.preventDefault();
+                    return false;
+                }
+                var submitButton = this.querySelector('button[id="sbForm6"]');
+                submitButton.disabled = true;
+                submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
+                return true;
+            });
+        </script>
+    </div>
+  </div>
+</div>
+{{-- Jenis Surat --}}
+<div class="modal fade" id="mailType" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+        <div class="modal-header" style="background-color: #0074F1; color: white;">
+          <h5 class="modal-title font-weight-bold" id="modalAddLabel">Tambah Daftar Jenis Surat</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
+              <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{{ route('dropdown.store') }}" method="POST" enctype="multipart/form-data" id="modalForm7">
+          @csrf
+          <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
+            <input type="hidden" class="form-control" name="category" value="Jenis Surat" required>
+            <input type="hidden" class="form-control" name="code_format" value="JS" required>
+
+            <div class="form-group">
+              <label class="text-danger">Jenis Surat *</label>
+              <input type="text" class="form-control" id="" name="name_value" placeholder="Masukkan Jenis Surat.." required>
+            </div>
+            <div class="form-group">
+                <label>Keterangan</label>
+                <textarea class="form-control" id="" rows="3" name="information" placeholder="Masukkan Keterangan..(Opsional)"></textarea>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            <button type="submit" class="btn btn-primary" id="sbForm7">Simpan</button>
+          </div>
+        </form>
+        <script>
+            document.getElementById('modalForm7').addEventListener('submit', function(event) {
+                if (!this.checkValidity()) {
+                    event.preventDefault();
+                    return false;
+                }
+                var submitButton = this.querySelector('button[id="sbForm7"]');
+                submitButton.disabled = true;
+                submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
+                return true;
+            });
+        </script>
+    </div>
+  </div>
+</div>

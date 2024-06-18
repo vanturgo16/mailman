@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Classification;
+use App\Models\Complain;
 use App\Models\Dropdown;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,32 +26,46 @@ class IncommingMailController extends Controller
     
     public function index(Request $request)
     {
-        // $datas = IncommingMail::orderBy('created_at', 'desc')->get();
+        $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'incomming_mails.created_at as created')
+            ->orderBy('created_at', 'desc');
 
-        // if ($request->ajax()) {
-        //     $data = DataTables::of($datas)
-        //     ->addColumn('action', function ($data) {
-        //         return view('mail.incomming.action', compact('data'));
-        //     })
-        //     ->toJson();
-        //     return $data;
-        // }
-        // return view('mail.incomming.index', compact('datas'));
+        // Get Query
+        $datas = $datas->get();
+        // dd($datas);
 
-        return view('mail.incomming.cs');
+        if ($request->ajax()) {
+            $data = DataTables::of($datas)
+            ->addColumn('action', function ($data) {
+                return view('mail.incomming.action', compact('data'));
+            })
+            ->toJson();
+            return $data;
+        }
+
+        return view('mail.incomming.index', compact('datas'));
     }
+
+    // public function index(Request $request)
+    // {
+    //     return view('mail.incomming.cs');
+    // }
 
     public function create(Request $request)
     {
+        $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
+        $complains = Complain::get();
         $letters = Letter::get();
         $workunits = WorkUnit::get();
         $unitletters = UnitLetter::get();
         $classifications = Classification::get();
+        $results = Dropdown::where('category', 'Hasil Penelitian')->get();
+        $approveds = Dropdown::where('category', 'Disetujui Oleh')->get();
+        $mailtypes = Dropdown::where('category', 'Jenis Surat')->get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
 
         $sators = Sator::orderBy('sator_name','asc')->get();
 
-        return view('mail.incomming.create', compact('letters', 'workunits', 'unitletters', 'classifications', 'receivedvias',
+        return view('mail.incomming.create', compact('placemans', 'complains', 'letters', 'workunits', 'unitletters', 'classifications', 'results', 'approveds', 'mailtypes', 'receivedvias',
             'sators'));
     }
 

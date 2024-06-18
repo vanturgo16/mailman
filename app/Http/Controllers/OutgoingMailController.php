@@ -100,28 +100,25 @@ class OutgoingMailController extends Controller
         return view('mail.outgoing.index', compact('letters', 'sators', 'archive_remains', 'datas', 'out_date', 'mail_date', 'mail_number', 'id_mst_letter', 'archive_remain'));
     }
 
-    public function checkChanges($timenow)
+    public function checkChanges()
     {
-        // $timenow = date('Y-m-d H:i:s', strtotime($timenow));
-
-        // $latestUpdate = DB::table('outgoing_mails')
-        //     ->orderBy('updated_at', 'desc')
-        //     ->value('updated_at');
-        // $latestUpdate = Carbon::parse($latestUpdate);
-        // $latestUpdate = $latestUpdate->addSeconds(10);
-        // $latestUpdate = date('Y-m-d H:i:s', strtotime($latestUpdate));
-
-        // $changes = $latestUpdate > $timenow;
-        
-        // return response()->json(['changes' => $changes, 'latestUpdate' => $latestUpdate, 'timeNow' => $timenow]);
-
         $firstque = QueNumbOutMail::count();
         sleep(3);
         $secondque = QueNumbOutMail::count();
         $changes = ($firstque != $secondque);
 
-        return response()->json(['changes' => $changes, 'firstque' => $firstque, 'secondque' => $secondque]);
+        return response()->json(['changes' => $changes]);
     }
+    public function checkChangeUpdate()
+    {
+        $firstTimestamp = OutgoingMail::max('updated_at');
+        sleep(3);
+        $secondTimestamp = OutgoingMail::max('updated_at');
+        $changes = ($firstTimestamp != $secondTimestamp);
+
+        return response()->json(['changes' => $changes]);
+    }
+
 
     public function rekapitulasi(Request $request)
     {

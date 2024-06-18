@@ -383,7 +383,6 @@
                             html = '<span class="badge bg-secondary">Null</span>';
                         } else {
                             html = row.drafter_name;
-                            // html = '<span class="text-bold">'+row.drafter_name+'</span>';
                         }
                         return html;
                     },
@@ -401,7 +400,6 @@
                         } else {
                             const formattedDate = formatDateToDMY(row.mail_date);
                             html = formattedDate;
-                            // html = row.mail_date;
                         }
                         return html;
                     },
@@ -416,7 +414,6 @@
                         if (row.mail_regarding == null) {
                             html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
                         } else {
-                            // html = row.mail_regarding_filtered;
                             var truncatedData = row.mail_regarding_filtered.length > 150 ? row.mail_regarding_filtered.substr(0, 150) + '...' : row.mail_regarding_filtered;
                             html = truncatedData;
                         }
@@ -498,33 +495,41 @@
                     searchable: false,
                     className: 'text-center',
                 },
-                {
-                    data: 'id', // Ensure that 'id' is included in your data source
-                    visible: false, // Hide the 'id' column
-                },
             ],
         });
 
         setTimeout(checkForChanges, 10);
         setTimeout(checkForChanges, 20);
+
+        setTimeout(checkForChangeUpdate, 10);
+        setTimeout(checkForChangeUpdate, 20);
     });
 
     function checkForChanges() {
-        let lastChecked = new Date().toISOString();
-        var url = '{{ route("outgoingmail.checkChanges", ":id") }}';
-        url = url.replace(':id', lastChecked);
-        
         $.ajax({
-            url: url,
+            url: '{{ route("outgoingmail.checkChanges") }}',
             method: 'GET',
             success: function(response) {
-                console.log(response);
                 if (response.changes) {
                     $("#server-side-table").DataTable().ajax.reload();
                 }
             },
             complete: function() {
                 setTimeout(checkForChanges, 10);
+            }
+        });
+    }
+    function checkForChangeUpdate() {
+        $.ajax({
+            url: '{{ route("outgoingmail.checkChangeUpdate") }}',
+            method: 'GET',
+            success: function(response) {
+                if (response.changes) {
+                    $("#server-side-table").DataTable().ajax.reload();
+                }
+            },
+            complete: function() {
+                setTimeout(checkForChangeUpdate, 10);
             }
         });
     }
