@@ -26,16 +26,15 @@
                 <div class="d-flex justify-content-start align-items-center">
                     <a href="{{ route('incommingmail.create') }}" type="button" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tambah Baru</a>
                     <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#addBulk"><i class="mdi mdi-plus-box-multiple"></i> Tambah Baru (Bulk) </a>
-                    <a href="#" type="button" class="btn btn-sm btn-primary ml-1"><i class="mdi mdi-printer-search"></i> Rekapitulasi</a>
+                    <a href="{{ route('incommingmail.rekapitulasi') }}" type="button" class="btn btn-sm btn-primary ml-1"><i class="mdi mdi-printer-search"></i> Rekapitulasi</a>
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
                     <form action="{{ route('incommingmail.index') }}" method="POST" id="resetForm" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" name="out_date" value="">
+                        <input type="hidden" name="entry_date" value="">
                         <input type="hidden" name="mail_date" value="">
                         <input type="hidden" name="mail_number" value="">
-                        <input type="hidden" name="id_mst_letter" value="">
-                        <input type="hidden" name="archive_remain" value="">
+                        <input type="hidden" name="placeman" value="">
                         <button type="submit" class="btn btn-sm btn-secondary" id="resetbtn"><i class="mdi mdi-reload"></i> Reset Filter</button>
                     </form>
                     <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#search"><span class="mdi mdi-filter"></span> Filter & Cari </a>
@@ -91,6 +90,188 @@
     </div>
 </div>
 
+{{-- Add Bulk --}}
+<div class="modal fade" id="addBulk" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #0074F1; color: white;">
+                <h5 class="modal-title font-weight-bold" id="modalAddLabel">Tambah Surat Masuk Baru (Dalam Jumlah Besar)</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('incommingmail.storebulk') }}" method="POST" enctype="multipart/form-data" id="modalFormBulk">
+                @csrf
+                <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label  class="text-danger">Pejabat / Naskah *</label>
+                            <select class="form-control js-example-basic-single" id="placeman" name="placeman" style="width: 100%;" required>
+                                <option value="">- Pilih -</option>
+                                @foreach($placemans as $item)
+                                  <option value="{{ $item->name_value }}">{{ $item->name_value }}</option>
+                                @endforeach
+                            </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label  class="text-danger" id="labeljenisNaskah">Jenis Naskah *</label>
+                                <div id="jenisNaskah">
+                                    <select class="form-control js-example-basic-single" id="mst_letter" name="id_mst_letter" style="width: 100%;" required>
+                                        <option value="">- Pilih -</option>
+                                        @foreach($letters as $letter)
+                                        <option value="{{ $letter->id }}">{{ $letter->let_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+        
+                                <div id="jenisPengaduan" hidden>
+                                    <select class="form-control js-example-basic-single" id="mst_complain" name="id_mst_complain" style="width: 100%;" required>
+                                        <option value="">- Pilih -</option>
+                                        @foreach($complains as $item)
+                                        <option value="{{ $item->id }}">{{ $item->com_code }} - {{ $item->com_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="text-danger">Tanggal Surat *</label>
+                                <input type="datetime-local" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label  class="text-danger">Jumlah Naskah *</label>
+                            <input type="number" name="amount_letter" class="form-control" placeholder="Masukkan Jumlah Naskah Dalam Angka.." required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="submit" class="btn btn-primary" id="sbFormBulk">Tambah</button>
+                </div>
+            </form>
+            <script>
+                const labeljenisNaskah = document.getElementById('labeljenisNaskah');
+                const jenisNaskah = document.getElementById('jenisNaskah');
+                const jenisPengaduan = document.getElementById('jenisPengaduan');
+                const idLetter = document.getElementById('mst_letter');
+                const idComplain = document.getElementById('mst_complain');
+                
+                $('select[id="placeman"]').on('change', function() {
+                    const placeman = $(this).val();
+                    if (placeman == 'LITNADIN') {
+                        labeljenisNaskah.textContent = "Jenis Naskah *";
+                        jenisNaskah.hidden = false;
+                        jenisPengaduan.hidden = true;
+                        idLetter.required = true;
+                        idComplain.required = false;
+                    } 
+                    else if (placeman == 'PENGADUAN') 
+                    {
+                        labeljenisNaskah.textContent = "Jenis Pengaduan *";
+                        jenisNaskah.hidden = true;
+                        jenisPengaduan.hidden = false;
+                        idLetter.required = false;
+                        idComplain.required = true;
+                    } 
+                    else 
+                    {
+                        labeljenisNaskah.textContent = "Jenis Naskah *";
+                        jenisNaskah.hidden = false;
+                        jenisPengaduan.hidden = true;
+                        idLetter.required = true;
+                        idComplain.required = false;
+                    }
+                });
+            </script>
+            <script>
+                document.getElementById('modalFormBulk').addEventListener('submit', function(event) {
+                    if (!this.checkValidity()) {
+                        event.preventDefault();
+                        return false;
+                    }
+                    var submitButton = this.querySelector('button[id="sbFormBulk"]');
+                    submitButton.disabled = true;
+                    submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
+                    return true;
+                });
+            </script>
+        </div>
+    </div>
+</div>
+
+{{-- Filter & Search --}}
+<div class="modal fade" id="search" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #0074F1; color: white;">
+            <h5 class="modal-title font-weight-bold" id="modalAddLabel">Filter & Cari</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <form action="{{ route('incommingmail.index') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
+                @csrf
+                <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tanggal Masuk</label>
+                                <input type="date" name="entry_date" value="{{ $entry_date }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tanggal Surat</label>
+                                <input type="date" name="mail_date" value="{{ $mail_date }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label>Nomor Surat</label>
+                            <input type="text" name="mail_number" value="{{ $mail_number }}" class="form-control" placeholder="Masukkan Kata Kunci Nomor Surat..">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label>Pejabat / Naskah</label>
+                            <select class="form-control js-example-basic-single" name="placeman" style="width: 100%;">
+                                <option value="">- Pilih -</option>
+                                @foreach($placemans as $item)
+                                  <option value="{{ $item->name_value }}" @if($placeman == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
+                                @endforeach
+                            </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="submit" class="btn btn-primary" id="sbSearch">Cari</button>
+                </div>
+            </form>
+            <script>
+                document.getElementById('modalSearch').addEventListener('submit', function(event) {
+                    if (!this.checkValidity()) {
+                        event.preventDefault();
+                        return false;
+                    }
+                    var submitButton = this.querySelector('button[id="sbSearch"]');
+                    submitButton.disabled = true;
+                    submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
+                    return true;
+                });
+            </script>
+        </div>
+    </div>
+</div>
+
 <script>
     function formatDateToDMY(dateString) {
         const [datePart] = dateString.split(' ');
@@ -103,7 +284,14 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: '{!! route('incommingmail.index') !!}'
+                url: '{!! route('incommingmail.index') !!}',
+                type: 'GET',
+                data: {
+                    entry_date: '{{ $entry_date }}',
+                    mail_date: '{{ $mail_date }}',
+                    mail_number: '{{ $mail_number }}',
+                    placeman: '{{ $placeman }}'
+                }
             },
             columns: [{
                 data: null,
@@ -119,10 +307,11 @@
                     name: 'placeman',
                     orderable: true,
                     searchable: true,
+                    className: 'text-center',
                     render: function(data, type, row) {
                         var html
                         if(row.placeman == null){
-                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                            html = '<span class="badge bg-secondary">Null</span>';
                         } else {
                             html = '<span class="text-bold">'+row.placeman+'</span>';
                         }
@@ -154,7 +343,7 @@
                     render: function(data, type, row) {
                         var html
                         if(row.mail_number == null){
-                            html = '<span class="badge bg-warning"><i class="fas fa-spinner"></i> Menunggu..</span>';
+                            html = '<span class="badge bg-secondary">Null</span>';
                         } else {
                             html = '<span class="text-bold">'+row.mail_number+'</span>';
                         }
@@ -162,17 +351,17 @@
                     },
                 },
                 {
-                    data: 'mail_number',
-                    name: 'mail_number',
+                    data: 'agenda_number',
+                    name: 'agenda_number',
                     orderable: true,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
                         var html
-                        if(row.mail_number == null){
+                        if(row.agenda_number == null){
                             html = '<span class="badge bg-warning"><i class="fas fa-spinner"></i> Menunggu..</span>';
                         } else {
-                            html = '<span class="text-bold">'+row.mail_number+'</span>';
+                            html = '<span class="text-bold">'+row.agenda_number+'</span>';
                         }
                         return html;
                     },
@@ -211,17 +400,17 @@
                     },
                 },
                 {
-                    data: 'receiver',
-                    name: 'receiver',
+                    data: 'receiver_name',
+                    name: 'receiver_name',
                     orderable: true,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
                         var html
-                        if(row.receiver == null){
+                        if(row.receiver_name == null){
                             html = '<span class="badge bg-secondary">Null</span>';
                         } else {
-                            html = row.receiver;
+                            html = row.receiver_name;
                         }
                         return html;
                     },
@@ -267,7 +456,42 @@
                 },
             ],
         });
+
+        setTimeout(checkForChanges, 10);
+        setTimeout(checkForChanges, 20);
+
+        setTimeout(checkForChangeUpdate, 10);
+        setTimeout(checkForChangeUpdate, 20);
     });
+
+    function checkForChanges() {
+        $.ajax({
+            url: '{{ route("incommingmail.checkChanges") }}',
+            method: 'GET',
+            success: function(response) {
+                if (response.changes) {
+                    $("#server-side-table").DataTable().ajax.reload();
+                }
+            },
+            complete: function() {
+                setTimeout(checkForChanges, 10);
+            }
+        });
+    }
+    function checkForChangeUpdate() {
+        $.ajax({
+            url: '{{ route("incommingmail.checkChangeUpdate") }}',
+            method: 'GET',
+            success: function(response) {
+                if (response.changes) {
+                    $("#server-side-table").DataTable().ajax.reload();
+                }
+            },
+            complete: function() {
+                setTimeout(checkForChangeUpdate, 10);
+            }
+        });
+    }
 </script>
 
 <script>

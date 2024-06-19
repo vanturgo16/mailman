@@ -7,13 +7,13 @@
   <div class="container-fluid">
       <div class="row mb-2">
           <div class="col-sm-6">
-              <h1 class="m-0"><i class="fas fa-plus"></i> Tambah Surat Masuk</h1>
+              <h1 class="m-0"><i class="mdi mdi-file-edit"></i> Ubah Surat Masuk</h1>
           </div>
           <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Beranda</a></li>
                   <li class="breadcrumb-item"><a href="{{ route('incommingmail.index') }}"> Daftar Surat Masuk</a></li>
-                    <li class="breadcrumb-item active">Tambah</li>
+                    <li class="breadcrumb-item active">Ubah</li>
               </ol>
           </div>
       </div>
@@ -57,10 +57,10 @@
   <div class="card card-primary card-outline">
       <div class="card-header">
           <h3 class="card-title">
-              Formulir Tambah Surat Masuk
+              Formulir Ubah Surat Masuk
           </h3>
       </div>
-      <form action="{{ route('incommingmail.store') }}" method="POST" enctype="multipart/form-data" id="formIncommingMail">
+      <form action="{{ route('incommingmail.update', encrypt($data->id)) }}" method="POST" enctype="multipart/form-data" id="formIncommingMail">
         @csrf
         <div class="card-body" style="max-height: 65vh; overflow-y: auto;">
           <div class="row px-1">
@@ -71,12 +71,13 @@
                   <tr>
                     <td><label class="text-danger">Pejabat / Naskah *</label></td>
                     <td>
-                      <select class="form-control js-example-basic-single" id="placeman" name="placeman" style="width: 100%;" required>
+                      <input type="text" class="form-control" name="placeman" value="{{ $data->placeman }}" style="width: 100%;" readonly>
+                      {{-- <select class="form-control js-example-basic-single" id="placeman" name="placeman" style="width: 100%;" required>
                         <option value="">- Pilih -</option>
                         @foreach($placemans as $item)
-                          <option value="{{ $item->name_value }}">{{ $item->name_value }}</option>
+                          <option value="{{ $item->name_value }}" @if($data->placeman == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
                         @endforeach
-                      </select>
+                      </select> --}}
                     </td>
                   </tr>
                   {{-- Jenis Naskah --}}
@@ -84,21 +85,25 @@
                     <td><label class="text-danger" id="labeljenisNaskah">Jenis Naskah *</label></td>
                     <td>
                       <div id="jenisNaskah">
-                        <select class="form-control js-example-basic-single" id="mst_letter" name="id_mst_letter" style="width: 100%;" required>
+                        <input type="hidden" name="id_mst_letter" value="{{ $data->id_mst_letter }}">
+                        <input type="text" class="form-control" value="{{ $data->let_name }}" style="width: 100%;" readonly>
+                        {{-- <select class="form-control js-example-basic-single" id="mst_letter" name="id_mst_letter" style="width: 100%;" required>
                           <option value="">- Pilih -</option>
                           @foreach($letters as $letter)
-                            <option value="{{ $letter->id }}">{{ $letter->let_name }}</option>
+                            <option value="{{ $letter->id }}" @if($data->id_mst_letter == $letter->id) selected="selected" @endif>{{ $letter->let_name }}</option>
                           @endforeach
-                        </select>
+                        </select> --}}
                       </div>
 
                       <div id="jenisPengaduan" hidden>
-                        <select class="form-control js-example-basic-single" id="mst_complain" name="id_mst_complain" style="width: 100%;" required>
+                        <input type="hidden" name="id_mst_complain" value="{{ $data->id_mst_complain }}">
+                        <input type="text" class="form-control" value="{{ $data->com_name }}" style="width: 100%;" readonly>
+                        {{-- <select class="form-control js-example-basic-single" id="mst_complain" name="id_mst_complain" style="width: 100%;" required>
                           <option value="">- Pilih -</option>
                           @foreach($complains as $item)
-                            <option value="{{ $item->id }}">{{ $item->com_code }} - {{ $item->com_name }}</option>
+                            <option value="{{ $item->id }}" @if($data->id_mst_complain == $item->id) selected="selected" @endif>{{ $item->com_name }}</option>
                           @endforeach
-                        </select>
+                        </select> --}}
                       </div>
                     </td>
                   </tr>
@@ -106,14 +111,14 @@
                   <tr>
                     <td><label class="text-danger" id="labelpengirim">Pengirim *</label></td>
                     <td>
-                      <input type="text" name="senderInput" id="pengirim1" value="{{ old('sender') }}" class="form-control" placeholder="Masukkan Pengirim.." required>
+                      <input type="text" name="senderInput" id="pengirim1" value="{{ $data->sender }}" class="form-control" placeholder="Masukkan Pengirim.." required>
                       
                       <div class="row" id="pengirim2" hidden>
                         <div class="col-md-9">
                           <select class="form-control js-example-basic-single" id="pengirimselect" name="senderSelect" style="width: 100%;" required>
                             <option value="">- Pilih -</option>
                             @foreach($workunits as $workunit)
-                              <option value="{{ $workunit->work_name }}">{{ $workunit->work_name }}</option>
+                              <option value="{{ $workunit->work_name }}" @if($data->sender == $workunit->work_name) selected="selected" @endif>{{ $workunit->work_name }}</option>
                             @endforeach
                           </select>
                         </div>
@@ -128,14 +133,14 @@
                   <tr>
                     <td><label id="labelnoSurat">Nomor Surat</label></td>
                     <td>
-                      <input type="text" name="mail_number" value="{{ old('mail_number') }}" placeholder="Masukkan Nomor Surat.." class="form-control">
+                      <input type="text" name="mail_number" value="{{ $data->mail_number }}" placeholder="Masukkan Nomor Surat.." class="form-control">
                     </td>
                   </tr>
                   {{-- Perihal --}}
                   <tr>
                     <td><label class="text-danger">Perihal / Tentang *</label></td>
                     <td>
-                      <textarea class="form-control editor" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat.." value="" required></textarea>
+                      <textarea class="form-control editor" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat.." value="" required>{{ $data->mail_regarding }}</textarea>
                     </td>
                   </tr>
                   {{-- Tanggal --}}
@@ -145,11 +150,11 @@
                       <div class="row">
                         <div class="col-6">
                           <label  class="text-danger">Tanggal Masuk *</label>
-                          <input type="date" name="entry_date" value="{{ old('entry_date') }}" class="form-control" required>
+                          <input type="date" name="entry_date" value="{{ \Carbon\Carbon::parse($data->entry_date)->format('Y-m-d') }}" class="form-control" required>
                         </div>
                         <div class="col-6">
                           <label  class="text-danger">Tanggal Surat *</label>
-                          <input type="datetime-local" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
+                          <input type="datetime-local" name="mail_date" value="{{ $data->mail_date }}" class="form-control" required>
                         </div>
                       </div>
                     </td>
@@ -163,7 +168,7 @@
                           <select class="form-control js-example-basic-single" name="receiver" style="width: 100%;" required>
                             <option value="">- Pilih -</option>
                             @foreach($workunits as $workunit)
-                              <option value="{{ $workunit->id }}">{{ $workunit->work_name }}</option>
+                              <option value="{{ $workunit->id }}" @if($data->receiver == $workunit->id) selected="selected" @endif>{{ $workunit->work_name }}</option>
                             @endforeach
                           </select>
                         </div>
@@ -181,7 +186,7 @@
                         <div class="col-md-5">
                           <div class="form-group">
                             <label  class="text-danger">Jumlah *</label>
-                            <input type="number" name="mail_quantity" value="{{ old('mail_quantity') }}" class="form-control" placeholder="Masukkan Jumlah.." required>
+                            <input type="number" name="mail_quantity" value="{{ $data->mail_quantity }}" class="form-control" placeholder="Masukkan Jumlah.." required>
                           </div>
                         </div>
                         {{-- Satuan --}}
@@ -191,7 +196,7 @@
                             <select class="form-control js-example-basic-single" name="mail_unit" style="width: 100%;" required>
                               <option value="">- Pilih -</option>
                               @foreach($unitletters as $unitletter)
-                                <option value="{{ $unitletter->id }}">{{ $unitletter->unit_name }}</option>
+                                <option value="{{ $unitletter->id }}" @if($data->mail_unit == $unitletter->id) selected="selected" @endif>{{ $unitletter->unit_name }}</option>
                               @endforeach
                             </select>
                           </div>
@@ -215,7 +220,7 @@
                             <select class="form-control js-example-basic-single" name="archive_classification" style="width: 100%;">
                               <option value="">- Pilih -</option>
                               @foreach($classifications as $classification)
-                                <option value="{{ $classification->id }}">{{ $classification->classification_name }}</option>
+                                <option value="{{ $classification->id }}" @if($data->archive_classification == $classification->id) selected="selected" @endif>{{ $classification->classification_name }}</option>
                               @endforeach
                             </select>
                           </div>
@@ -233,11 +238,11 @@
                       <div class="row">
                         <div class="col-6">
                           <label>Dari</label>
-                          <input type="date" name="mail_retention_from" value="{{ old('mail_retention_from') }}" class="form-control">
+                          <input type="date" name="mail_retention_from" value="{{ \Carbon\Carbon::parse($data->mail_retention_from)->format('Y-m-d') }}" class="form-control">
                         </div>
                         <div class="col-6">
                           <label>Hingga</label>
-                          <input type="date" name="mail_retention_to" value="{{ old('mail_retention_to') }}" class="form-control">
+                          <input type="date" name="mail_retention_to" value="{{ \Carbon\Carbon::parse($data->mail_retention_to)->format('Y-m-d') }}" class="form-control">
                         </div>
                       </div>
                     </td>
@@ -252,7 +257,7 @@
                             <select class="form-control js-example-basic-single" id="jenisSuratselect" name="mail_type" style="width: 100%;">
                               <option value="">- Pilih -</option>
                               @foreach($mailtypes as $item)
-                                <option value="{{ $item->name_value }}">{{ $item->name_value }}</option>
+                                <option value="{{ $item->name_value }}" @if($data->mail_type == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
                               @endforeach
                             </select>
                           </div>
@@ -270,7 +275,7 @@
                       <select class="form-control js-example-basic-single" id="resultSelect" name="result" style="width: 100%;">
                         <option value="">- Pilih -</option>
                         @foreach($results as $item)
-                          <option value="{{ $item->name_value }}">{{ $item->name_value }}</option>
+                          <option value="{{ $item->name_value }}" @if($data->result == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
                         @endforeach
                       </select>
                     </td>
@@ -285,7 +290,7 @@
                             <select class="form-control js-example-basic-single" id="approvedSelect" name="approved_by" style="width: 100%;">
                               <option value="">- Pilih -</option>
                               @foreach($approveds as $item)
-                                <option value="{{ $item->name_value }}">{{ $item->name_value }}</option>
+                                <option value="{{ $item->name_value }}" @if($data->approved_by == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
                               @endforeach
                             </select>
                           </div>
@@ -304,25 +309,25 @@
                         <select class="form-control js-example-basic-single" name="received_viaSelect" style="width: 100%;">
                           <option value="">- Pilih -</option>
                           @foreach($receivedvias as $receivedvia)
-                            <option value="{{ $receivedvia->name_value }}">{{ $receivedvia->name_value }}</option>
+                            <option value="{{ $receivedvia->name_value }}" @if($data->received_via == $receivedvia->name_value) selected="selected" @endif>{{ $receivedvia->name_value }}</option>
                           @endforeach
                         </select>
                       </div>
-                      <textarea id="inputDiterimaVia" class="form-control" rows="2" type="text" name="received_viaInput" placeholder="Diterima Via.." value="{{ old('received_via') }}" hidden></textarea>
+                      <textarea id="inputDiterimaVia" class="form-control" rows="2" type="text" name="received_viaInput" placeholder="Diterima Via.." hidden>{{ $data->received_via }}</textarea>
                     </td>
                   </tr>
                   {{-- Lampiran --}}
                   <tr>
                     <td><label>Lampiran</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." value="{{ old('attachment_text') }}"></textarea>
+                      <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran..">{{ $data->attachment_text }}</textarea>
                     </td>
                   </tr>
                   {{-- Keterangan --}}
                   <tr>
                     <td><label>Keterangan</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}"></textarea>
+                      <textarea class="form-control" rows="3" type="text" name="information" placeholder="Masukkan Keterangan..">{{ $data->information }}</textarea>
                     </td>
                   </tr>
                 </tbody>
@@ -330,12 +335,11 @@
             </div>
           </div>
         </div>
-
         <div class="card-footer">
           <div class="row">
             <div class="col-12" style="text-align: right">
               <a href="{{ route('incommingmail.index') }}" type="button" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Kembali</a>
-              <button type="submit" class="btn btn-primary" id="sbFormIncommingMail"><i class="fa fa-paper-plane"></i> Kirim Data</button>
+              <button type="submit" class="btn btn-primary" id="sbformIncommingMail"><i class="mdi mdi-update"></i> Ubah Data</button>
             </div>
           </div>
         </div>
@@ -346,7 +350,7 @@
                   event.preventDefault();
                   return false;
               }
-              var submitButton = this.querySelector('button[id="sbFormIncommingMail"]');
+              var submitButton = this.querySelector('button[id="sbformIncommingMail"]');
               submitButton.disabled = true;
               submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
               return true;
@@ -357,6 +361,9 @@
 
 {{-- MODAL ADD --}}
 @include('mail.modal')
+
+{{-- CKEDITOR --}}
+<script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 
 <script>
   $(".js-example-basic-single").select2().on("select2:open", function () {
@@ -372,8 +379,8 @@
   const labeljenisNaskah = document.getElementById('labeljenisNaskah');
   const jenisNaskah = document.getElementById('jenisNaskah');
   const jenisPengaduan = document.getElementById('jenisPengaduan');
-  const idLetter = document.getElementById('mst_letter');
-  const idComplain = document.getElementById('mst_complain');
+  // const idLetter = document.getElementById('mst_letter');
+  // const idComplain = document.getElementById('mst_complain');
   const labelnoSurat = document.getElementById('labelnoSurat');
   const labelPenerima = document.getElementById('labelPenerima');
   const jenisSurat = document.getElementById('jenisSurat');
@@ -386,6 +393,76 @@
   const resultSelect = document.getElementById('resultSelect');
   const approvedSelect = document.getElementById('approvedSelect');
 
+  var placemanBefore = "{{ $data->placeman }}";
+  if (placemanBefore == 'LITNADIN') {
+    labelpengirim.textContent = "Pengirim / Konseptor *";
+    pengirim1.hidden = true;
+    pengirim2.hidden = false;
+    pengirim1.required = false;
+    pengirimselect.required = true;
+    labeljenisNaskah.textContent = "Jenis Naskah *";
+    jenisNaskah.hidden = false;
+    jenisPengaduan.hidden = true;
+    // idLetter.required = true;
+    // idComplain.required = false;
+    labelnoSurat.textContent = "Nomor Surat Pengantar";
+    labelPenerima.textContent = "Penandatanganan *";
+    jenisSurat.hidden = true;
+    hasilPenelitian.hidden = false;
+    disetujuiOleh.hidden = false;
+    selectDiterimaVia.hidden = true;
+    inputDiterimaVia.hidden = false;
+    jenisSuratselect.required = false;
+    resultSelect.required = true;
+    approvedSelect.required = true;
+  } 
+  else if (placemanBefore == 'PENGADUAN') 
+  {
+    labelpengirim.textContent = "Pengirim *";
+    pengirim1.hidden = false;
+    pengirim2.hidden = true;
+    pengirim1.required = true;
+    pengirimselect.required = false;
+    labeljenisNaskah.textContent = "Jenis Pengaduan *";
+    jenisNaskah.hidden = true;
+    jenisPengaduan.hidden = false;
+    // idLetter.required = false;
+    // idComplain.required = true;
+    labelnoSurat.textContent = "Nomor Surat";
+    labelPenerima.textContent = "Penerima *";
+    jenisSurat.hidden = false;
+    hasilPenelitian.hidden = true;
+    disetujuiOleh.hidden = true;
+    selectDiterimaVia.hidden = false;
+    inputDiterimaVia.hidden = true;
+    jenisSuratselect.required = true;
+    resultSelect.required = false;
+    approvedSelect.required = false;
+  } 
+  else 
+  {
+    labelpengirim.textContent = "Pengirim *";
+    pengirim1.hidden = false;
+    pengirim2.hidden = true;
+    pengirim1.required = true;
+    pengirimselect.required = false;
+    labeljenisNaskah.textContent = "Jenis Naskah *";
+    jenisNaskah.hidden = false;
+    jenisPengaduan.hidden = true;
+    // idLetter.required = true;
+    // idComplain.required = false;
+    labelnoSurat.textContent = "Nomor Surat";
+    labelPenerima.textContent = "Penerima *";
+    jenisSurat.hidden = false;
+    hasilPenelitian.hidden = true;
+    disetujuiOleh.hidden = true;
+    selectDiterimaVia.hidden = false;
+    inputDiterimaVia.hidden = true;
+    jenisSuratselect.required = true;
+    resultSelect.required = false;
+    approvedSelect.required = false;
+  }
+
   $('select[id="placeman"]').on('change', function() {
       const placeman = $(this).val();
       if (placeman == 'LITNADIN') {
@@ -397,8 +474,8 @@
         labeljenisNaskah.textContent = "Jenis Naskah *";
         jenisNaskah.hidden = false;
         jenisPengaduan.hidden = true;
-        idLetter.required = true;
-        idComplain.required = false;
+        // idLetter.required = true;
+        // idComplain.required = false;
         labelnoSurat.textContent = "Nomor Surat Pengantar";
         labelPenerima.textContent = "Penandatanganan *";
         jenisSurat.hidden = true;
@@ -420,8 +497,8 @@
         labeljenisNaskah.textContent = "Jenis Pengaduan *";
         jenisNaskah.hidden = true;
         jenisPengaduan.hidden = false;
-        idLetter.required = false;
-        idComplain.required = true;
+        // idLetter.required = false;
+        // idComplain.required = true;
         labelnoSurat.textContent = "Nomor Surat";
         labelPenerima.textContent = "Penerima *";
         jenisSurat.hidden = false;
@@ -443,8 +520,8 @@
         labeljenisNaskah.textContent = "Jenis Naskah *";
         jenisNaskah.hidden = false;
         jenisPengaduan.hidden = true;
-        idLetter.required = true;
-        idComplain.required = false;
+        // idLetter.required = true;
+        // idComplain.required = false;
         labelnoSurat.textContent = "Nomor Surat";
         labelPenerima.textContent = "Penerima *";
         jenisSurat.hidden = false;
