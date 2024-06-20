@@ -168,10 +168,10 @@
                 <td class="align-top text-left px-1">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
                 <td class="align-top text-left px-1"><b>{{ $item->mail_number }}</b></td>
                 <td class="align-top text-left px-1">{{ $item->receiver }}</td>
-                <td class="align-top text-left px-1">{{ $item->mail_regarding_filtered }}</td>
-                <td class="align-top text-left px-1">{{ $item->attachment_text_filtered }}</td>
+                <td class="align-top text-left px-1">{{ $item->mail_regarding }}</td>
+                <td class="align-top text-left px-1">{{ $item->attachment_text }}</td>
                 <td class="align-top text-left px-1">{{ $item->drafter_name }}</td>
-                <td class="align-top text-left px-1">{{ $item->information_filtered }}</td>
+                <td class="align-top text-left px-1">{{ $item->information }}</td>
               </tr>
             @endforeach
           @endif

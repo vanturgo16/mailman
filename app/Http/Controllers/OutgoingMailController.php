@@ -83,10 +83,10 @@ class OutgoingMailController extends Controller
         // Get Query
         $datas = $datas->get();
 
-        $datas = $datas->map(function($item) {
-            $item->mail_regarding_filtered = $this->cleanText($item->mail_regarding);
-            return $item;
-        });
+        // $datas = $datas->map(function($item) {
+        //     $item->mail_regarding_filtered = $this->cleanText($item->mail_regarding);
+        //     return $item;
+        // });
 
         if ($request->ajax()) {
             $data = DataTables::of($datas)
@@ -164,20 +164,20 @@ class OutgoingMailController extends Controller
             // Get Query
             $datas = $datas->get();
 
-            $datas = $datas->map(function($item) {
-                $item->mail_regarding_filtered = $this->cleanText($item->mail_regarding);
-                return $item;
-            });
+            // $datas = $datas->map(function($item) {
+            //     $item->mail_regarding_filtered = $this->cleanText($item->mail_regarding);
+            //     return $item;
+            // });
 
-            $datas = $datas->map(function($item) {
-                $item->attachment_text_filtered = $this->cleanText($item->attachment_text);
-                return $item;
-            });
+            // $datas = $datas->map(function($item) {
+            //     $item->attachment_text_filtered = $this->cleanText($item->attachment_text);
+            //     return $item;
+            // });
 
-            $datas = $datas->map(function($item) {
-                $item->information_filtered = $this->cleanText($item->information);
-                return $item;
-            });
+            // $datas = $datas->map(function($item) {
+            //     $item->information_filtered = $this->cleanText($item->information);
+            //     return $item;
+            // });
         } else {
             $datas = [];
         }
@@ -230,20 +230,20 @@ class OutgoingMailController extends Controller
             // Get Query
             $datas = $datas->get();
 
-            $datas = $datas->map(function($item) {
-                $item->mail_regarding_filtered = $this->cleanText($item->mail_regarding);
-                return $item;
-            });
+            // $datas = $datas->map(function($item) {
+            //     $item->mail_regarding_filtered = $this->cleanText($item->mail_regarding);
+            //     return $item;
+            // });
 
-            $datas = $datas->map(function($item) {
-                $item->attachment_text_filtered = $this->cleanText($item->attachment_text);
-                return $item;
-            });
+            // $datas = $datas->map(function($item) {
+            //     $item->attachment_text_filtered = $this->cleanText($item->attachment_text);
+            //     return $item;
+            // });
 
-            $datas = $datas->map(function($item) {
-                $item->information_filtered = $this->cleanText($item->information);
-                return $item;
-            });
+            // $datas = $datas->map(function($item) {
+            //     $item->information_filtered = $this->cleanText($item->information);
+            //     return $item;
+            // });
         } else {
             $datas = [];
         }

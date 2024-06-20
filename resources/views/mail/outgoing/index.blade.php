@@ -408,7 +408,7 @@
                         if (row.mail_regarding == null) {
                             html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
                         } else {
-                            var truncatedData = row.mail_regarding_filtered.length > 150 ? row.mail_regarding_filtered.substr(0, 150) + '...' : row.mail_regarding_filtered;
+                            var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
                             html = truncatedData;
                         }
                         return html;

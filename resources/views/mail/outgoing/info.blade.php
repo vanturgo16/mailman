@@ -98,7 +98,7 @@
                         @if($data->mail_regarding == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
-                            {!! $data->mail_regarding !!}
+                            {{ $data->mail_regarding }}
                         @endif
                     </div>
                 </div>
@@ -290,7 +290,7 @@
                         @if($data->attachment_text == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
-                            {!! $data->attachment_text !!}
+                            {{ $data->attachment_text }}
                         @endif
                     </div>
                 </div>
@@ -302,7 +302,7 @@
                         @if($data->information == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
-                            {!! $data->information !!}
+                            {{ $data->information }}
                         @endif
                     </div>
                 </div>

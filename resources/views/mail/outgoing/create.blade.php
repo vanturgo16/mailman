@@ -126,7 +126,7 @@
                   <tr>
                     <td><label class="text-danger">Perihal / Tentang *</label></td>
                     <td>
-                      <textarea class="form-control editor" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat.." value=""></textarea>
+                      <textarea class="form-control" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat.." value=""></textarea>
                     </td>
                   </tr>
                   {{-- Tanggal --}}
@@ -312,14 +312,14 @@
                   <tr>
                     <td><label>Lampiran</label></td>
                     <td>
-                      <textarea class="form-control editor" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." value="{{ old('attachment_text') }}"></textarea>
+                      <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." value="{{ old('attachment_text') }}"></textarea>
                     </td>
                   </tr>
                   {{-- Keterangan --}}
                   <tr>
                     <td><label>Keterangan</label></td>
                     <td>
-                      <textarea class="form-control editor" rows="3" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}"></textarea>
+                      <textarea class="form-control" rows="3" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}"></textarea>
                     </td>
                   </tr>
                 </tbody>
@@ -612,19 +612,6 @@
 
 {{-- MODAL ADD --}}
 @include('mail.modal')
-
-{{-- CKEDITOR --}}
-<script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
-<script>
-  // Get all textareas with the class 'editor' and initialize CKEditor for each
-  document.querySelectorAll('.editor').forEach(textarea => {
-      ClassicEditor
-          .create(textarea)
-          .catch(error => {
-              console.error(error);
-          });
-  });
-</script>
 
 <script>
   $(".js-example-basic-single").select2().on("select2:open", function () {
