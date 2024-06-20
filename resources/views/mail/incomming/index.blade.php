@@ -139,12 +139,6 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="text-danger">Tanggal Surat *</label>
-                                <input type="datetime-local" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
                             <label  class="text-danger">Jumlah Naskah *</label>
                             <input type="number" name="amount_letter" class="form-control" placeholder="Masukkan Jumlah Naskah Dalam Angka.." required>
                             </div>

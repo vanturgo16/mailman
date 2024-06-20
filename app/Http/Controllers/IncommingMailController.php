@@ -308,17 +308,15 @@ class IncommingMailController extends Controller
         // dd($request->all());
         $request->validate([
             "placeman" => "required",
-            "mail_date" => "required",
             "amount_letter" => "required",
         ], [
             'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
-            'mail_date.required' => 'Tanggal Surat Wajib Untuk Diisi.',
             'amount_letter.required' => 'Jumlah Naskah Wajib Untuk Diisi.',
         ]);
 
         $placeman = $request->placeman;
-        $mail_date = $request->mail_date;
         $amountLetter = $request->amount_letter;
+
         if($placeman == 'PENGADUAN'){
             $id_mst_letter = null;
             $id_mst_complain = $request->id_mst_complain;
@@ -337,7 +335,6 @@ class IncommingMailController extends Controller
                     'placeman' => $placeman,
                     'id_mst_letter' => $id_mst_letter,
                     'id_mst_complain' => $id_mst_complain,
-                    'mail_date' => $mail_date,
                     'status' => null,
                     'created_by' => auth()->user()->name,
                 ]);

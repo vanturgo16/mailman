@@ -26,7 +26,7 @@ use App\Models\DaftarKolom;
 use App\Models\DaftarLantai;
 use App\Models\DaftarRak;
 use App\Models\DaftarRuang;
-use App\Models\LastNumbering;
+use App\Models\LastNumberingOutgoing;
 use App\Models\Pattern;
 use Hamcrest\Arrays\IsArray;
 
@@ -392,16 +392,13 @@ class OutgoingMailController extends Controller
         // dd($request->all());
         $request->validate([
             "id_mst_letter" => "required",
-            "mail_date" => "required",
             "amount_letter" => "required",
         ], [
             'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
-            'mail_date.required' => 'Tanggal Surat Wajib Untuk Diisi.',
             'amount_letter.required' => 'Jumlah Naskah Wajib Untuk Diisi.',
         ]);
 
         $idMstLetter = $request->id_mst_letter;
-        $mail_date = $request->mail_date;
         $org_unit = $request->org_unit;
         $amountLetter = $request->amount_letter;
         
@@ -422,7 +419,6 @@ class OutgoingMailController extends Controller
                 // Store Outgoing Mail
                 $store = OutgoingMail::create([
                     'id_mst_letter' => $idMstLetter,
-                    'mail_date' => $mail_date,
                     'org_unit' => $org_unit,
                     'location_save_route' => $location_save_route,
                     'status' => null,
@@ -764,7 +760,7 @@ class OutgoingMailController extends Controller
             foreach($que as $q){
                 if($q->pat_type == "Sederhana")
                 {
-                    $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
+                    $lastnumber = LastNumberingOutgoing::where('id_mst_letter', $q->id_mst_letter)->first();
                     $number = $lastnumber ? $lastnumber->last_number : 0;
                     $pattern = $q->pat_simple;
                     $number++;
@@ -774,11 +770,11 @@ class OutgoingMailController extends Controller
                     //Update Mail Number
                     OutgoingMail::where('id', $q->id_mail)->update(["mail_number" => $mail_number, "mail_number_with" => $mail_number_with]);
                     //Update Last Number
-                    $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
+                    $lastnumber = LastNumberingOutgoing::where('id_mst_letter', $q->id_mst_letter)->first();
                     if($lastnumber){
-                        LastNumbering::where('id_mst_letter', $q->id_mst_letter)->update(["last_number" => $number]);
+                        LastNumberingOutgoing::where('id_mst_letter', $q->id_mst_letter)->update(["last_number" => $number]);
                     } else {
-                        LastNumbering::create([
+                        LastNumberingOutgoing::create([
                             'id_mst_letter' => $q->id_mst_letter,
                             'last_number' => $number,
                         ]);
@@ -788,7 +784,7 @@ class OutgoingMailController extends Controller
                 } 
                 elseif ($q->pat_type == "Perpaduan")
                 {
-                    $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
+                    $lastnumber = LastNumberingOutgoing::where('id_mst_letter', $q->id_mst_letter)->first();
                     $number = $lastnumber ? $lastnumber->last_number : 0;
                     $number++;
     
@@ -811,11 +807,11 @@ class OutgoingMailController extends Controller
                             $value = $number;
                             $mail_number[] = $value;
                             // Update Last Number
-                            $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
+                            $lastnumber = LastNumberingOutgoing::where('id_mst_letter', $q->id_mst_letter)->first();
                             if($lastnumber){
-                                LastNumbering::where('id_mst_letter', $q->id_mst_letter)->update(["last_number" => $number]);
+                                LastNumberingOutgoing::where('id_mst_letter', $q->id_mst_letter)->update(["last_number" => $number]);
                             } else {
-                                LastNumbering::create([
+                                LastNumberingOutgoing::create([
                                     'id_mst_letter' => $q->id_mst_letter,
                                     'last_number' => $number,
                                 ]);

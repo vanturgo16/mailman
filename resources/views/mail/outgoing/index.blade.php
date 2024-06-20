@@ -118,12 +118,6 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="text-danger">Tanggal Surat *</label>
-                                <input type="date" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
                                 <label id="labelkso">Kode Satuan Organisasi</label>
                                 <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
                                     <option value="">- Pilih -</option>
