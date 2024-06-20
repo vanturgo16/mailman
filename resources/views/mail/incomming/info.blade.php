@@ -7,9 +7,9 @@
   <div class="container-fluid">
       <div class="row mb-2">
           <div class="col-sm-6">
-              <h1 class="m-0"><span class="mdi mdi-information"></span> Informasi Surat Keluar | 
+              <h1 class="m-0"><span class="mdi mdi-information"></span> Informasi Surat Masuk | 
                 @if($data->mail_number == null)
-                  <span class="badge bg-warning"><i class="fas fa-spinner"></i> Menunggu..</span>
+                  <span class="badge bg-secondary">Null</span>
                 @else
                   <b>({{ $data->mail_number }})</b>
                 @endif
@@ -18,7 +18,7 @@
           <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Beranda</a></li>
-                  <li class="breadcrumb-item"><a href="{{ route('outgoingmail.index') }}"> Daftar Surat Keluar</a></li>
+                  <li class="breadcrumb-item"><a href="{{ route('incommingmail.index') }}"> Daftar Surat Masuk</a></li>
                     <li class="breadcrumb-item active">Detail</li>
               </ol>
           </div>
@@ -34,24 +34,31 @@
           </h3>
       </div>
       <div class="card-body" style="max-height: 65vh; overflow-y: auto;">
-        <div class="card p-3" style="background-color:rgb(240, 240, 240);">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="form-group">
-                        <div><span class="text-bold">Nomor Naskah :</span></div>
-                        <span>
-                            @if($data->mail_number == null)
-                              <span class="badge bg-warning"><i class="fas fa-spinner"></i> Menunggu..</span>
-                            @else
-                              {{ $data->mail_number }}
-                            @endif
-                        </span>
-                    </div>
+        <div class="row px-2">
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <div><span class="text-bold">Pejabat / Naskah :</span></div>
+                    <span>
+                        @if($data->placeman == null)
+                            <span class="badge bg-secondary">Tidak Diisi..</span>
+                        @else
+                            {{ $data->placeman }}
+                        @endif
+                    </span>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="form-group">
+            <div class="col-lg-4">
+                <div class="form-group">
+                    @if($data->placeman == "PENGADUAN")
+                        <div><span class="text-bold">Jenis Pengaduan :</span></div>
+                        <span>
+                            @if($data->com_name == null)
+                                <span class="badge bg-secondary">Tidak Diisi..</span>
+                            @else
+                                {{ $data->com_name }}
+                            @endif
+                        </span>
+                    @else
                         <div><span class="text-bold">Jenis Naskah :</span></div>
                         <span>
                             @if($data->let_name == null)
@@ -60,37 +67,37 @@
                                 {{ $data->let_name }}
                             @endif
                         </span>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="form-group">
-                        <div><span class="text-bold">Konseptor :</span></div>
-                        <span>
-                            @if($data->drafter_name == null)
-                                <span class="badge bg-secondary">Tidak Diisi..</span>
-                            @else
-                                {{ $data->drafter_name }}
-                            @endif
-                        </span>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="form-group">
-                        <div><span class="text-bold">Kode Satuan Organisasi :</span></div>
-                        <span>
-                            @if($data->sator_name == null)
-                                <span class="badge bg-secondary">Tidak Diisi..</span>
-                            @else
-                                {{ $data->sator_name }}
-                            @endif
-                        </span>
-                    </div>
+                    @endif
                 </div>
             </div>
-        </div>
-    
-        <hr>
-        <div class="row px-2">
+            <div class="col-lg-4">
+                <div class="form-group">
+                    <div><span class="text-bold">Pengirim :</span></div>
+                    <span>
+                        @if($data->sender == null)
+                            <span class="badge bg-secondary">Tidak Diisi..</span>
+                        @else
+                            {{ $data->sender }}
+                        @endif
+                    </span>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group">
+                    @if($data->placeman == "PENGADUAN")
+                        <div><span class="text-bold">Nomor Surat Pengaduan :</span></div>
+                    @else
+                        <div><span class="text-bold">Nomor Surat :</span></div>
+                    @endif
+                    <span>
+                        @if($data->mail_number == null)
+                            <span class="badge bg-secondary">Tidak Diisi..</span>
+                        @else
+                            {{ $data->mail_number }}
+                        @endif
+                    </span>
+                </div>
+            </div>
             <div class="col-lg-12">
                 <div class="form-group">
                     <div><span class="text-bold">Perihal / Tentang :</span></div>
@@ -98,19 +105,19 @@
                         @if($data->mail_regarding == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
-                            {{ $data->mail_regarding }}
+                            {!! $data->mail_regarding !!}
                         @endif
                     </div>
                 </div>
             </div>
             <div class="col-lg-4">
                 <div class="form-group">
-                    <div><span class="text-bold">Tanggal Keluar :</span></div>
+                    <div><span class="text-bold">Tanggal Masuk :</span></div>
                     <span>
-                        @if($data->out_date == null)
+                        @if($data->entry_date == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
-                            {{ $data->out_date }}
+                            {{ $data->entry_date }}
                         @endif
                     </span>
                 </div>
@@ -129,38 +136,18 @@
             </div>
             <div class="col-lg-4">
                 <div class="form-group">
-                    <div><span class="text-bold">Penandatanganan :</span></div>
+                    @if($data->placeman == "PENGADUAN")
+                        <div><span class="text-bold">Penandatanganan :</span></div>
+                    @else
+                        <div><span class="text-bold">Penerima :</span></div>
+                    @endif
                     <span>
-                        @if($data->sign_name == null)
+                        @if($data->receiver_name == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
-                            {{ $data->sign_name }}
+                            {{ $data->receiver_name }}
                         @endif
                     </span>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <div><span class="text-bold">Penandatanganan Pihak Instansi Lain :</span></div>
-                    <div class="card p-2 mt-1" style="background-color:rgb(253, 253, 253);">
-                        @if($data->signing_other == null)
-                            <span class="badge bg-secondary">Tidak Diisi..</span>
-                        @else
-                            {{ $data->signing_other }}
-                        @endif
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <div><span class="text-bold">Penerima :</span></div>
-                    <div class="card p-2 mt-1" style="background-color:rgb(253, 253, 253);">
-                        @if($data->receiver == null)
-                            <span class="badge bg-secondary">Tidak Diisi..</span>
-                        @else
-                            {{ $data->receiver }}
-                        @endif
-                    </div>
                 </div>
             </div>
             <div class="col-lg-4">
@@ -183,18 +170,6 @@
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
                             {{ $data->unit_name }}
-                        @endif
-                    </span>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <div><span class="text-bold">Arsip Pertinggal :</span></div>
-                    <span>
-                        @if($data->archive_remains == null)
-                            <span class="badge bg-secondary">Tidak Diisi..</span>
-                        @else
-                            {{ $data->archive_remains }}
                         @endif
                     </span>
                 </div>
@@ -235,21 +210,48 @@
                     </span>
                 </div>
             </div>
-            <div class="col-lg-12">
-                <div class="form-group">
-                    <div><span class="text-bold">Lokasi Simpan :</span></div>
-                    <span>
-                        @if($data->location_save == null)
-                            <span class="badge bg-secondary">Tidak Diisi..</span>
-                        @else
-                            {{ $data->location_save }}
-                        @endif
-                    </span>
+            @if($data->placeman == "LITNADIN")
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <div><span class="text-bold">Hasil Penelitian :</span></div>
+                        <span>
+                            @if($data->result == null)
+                                <span class="badge bg-secondary">Tidak Diisi..</span>
+                            @else
+                                {{ $data->result }}
+                            @endif
+                        </span>
+                    </div>
                 </div>
-            </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <div><span class="text-bold">Disetujui Oleh :</span></div>
+                        <span>
+                            @if($data->approved_by == null)
+                                <span class="badge bg-secondary">Tidak Diisi..</span>
+                            @else
+                                {{ $data->approved_by }}
+                            @endif
+                        </span>
+                    </div>
+                </div>
+            @else
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <div><span class="text-bold">Jenis Surat :</span></div>
+                        <span>
+                            @if($data->mail_type == null)
+                                <span class="badge bg-secondary">Tidak Diisi..</span>
+                            @else
+                                {{ $data->mail_type }}
+                            @endif
+                        </span>
+                    </div>
+                </div>
+            @endif
             <div class="col-lg-4">
                 <div class="form-group">
-                    <div><span class="text-bold">Dikirim Via :</span></div>
+                    <div><span class="text-bold">Diterima Via :</span></div>
                     <span>
                         @if($data->received_via == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
@@ -259,30 +261,8 @@
                     </span>
                 </div>
             </div>
-            <div class="col-lg-4">
-                <div class="form-group">
-                    <div><span class="text-bold">Nomor Referensi :</span></div>
-                    <span>
-                        @if($data->ref_number == null)
-                            <span class="badge bg-secondary">Tidak Diisi..</span>
-                        @else
-                            {{ $data->ref_number }}
-                        @endif
-                    </span>
-                </div>
-            </div>
-            {{-- <div class="col-lg-4">
-                <div class="form-group">
-                    <div><span class="text-bold">Referensi Surat :</span></div>
-                    <span>
-                        @if($data->ref_mail == null)
-                            <span class="badge bg-secondary">Tidak Diisi..</span>
-                        @else
-                            {{ $data->ref_mail }}
-                        @endif
-                    </span>
-                </div>
-            </div> --}}
+        </div>
+        <div class="row px-2">
             <div class="col-lg-6">
                 <div class="form-group">
                     <div><span class="text-bold">Lampiran :</span></div>
@@ -290,7 +270,7 @@
                         @if($data->attachment_text == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
-                            {{ $data->attachment_text }}
+                            {!! $data->attachment_text !!}
                         @endif
                     </div>
                 </div>
@@ -302,7 +282,7 @@
                         @if($data->information == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
-                            {{ $data->information }}
+                            {!! $data->information !!}
                         @endif
                     </div>
                 </div>
@@ -336,7 +316,7 @@
       <div class="card-footer">
         <div class="row">
           <div class="col-12" style="text-align: right">
-            <a href="{{ route('outgoingmail.index') }}" type="button" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Kembali</a>
+            <a href="{{ route('incommingmail.index') }}" type="button" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Kembali</a>
           </div>
         </div>
       </div>

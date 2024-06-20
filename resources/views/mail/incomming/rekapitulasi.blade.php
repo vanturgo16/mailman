@@ -7,12 +7,12 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0"><i class="fas fa-envelope"></i> Rekapitulasi Surat Keluar</h1>
+                <h1 class="m-0"><i class="fas fa-envelope"></i> Rekapitulasi Surat Masuk</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Beranda</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('outgoingmail.index') }}"> Daftar Surat Keluar</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('incommingmail.index') }}"> Daftar Surat Masuk</a></li>
                     <li class="breadcrumb-item active">Rekapitulasi</li>
                 </ol>
             </div>
@@ -25,26 +25,26 @@
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-start align-items-center">
-                    <form action="{{ route('outgoingmail.rekapitulasiPrint') }}" method="POST" target="_blank" enctype="multipart/form-data">
+                    <form action="{{ route('incommingmail.rekapitulasiPrint') }}" method="POST" target="_blank" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="startdate" value="{{ $startdate }}">
                         <input type="hidden" name="enddate" value="{{ $enddate }}">
                         <input type="hidden" name="mail_number" value="{{ $mail_number }}">
-                        <input type="hidden" name="id_mst_letter" value="{{ $id_mst_letter }}">
-                        <input type="hidden" name="workunit" value="{{ $workunit }}">
-                        <input type="hidden" name="archive_remain" value="{{ $archive_remain }}">
+                        <input type="hidden" name="placeman" value="{{ $placeman }}">
+                        <input type="hidden" name="complain" value="{{ $complain }}">
+                        <input type="hidden" name="letter" value="{{ $letter }}">
                         <button type="submit" class="btn btn-sm btn-danger"><i class="mdi mdi-file-pdf-box"></i> Cetak Ke PDF</button>
                     </form>
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
-                    <form action="{{ route('outgoingmail.rekapitulasi') }}" method="POST" id="resetForm" enctype="multipart/form-data">
+                    <form action="{{ route('incommingmail.rekapitulasi') }}" method="POST" id="resetForm" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="startdate" value="">
                         <input type="hidden" name="enddate" value="">
                         <input type="hidden" name="mail_number" value="">
-                        <input type="hidden" name="id_mst_letter" value="">
-                        <input type="hidden" name="workunit" value="">
-                        <input type="hidden" name="archive_remain" value="">
+                        <input type="hidden" name="placeman" value="">
+                        <input type="hidden" name="complain" value="">
+                        <input type="hidden" name="letter" value="">
                         <button type="submit" class="btn btn-sm btn-secondary" id="resetbtn"><i class="mdi mdi-reload"></i> Reset Filter</button>
                     </form>
                     <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#search"><span class="mdi mdi-filter"></span> Filter & Cari </a>
@@ -81,14 +81,18 @@
             <table id="server-side-table" class="table table-bordered" style="font-size: small">
                 <thead>
                     <tr>
-                        <th class="align-middle text-center">No.</th>
-                        <th class="align-middle text-center">Tgl. Surat</th>
+                        <th rowspan="2" class="align-middle text-center">No.</th>
+                        <th rowspan="2" class="align-middle text-center">Tgl. Agenda</th>
+                        <th rowspan="2" class="align-middle text-center">No. Agenda</th>
+                        <th colspan="3" class="align-middle text-center">Naskah / Surat</th>
+                        <th rowspan="2" class="align-middle text-center">Lampiran</th>
+                        <th rowspan="2" class="align-middle text-center">Kepada</th>
+                        <th rowspan="2" class="align-middle text-center">Keterangan</th>
+                    </tr>
+                    <tr>
                         <th class="align-middle text-center">No. Surat</th>
-                        <th class="align-middle text-center">Penerima</th>
-                        <th class="align-middle text-center">Perihal / Tentang</th>
-                        <th class="align-middle text-center">Lampiran</th>
-                        <th class="align-middle text-center">Dari / Konseptor</th>
-                        <th class="align-middle text-center">Keterangan</th>
+                        <th class="align-middle text-center">Terima Dari</th>
+                        <th class="align-middle text-center">Isi / Perihal</th>
                     </tr>
                 </thead>
             </table>
@@ -107,7 +111,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
-            <form action="{{ route('outgoingmail.rekapitulasi') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
+            <form action="{{ route('incommingmail.rekapitulasi') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
                 @csrf
                 <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
                     <div class="row">
@@ -134,35 +138,35 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                            <label>Jenis Naskah</label>
-                            <select class="form-control js-example-basic-single" name="id_mst_letter" style="width: 100%;">
+                            <label>Pejabat / Naskah</label>
+                            <select class="form-control js-example-basic-single" id="placeman" name="placeman" style="width: 100%;">
                                 <option value="">- Pilih -</option>
-                                @foreach($letters as $letter)
-                                <option value="{{ $letter->id }}" @if($id_mst_letter == $letter->id) selected="selected" @endif>{{ $letter->let_name }}</option>
+                                @foreach($placemans as $item)
+                                  <option value="{{ $item->name_value }}" @if($placeman == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
                                 @endforeach
                             </select>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                            <label>Penandatanganan</label>
-                            <select class="form-control js-example-basic-single" name="workunit" style="width: 100%;">
-                                <option value="">- Pilih -</option>
-                                @foreach($workunits as $item)
-                                    <option value="{{ $item->id }}" @if($workunit == $item->id) selected="selected" @endif>{{ $item->work_name }}</option>
-                                @endforeach
-                            </select>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                            <label>Arsip Pertinggal</label>
-                            <select class="form-control js-example-basic-single" name="archive_remain" style="width: 100%;">
-                                <option value="">- Pilih -</option>
-                                @foreach($archive_remains as $item)
-                                    <option value="{{ $item->name_value }}" @if($archive_remain == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
-                                @endforeach
-                            </select>
+                                <label id="labeljenisNaskah">Jenis Naskah</label>
+                                <div id="jenisNaskah">
+                                    <select class="form-control js-example-basic-single" id="mst_letter" name="id_mst_letter" style="width: 100%;">
+                                        <option value="">- Pilih -</option>
+                                        @foreach($letters as $item)
+                                        <option value="{{ $item->id }}" @if($letter == $item->id) selected="selected" @endif>{{ $item->let_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+        
+                                <div id="jenisPengaduan" hidden>
+                                    <select class="form-control js-example-basic-single" id="mst_complain" name="id_mst_complain" style="width: 100%;">
+                                        <option value="">- Pilih -</option>
+                                        @foreach($complains as $item)
+                                        <option value="{{ $item->id }}" @if($complain == $item->id) selected="selected" @endif>{{ $item->com_code }} - {{ $item->com_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -184,6 +188,53 @@
                     return true;
                 });
             </script>
+            <script>
+                const labeljenisNaskah = document.getElementById('labeljenisNaskah');
+                const jenisNaskah = document.getElementById('jenisNaskah');
+                const jenisPengaduan = document.getElementById('jenisPengaduan');
+                const idLetter = document.getElementById('mst_letter');
+                const idComplain = document.getElementById('mst_complain');
+
+                var placemanBefore = "{{ $placeman }}";
+                if (placemanBefore == 'LITNADIN') {
+                    labeljenisNaskah.textContent = "Jenis Naskah *";
+                    jenisNaskah.hidden = false;
+                    jenisPengaduan.hidden = true;
+                } 
+                else if (placemanBefore == 'PENGADUAN') 
+                {
+                    labeljenisNaskah.textContent = "Jenis Pengaduan *";
+                    jenisNaskah.hidden = true;
+                    jenisPengaduan.hidden = false;
+                } 
+                else 
+                {
+                    labeljenisNaskah.textContent = "Jenis Naskah *";
+                    jenisNaskah.hidden = false;
+                    jenisPengaduan.hidden = true;
+                }
+
+                $('select[id="placeman"]').on('change', function() {
+                    const placeman = $(this).val();
+                    if (placeman == 'LITNADIN') {
+                        labeljenisNaskah.textContent = "Jenis Naskah *";
+                        jenisNaskah.hidden = false;
+                        jenisPengaduan.hidden = true;
+                    } 
+                    else if (placeman == 'PENGADUAN') 
+                    {
+                        labeljenisNaskah.textContent = "Jenis Pengaduan *";
+                        jenisNaskah.hidden = true;
+                        jenisPengaduan.hidden = false;
+                    } 
+                    else 
+                    {
+                        labeljenisNaskah.textContent = "Jenis Naskah *";
+                        jenisNaskah.hidden = false;
+                        jenisPengaduan.hidden = true;
+                    }
+                });
+            </script>
         </div>
     </div>
 </div>
@@ -199,15 +250,15 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: '{!! route('outgoingmail.rekapitulasi') !!}',
+                url: '{!! route('incommingmail.rekapitulasi') !!}',
                 type: 'GET',
                 data: {
                     startdate: '{{ $startdate }}',
                     enddate: '{{ $enddate }}',
                     mail_number: '{{ $mail_number }}',
-                    id_mst_letter: '{{ $id_mst_letter }}',
-                    workunit: '{{ $workunit }}',
-                    archive_remain: '{{ $archive_remain }}'
+                    placeman: '{{ $placeman }}',
+                    complain: '{{ $complain }}',
+                    letter: '{{ $letter }}',
                 }
             },
             columns: [{
@@ -232,7 +283,22 @@
                         } else {
                             const formattedDate = formatDateToDMY(row.mail_date);
                             html = formattedDate;
-                            // html = row.mail_date;
+                        }
+                        return html;
+                    },
+                },
+                {
+                    data: 'agenda_number',
+                    name: 'agenda_number',
+                    orderable: true,
+                    searchable: true,
+                    className: 'text-center',
+                    render: function(data, type, row) {
+                        var html
+                        if(row.agenda_number == null){
+                            html = '<span class="badge bg-warning"><i class="fas fa-spinner"></i> Menunggu..</span>';
+                        } else {
+                            html = '<span class="text-bold">'+row.agenda_number+'</span>';
                         }
                         return html;
                     },
@@ -246,7 +312,7 @@
                     render: function(data, type, row) {
                         var html
                         if(row.mail_number == null){
-                            html = '<span class="badge bg-warning"><i class="fas fa-spinner"></i> Menunggu..</span>';
+                            html = '<span class="badge bg-secondary">Null</span>';
                         } else {
                             html = '<span class="text-bold">'+row.mail_number+'</span>';
                         }
@@ -254,17 +320,17 @@
                     },
                 },
                 {
-                    data: 'receiver',
-                    name: 'receiver',
+                    data: 'sender',
+                    name: 'sender',
                     orderable: true,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
                         var html
-                        if(row.receiver == null){
+                        if(row.sender == null){
                             html = '<span class="badge bg-secondary">Null</span>';
                         } else {
-                            html = row.receiver;
+                            html = row.sender;
                         }
                         return html;
                     },
@@ -302,17 +368,17 @@
                     },
                 },
                 {
-                    data: 'drafter_name',
-                    name: 'drafter_name',
+                    data: 'receiver_name',
+                    name: 'receiver_name',
                     orderable: true,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
                         var html
-                        if(row.drafter_name == null){
+                        if(row.receiver_name == null){
                             html = '<span class="badge bg-secondary">Null</span>';
                         } else {
-                            html = row.drafter_name;
+                            html = row.receiver_name;
                         }
                         return html;
                     },

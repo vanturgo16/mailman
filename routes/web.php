@@ -172,7 +172,18 @@ Route::group(['middleware' => 'cekadmin'], function () {
     Route::controller(IncommingMailController::class)->group(function () {
         Route::prefix('surat-masuk')->group(function () {
             Route::get('/', 'index')->name('incommingmail.index');
+            Route::post('/', 'index')->name('incommingmail.index');
+            Route::get('/check-table-changes', 'checkChanges')->name('incommingmail.checkChanges');
+            Route::get('/check-table-changes-update', 'checkChangeUpdate')->name('incommingmail.checkChangeUpdate');
             Route::get('/tambah', 'create')->name('incommingmail.create');
+            Route::post('/store', 'store')->name('incommingmail.store');
+            Route::post('/store/bulk', 'storebulk')->name('incommingmail.storebulk');
+            Route::get('/detail/{id}', 'detail')->name('incommingmail.detail');
+            Route::get('/ubah/{id}', 'edit')->name('incommingmail.edit');
+            Route::post('/update/{id}', 'update')->name('incommingmail.update');
+            Route::get('/rekapitulasi', 'rekapitulasi')->name('incommingmail.rekapitulasi');
+            Route::post('/rekapitulasi', 'rekapitulasi')->name('incommingmail.rekapitulasi');
+            Route::post('/rekapitulasi/Cetak', 'rekapitulasiPrint')->name('incommingmail.rekapitulasiPrint');
         });
     });
     //SURAT KELUAR
@@ -180,7 +191,8 @@ Route::group(['middleware' => 'cekadmin'], function () {
         Route::prefix('surat-keluar')->group(function () {
             Route::get('/', 'index')->name('outgoingmail.index');
             Route::post('/', 'index')->name('outgoingmail.index');
-            Route::get('/check-table-changes/{lastcheck}', 'checkChanges')->name('outgoingmail.checkChanges');
+            Route::get('/check-table-changes', 'checkChanges')->name('outgoingmail.checkChanges');
+            Route::get('/check-table-changes-update', 'checkChangeUpdate')->name('outgoingmail.checkChangeUpdate');
             Route::get('/tambah', 'create')->name('outgoingmail.create');
             Route::post('/store', 'store')->name('outgoingmail.store');
             Route::post('/store/bulk', 'storebulk')->name('outgoingmail.storebulk');

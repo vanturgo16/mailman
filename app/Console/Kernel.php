@@ -23,7 +23,14 @@ class Kernel extends ConsoleKernel
             ->everyMinute();
             // ->everyFiveMinutes();
             // ->dailyAt('08:00');
-            // ->sendOutputTo("storage/logs/LogAlertExpired_".$now.".txt");
+            // ->sendOutputTo("storage/logs/LogGenMailNumber_".$now.".txt");
+
+        $schedule->command('GenerateAgendaNumber')
+            ->timezone('Asia/Jakarta')
+            ->everyMinute();
+            // ->everyFiveMinutes();
+            // ->dailyAt('08:00');
+            // ->sendOutputTo("storage/logs/LogGenAgendaNumber_".$now.".txt");
     }
 
     /**

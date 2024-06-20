@@ -2,16 +2,19 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Complain;
+use App\Models\IncommingMail;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use DateTime;
 
 // Model
 use App\Models\Letter;
 use App\Models\OutgoingMail;
 use App\Models\QueNumbOutMail;
 use App\Models\Sator;
-use App\Models\LastNumbering;
-
+use App\Models\LastNumberingOutgoing;
+use App\Models\QueNumbIncMail;
 use App\Traits\GenerateNumber;
 
 use Illuminate\Console\Command;
@@ -26,7 +29,7 @@ class GenerateMailNumber extends Command
     {
         $today = Carbon::today();
 
-        $que = QueNumbOutMail::select('que_numb_outgoing_mail.*', 'outgoing_mails.org_unit', 'outgoing_mails.mail_date', 'master_pattern.pat_simple', 'master_pattern.pat_mix', 'master_pattern.pat_type')
+        $que = QueNumbOutMail::select('que_numb_outgoing_mail.*', 'outgoing_mails.org_unit', 'outgoing_mails.created_at as created_mail', 'master_pattern.pat_simple', 'master_pattern.pat_mix', 'master_pattern.pat_type')
             ->leftjoin('outgoing_mails', 'que_numb_outgoing_mail.id_mail', 'outgoing_mails.id')
             ->leftjoin('master_pattern', 'que_numb_outgoing_mail.id_mst_letter', 'master_pattern.let_id')
             ->get();
@@ -37,7 +40,7 @@ class GenerateMailNumber extends Command
             foreach($que as $q){
                 if($q->pat_type == "Sederhana")
                 {
-                    $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
+                    $lastnumber = LastNumberingOutgoing::where('id_mst_letter', $q->id_mst_letter)->first();
                     $number = $lastnumber ? $lastnumber->last_number : 0;
                     $pattern = $q->pat_simple;
                     $number++;
@@ -47,11 +50,11 @@ class GenerateMailNumber extends Command
                     //Update Mail Number
                     OutgoingMail::where('id', $q->id_mail)->update(["mail_number" => $mail_number, "mail_number_with" => $mail_number_with]);
                     //Update Last Number
-                    $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
+                    $lastnumber = LastNumberingOutgoing::where('id_mst_letter', $q->id_mst_letter)->first();
                     if($lastnumber){
-                        LastNumbering::where('id_mst_letter', $q->id_mst_letter)->update(["last_number" => $number]);
+                        LastNumberingOutgoing::where('id_mst_letter', $q->id_mst_letter)->update(["last_number" => $number]);
                     } else {
-                        LastNumbering::create([
+                        LastNumberingOutgoing::create([
                             'id_mst_letter' => $q->id_mst_letter,
                             'last_number' => $number,
                         ]);
@@ -61,7 +64,7 @@ class GenerateMailNumber extends Command
                 } 
                 elseif ($q->pat_type == "Perpaduan")
                 {
-                    $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
+                    $lastnumber = LastNumberingOutgoing::where('id_mst_letter', $q->id_mst_letter)->first();
                     $number = $lastnumber ? $lastnumber->last_number : 0;
                     $number++;
     
@@ -84,21 +87,21 @@ class GenerateMailNumber extends Command
                             $value = $number;
                             $mail_number[] = $value;
                             // Update Last Number
-                            $lastnumber = LastNumbering::where('id_mst_letter', $q->id_mst_letter)->first();
+                            $lastnumber = LastNumberingOutgoing::where('id_mst_letter', $q->id_mst_letter)->first();
                             if($lastnumber){
-                                LastNumbering::where('id_mst_letter', $q->id_mst_letter)->update(["last_number" => $number]);
+                                LastNumberingOutgoing::where('id_mst_letter', $q->id_mst_letter)->update(["last_number" => $number]);
                             } else {
-                                LastNumbering::create([
+                                LastNumberingOutgoing::create([
                                     'id_mst_letter' => $q->id_mst_letter,
                                     'last_number' => $number,
                                 ]);
                             }
                         } elseif($pat == "Bulan Terbit") {
-                            $timestamp = strtotime($q->mail_date);
+                            $timestamp = strtotime($q->created_mail);
                             $value = date('m', $timestamp);
                             $mail_number[] = $value;
                         } elseif($pat == "Tahun Terbit") {
-                            $timestamp = strtotime($q->mail_date);
+                            $timestamp = strtotime($q->created_mail);
                             $value = date('Y', $timestamp);
                             $mail_number[] = $value;
                         } else {

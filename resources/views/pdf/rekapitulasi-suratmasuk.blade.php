@@ -56,7 +56,7 @@
     <table cellspacing="0" cellpadding="0" width="100%">
       <tr>
         <td align="center">
-          <h4>Verbal</h4>
+          <h4>AGENDA</h4>
         </td>
       </tr>
     </table>
@@ -116,25 +116,6 @@
           <td>
           </td>
         </tr>
-        <tr>
-          <td>
-            <span><b>Jenis Naskah</b> </span>
-          </td>
-          <td>
-            <span> &nbsp; : &nbsp; </span>
-          </td>
-          <td>
-            <span>
-              @if($letter != null)
-                {{ $letter }}
-              @else
-                -
-              @endif
-            </span>
-          </td>
-          <td>
-          </td>
-        </tr>
       </table>
     </span>
 
@@ -143,15 +124,20 @@
     <span>
       <table class="styled-table-service">
         <thead>
+          
           <tr>
-            <th class="align-middle text-center px-1" style="font-weight: normal; width:5%;"><b>No.</b></th>
-            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Tgl. Surat</b></th>
-            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>No. Verbal</b></th>
-            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Penerima</b></th>
-            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Perihal / Tentang</b></th>
-            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Lampiran</b></th>
-            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Dari / Konseptor</b></th>
-            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Keterangan</b></th>
+              <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal; width:5%;">No.</th>
+              <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Tgl. Agenda</th>
+              <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">No. Agenda</th>
+              <th colspan="3" class="align-middle text-center px-1" style="font-weight: normal;">Naskah / Surat</th>
+              <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Lampiran</th>
+              <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Kepada</th>
+              <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Keterangan</th>
+          </tr>
+          <tr>
+              <th class="align-middle text-center px-1" style="font-weight: normal;">No. Surat</th>
+              <th class="align-middle text-center px-1" style="font-weight: normal;">Terima Dari</th>
+              <th class="align-middle text-center px-1" style="font-weight: normal;">Isi / Perihal</th>
           </tr>
         </thead>
         <tbody>
@@ -165,13 +151,56 @@
               <?php $no++; ?>
               <tr>
                 <td class="align-middle text-center">{{ $no }}</td>
-                <td class="align-top text-left px-1">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
-                <td class="align-top text-left px-1"><b>{{ $item->mail_number }}</b></td>
-                <td class="align-top text-left px-1">{{ $item->receiver }}</td>
-                <td class="align-top text-left px-1">{{ $item->mail_regarding }}</td>
-                <td class="align-top text-left px-1">{{ $item->attachment_text }}</td>
-                <td class="align-top text-left px-1">{{ $item->drafter_name }}</td>
-                <td class="align-top text-left px-1">{{ $item->information }}</td>
+                <td class="align-middle text-center text-left px-1">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
+                <td class="align-middle text-center text-left px-1">
+                  @if($item->agenda_number == null)
+                    -
+                  @else
+                    <b>{{ $item->agenda_number }}</b>
+                  @endif
+                </td>
+                <td class="align-middle text-center text-left px-1">
+                  @if($item->mail_number == null)
+                    -
+                  @else
+                    {{ $item->mail_number }}
+                  @endif
+                </td>
+                <td class="align-top text-left px-1">
+                  @if($item->sender == null)
+                    -
+                  @else
+                    {{ $item->sender }}
+                  @endif
+                </td>
+                <td class="align-top text-left px-1">
+                  @if($item->mail_regarding == null)
+                    -
+                  @else
+                    {{ $item->mail_regarding }}
+                  @endif
+                </td>
+                <td class="align-top text-left px-1">
+                  @if($item->attachment_text == null)
+                    -
+                  @else
+                    {{ $item->attachment_text }}
+                  @endif
+                </td>
+                <td class="align-top text-left px-1">
+                  @if($item->receiver_name == null)
+                    -
+                  @else
+                    {{ $item->receiver_name }}
+                  @endif
+                </td>
+                <td class="align-top text-left px-1">
+                  @if($item->information == null)
+                    -
+                  @else
+                    {{ $item->information }}
+                  @endif
+                </td>
               </tr>
             @endforeach
           @endif
