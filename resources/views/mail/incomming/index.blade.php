@@ -277,6 +277,7 @@
         $('#server-side-table').DataTable({
             processing: true,
             serverSide: true,
+            scrollX: true,
             ajax: {
                 url: '{!! route('incommingmail.index') !!}',
                 type: 'GET',

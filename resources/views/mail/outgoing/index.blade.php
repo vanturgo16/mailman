@@ -314,6 +314,7 @@
         $('#server-side-table').DataTable({
             processing: true,
             serverSide: true,
+            scrollX: true,
             ajax: {
                 url: '{!! route('outgoingmail.index') !!}',
                 type: 'GET',
