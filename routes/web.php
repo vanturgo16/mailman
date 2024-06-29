@@ -1,6 +1,17 @@
 <?php
 
 namespace App\Http\Controllers\admin;
+
+use App\Http\Controllers\ClassificationController;
+use App\Http\Controllers\ComplainController;
+use App\Http\Controllers\DaftarBarisController;
+use App\Http\Controllers\DaftarBoxController;
+use App\Http\Controllers\DaftarGedungController;
+use App\Http\Controllers\DaftarKolomController;
+use App\Http\Controllers\DaftarLantaiController;
+use App\Http\Controllers\DaftarRakController;
+use App\Http\Controllers\DaftarRuangController;
+use App\Http\Controllers\DropdownController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,8 +28,22 @@ use App\Http\Controllers\opd\AjuanAgenda;
 
 
 use App\Http\Controllers\front\SliderController;
+use App\Http\Controllers\IncommingMailController;
+use App\Http\Controllers\InstansiController;
+use App\Http\Controllers\LetterController;
+use App\Http\Controllers\OutgoingMailController;
+use App\Http\Controllers\MappingLokasiSimpanController;
+use App\Http\Controllers\PatternController;
+use App\Http\Controllers\SatorController;
+use App\Http\Controllers\SaveLocationMapController;
+use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\UnitLetterController;
+use App\Http\Controllers\WorkUnitController;
+use App\Models\Dropdown;
 use Carbon\Carbon;
 use App\Models\User;
+use PgSql\Lob;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,39 +54,11 @@ use App\Models\User;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-// Route::get('/', function () {
-//     if (request()->start_date || request()->end_date) {
-//         $start_date = Carbon::parse(request()->start_date)->toDateTimeString();
-//         $end_date = Carbon::parse(request()->end_date)->toDateTimeString();
-//         $data = User::whereBetween('created_at',[$start_date,$end_date])->get();
-
-//     } else {
-//         $data = User::latest()->get();
-//     }
-    
-
-//     return view('cari', compact('data'));
-// });
-
-    Route::controller(FrondandController::class)->group(function () {
-        Route::get('/', 'login')->name('login');
-        // Route::get('/', 'index')->name('welcome');
-        // Route::get('/berita-desa', 'berita');
-        // Route::get('/berita', 'berita');
-        // Route::get('/berita/{id}/{slug}', 'berita_show');
-        // Route::get('/berita-desa/{id}/show', 'berita_show');
-        // Route::get('/galeri', 'gallery');
-        // Route::get('/galeriVideo', 'galleryVideo');
-        // Route::get('/juknis', 'juknis');
-        // Route::get('/kontak', 'kontak');
-        // Route::get('/profile', 'profile');
-        // Route::get('/agenda', 'agenda');
-        // Route::post('/kontak-desa', 'store_kontak');
-    });
+Route::controller(FrondandController::class)->group(function () {
+    Route::get('/', 'login')->name('login');
+});
 
 Route::group(['middleware' => 'cekadmin'], function () {
-
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
         Route::get('/pesan/{id}/show', 'show_pesan');
@@ -70,36 +67,6 @@ Route::group(['middleware' => 'cekadmin'], function () {
         Route::delete('/data-pesan/{id}/destroy', 'pesan_destroy');
         Route::post('/pesan-trash/{id}/restore', 'pesan_restore');
         Route::delete('/pesan-trash/{id}/delete-permanent', 'deletePermanent');
-    });
-
-    // juknis
-    Route::controller(JuknisController::class)->group(function () {
-        Route::get('/data-juknis', 'index');
-        Route::get('/data-juknis/create', 'create');
-        Route::post('/data-juknis', 'store');
-        Route::delete('/data-juknis/{id}/destroy', 'destroy');
-      });
-
-    //pejabat
-
-    Route::controller(PejabatController::class)->group(function () {
-        Route::get('/pejabat', 'index');
-        Route::get('/create-pejabat', 'create');
-        Route::post('/pejabat', 'store');
-        Route::get('/pejabat/edit/{id}', 'edit');
-        Route::patch('/pejabat/update/{pejabat_daerah}', 'update');
-        Route::delete('/pejabat/{id}/destroy', 'destroy');
-    
-    });
-
-    // jabatan
-    Route::controller(JabatanController::class)->group(function () {
-        Route::get('/jabatan', 'index');
-        Route::get('/create-jabatan', 'create');
-        Route::post('/jabatan', 'store');
-        Route::get('/jabatan/edit/{id}', 'edit');
-        Route::patch('/jabatan/update/{jabat}', 'update');
-   
     });
 
     //opd
@@ -111,40 +78,15 @@ Route::group(['middleware' => 'cekadmin'], function () {
         Route::patch('/opd/update/{opd}', 'update');
         Route::delete('/opd/{id}/destroy', 'destroy');   
     });
-    // agenda pejabat
-    Route::controller(AgendaPejabatController::class)->group(function () {
-        Route::get('/agenda-pejabat', 'index');
-        Route::post('/cari-agenda', 'cariagenda');
-        Route::get('/create-agenda-pejabat', 'create');
-        Route::post('/agenda-pejabat', 'store');
-        Route::get('/agenda-pejabat/edit/{id}', 'edit');
-        Route::get('/edit/file/{id}', 'edit_file');
-        Route::patch('/agenda-pejabat/update/{agendaPejabat}', 'update');
-
-        Route::patch('/update/surat/{agendaPejabat}', 'update_surat');
-        Route::patch('/update/acara/{agendaPejabat}', 'update_acara');
-        Route::patch('/update/sambutan/{agendaPejabat}', 'update_sambutan');
-
-        Route::delete('/agenda-pejabat/{id}/destroy', 'destroy');  
-        Route::post('/download-file-surat', 'download_surat');  
-        Route::post('/download-file-acara', 'download_acara');  
-        Route::post('/download-file-sambutan', 'download_sambutan');  
-
-    });
-    // arsip
-    Route::controller(ArsipController::class)->group(function () {
-        Route::get('/cari-arsip', 'index');
-        Route::get('/cari-arsip/cari','index_cari');
-    
-    });
-
+        
     // Permission
     Route::controller(PermissionController::class)->group(function () {
         Route::get('/permission', 'index');
         Route::get('/permission/create', 'create');
         Route::post('/permission', 'store');
-    
+
     });
+
     //user
     Route::controller(UserController::class)->group(function () {
         Route::get('/user', 'index');
@@ -153,8 +95,9 @@ Route::group(['middleware' => 'cekadmin'], function () {
         Route::get('/user/edit/{user}', 'edit');
         Route::patch('/user/update/{user}', 'update');
         Route::delete('/hapus-user/{user}', 'destroy');
-    
+
     });
+
     // role
     Route::controller(RoleController::class)->group(function () {
         Route::get('/role', 'index');
@@ -164,129 +107,127 @@ Route::group(['middleware' => 'cekadmin'], function () {
         Route::patch('/role/update/{role}', 'update');
     }); 
 
-    // frontmenu profil desa
-    Route::controller(ProfilController::class)->group(function () {
-        Route::get('/profil', 'index');
-        Route::patch('/profil/update', 'update');
-        Route::patch('/foto-profil/update', 'update_image');
+// master
+    Route::resource('gedung', DaftarGedungController::class);
+    Route::patch('/gedung/aktif/{id}', [DaftarGedungController::class, 'aktif']);
+        
+    Route::resource('lantai', DaftarLantaiController::class);
+        Route::patch('/lantai/aktif/{id}', [DaftarLantaiController::class, 'aktif']);
+
+    Route::resource('ruang', DaftarRuangController::class);
+    Route::patch('/ruang/aktif/{id}', [DaftarRuangController::class, 'aktif']);
+
+    Route::resource('rak', DaftarRakController::class);
+    Route::patch('/rak/aktif/{id}', [DaftarRakController::class, 'aktif']);
+
+    Route::resource('baris', DaftarBarisController::class);
+    Route::patch('/baris/aktif/{id}', [DaftarBarisController::class, 'aktif']);
+
+    Route::resource('kolom', DaftarKolomController::class);
+    Route::patch('/kolom/aktif/{id}', [DaftarKolomController::class, 'aktif']);
+
+    Route::resource('boks', DaftarBoxController::class);
+    Route::patch('/boks/aktif/{id}', [DaftarBoxController::class, 'aktif']);
+
+    //ajax lokasi simpan
+    Route::get('/mapping-lantai/{gedungId}', [MappingLokasiSimpanController::class, 'getLantai'])->name('mappingLantai');
+    Route::get('/mapping-ruang/{lantaiId}', [MappingLokasiSimpanController::class, 'getRuang'])->name('mappingRuang');
+    Route::get('/mapping-rak/{ruangId}', [MappingLokasiSimpanController::class, 'getRak'])->name('mappingRak');
+    Route::get('/mapping-baris/{rakId}', [MappingLokasiSimpanController::class, 'getBaris'])->name('mappingBaris');
+    Route::get('/mapping-kolom/{barisId}', [MappingLokasiSimpanController::class, 'getKolom'])->name('mappingKolom');
+
+    //Parameters
+    Route::resource('instansi', InstansiController::class);
+    Route::patch('/instansi/aktif/{id}', [InstansiController::class, 'aktif']);
+
+    Route::resource('sator', SatorController::class);
+    Route::patch('/sator/aktif/{id}', [SatorController::class, 'aktif']);
+
+    Route::resource('unitkerja', WorkUnitController::class);
+    Route::patch('/unitkerja/aktif/{id}', [WorkUnitController::class, 'aktif']);
+
+    Route::resource('klasifikasi', ClassificationController::class);
+    Route::patch('/klasifikasi/aktif/{id}', [ClassificationController::class, 'aktif']);
+
+    Route::resource('naskah', LetterController::class);
+    Route::patch('/naskah/aktif/{id}', [LetterController::class, 'aktif']);
+    Route::post('/pattern/store/{id}', [LetterController::class, 'storePattern']);
+    Route::get('/pattern/create/{id}', [LetterController::class, 'createPattern']);
+
+    Route::resource('pengaduan', ComplainController::class);
+    Route::patch('/pengaduan/aktif/{id}', [ComplainController::class, 'aktif']);
+
+    Route::resource('satnas', UnitLetterController::class);
+    Route::patch('/satnas/aktif/{id}', [UnitLetterController::class, 'aktif']);
+
+    Route::resource('template', TemplateController::class);
+    Route::patch('/template/aktif/{id}', [TemplateController::class, 'aktif']);
+    Route::get('/list-template-keluar', [TemplateController::class, 'listTemplateKeluar']);
+
+    Route::resource('dropdown', DropdownController::class);
+    Route::patch('/dropdown/aktif/{id}', [DropdownController::class, 'aktif']);
+
+    //SURAT
+    //SURAT MASUK
+    Route::controller(IncommingMailController::class)->group(function () {
+        Route::prefix('surat-masuk')->group(function () {
+            Route::get('/', 'index')->name('incommingmail.index');
+            Route::post('/', 'index')->name('incommingmail.index');
+            Route::get('/check-table-changes', 'checkChanges')->name('incommingmail.checkChanges');
+            Route::get('/check-table-changes-update', 'checkChangeUpdate')->name('incommingmail.checkChangeUpdate');
+            Route::get('/tambah', 'create')->name('incommingmail.create');
+            Route::post('/store', 'store')->name('incommingmail.store');
+            Route::post('/store/bulk', 'storebulk')->name('incommingmail.storebulk');
+            Route::get('/detail/{id}', 'detail')->name('incommingmail.detail');
+            Route::get('/ubah/{id}', 'edit')->name('incommingmail.edit');
+            Route::post('/update/{id}', 'update')->name('incommingmail.update');
+            Route::get('/rekapitulasi', 'rekapitulasi')->name('incommingmail.rekapitulasi');
+            Route::post('/rekapitulasi', 'rekapitulasi')->name('incommingmail.rekapitulasi');
+            Route::post('/rekapitulasi/Cetak', 'rekapitulasiPrint')->name('incommingmail.rekapitulasiPrint');
+        });
+    });
+    //SURAT KELUAR
+    Route::controller(OutgoingMailController::class)->group(function () {
+        Route::prefix('surat-keluar')->group(function () {
+            Route::get('/', 'index')->name('outgoingmail.index');
+            Route::post('/', 'index')->name('outgoingmail.index');
+            Route::get('/check-table-changes', 'checkChanges')->name('outgoingmail.checkChanges');
+            Route::get('/check-table-changes-update', 'checkChangeUpdate')->name('outgoingmail.checkChangeUpdate');
+            Route::get('/tambah', 'create')->name('outgoingmail.create');
+            Route::post('/store', 'store')->name('outgoingmail.store');
+            Route::post('/store/bulk', 'storebulk')->name('outgoingmail.storebulk');
+            Route::get('/detail/{id}', 'detail')->name('outgoingmail.detail');
+            Route::get('/ubah/{id}', 'edit')->name('outgoingmail.edit');
+            Route::post('/update/{id}', 'update')->name('outgoingmail.update');
+            Route::get('/checkpattern/{id}', 'checkpattern')->name('outgoingmail.checkpattern');
+            Route::get('/rekapitulasi', 'rekapitulasi')->name('outgoingmail.rekapitulasi');
+            Route::post('/rekapitulasi', 'rekapitulasi')->name('outgoingmail.rekapitulasi');
+            Route::post('/rekapitulasi/Cetak', 'rekapitulasiPrint')->name('outgoingmail.rekapitulasiPrint');
+
+            // Route::post('/generate', 'generatenumber')->name('outgoingmail.generate');
+        });
+    });
+    //MAP SAVE LOCATION
+    Route::controller(SaveLocationMapController::class)->group(function () {
+        Route::prefix('map-save-location')->group(function () {
+            Route::get('/listLantai/{id}', 'listLantai')->name('mapsaveloc.listLantai');
+            Route::get('/listRuang/{id}', 'listRuang')->name('mapsaveloc.listRuang');
+            Route::get('/listRak/{id}', 'listRak')->name('mapsaveloc.listRak');
+            Route::get('/listBaris/{id}', 'listBaris')->name('mapsaveloc.listBaris');
+            Route::get('/listKolom/{id}', 'listKolom')->name('mapsaveloc.listKolom');
+            Route::get('/listBoks/{id}', 'listBoks')->name('mapsaveloc.listBoks');
+        });
     });
 
-    // frontmenu profil desa
-    Route::controller(ProfildesaController::class)->group(function () {
-        Route::get('/profil-app', 'index');
-        Route::patch('/profildesa/update', 'update');
-    });
-    // frontmenu Berita
-    Route::controller(PostsController::class)->group(function () {
-        Route::get('/data-berita', 'index');
-        Route::get('/data-berita/create', 'create');
-        Route::post('/data-berita', 'store');
-        Route::get('/data-berita/show/{id}', 'show');
-        Route::get('/data-berita/edit/{id}', 'edit');
-        Route::patch('/data-berita/update/{posts}', 'update');
-        Route::delete('/berita/{id}/destroy', 'destroy');
-    });
-
-    // frontmenu Event
-    Route::controller(EventController::class)->group(function () {
-        Route::get('/data-event', 'index');
-        Route::get('/data-event/create', 'create');
-        Route::post('/data-event', 'store');
-        Route::get('/data-event/show/{id}', 'show');
-        Route::get('/data-event/edit/{id}', 'edit');
-        Route::patch('/data-event/update/{event}', 'update');
-        Route::delete('/event/{id}/destroy', 'destroy');
-
-    });
-
-    // frontmenu Gallery
-    Route::controller(GalleryController::class)->group(function () {
-        Route::get('/data-gallery', 'index');
-        Route::get('/data-gallery/create', 'create');
-        Route::post('/data-gallery', 'store');
-        Route::delete('/data-gallery/{id}/destroy', 'destroy');
-        Route::delete('/data-gallery/{id}/destroy_video', 'destroy_v');
-    });
-
-// frontmenu Gallery
-    Route::controller(TentangController::class)->group(function () {
-        Route::get('/about-profil', 'index');
-        Route::get('/about-profil/edit/{id}', 'edit_sambutan');
-        Route::get('/about-profil/edit_visimisi/{id}', 'edit_visimisi');
-        Route::get('/about-profil/edit_sejarah/{id}', 'edit_sejarah');
-        Route::get('/about-profil/edit-potensi/{id}', 'edit_potensi_alam');
-
-        Route::patch('/about-profil/update/{sambutan}', 'update_sambutan');
-        Route::patch('/about-profil/update_sejarah/{sejarah}', 'update_sejarah');
-        Route::patch('/about-profil/update_visimisi/{visimisi}', 'update_visimisi');
-        Route::patch('/about-profil/update-potensi/{potensi}', 'update_potensi_alam');
-    });
-
-    // frontmenu staff
-    Route::controller(StaffController::class)->group(function () {
-        Route::get('/data-staff', 'index');
-        Route::get('/data-staff/create', 'create');
-        Route::post('/data-staff', 'store');
-        Route::get('/data-staff/show/{id}', 'show');
-        Route::get('/data-staff/edit/{id}', 'edit');
-        Route::patch('/data-staff/update/{staff}', 'update');
-        Route::delete('/data-staff/{id}/destroy', 'destroy');
-
-    });
-    // frontmenu jml penduduk
-    Route::controller(JmlpendudukController::class)->group(function () {
-        Route::get('/data-jml-penduduk', 'index');
-        Route::get('/data-jml-penduduk/create', 'create');
-        Route::post('/data-jml-penduduk', 'store');
-        Route::delete('/data-jml-penduduk/{id}/destroy', 'destroy');
-
-    });
-    Route::controller(SliderController::class)->group(function () {
-        Route::get('/user/profile', 'index');
-        Route::get('/data-slider/create', 'create');
-        Route::post('/data-slider', 'store');
-        Route::delete('/data-slider/{id}/delete-permanent', 'deletePermanent');
-    });
-    // benner
-    Route::controller(BenneradmController::class)->group(function () {
-        Route::get('/adm-benner', 'index');
-        Route::get('/create-adm-benner', 'create');
-        Route::post('/adm-benner', 'store');
-        Route::get('/adm-benner/edit/{id}', 'edit');
-        Route::delete('/adm-benner/{id}/destroy', 'destroy');
+    //     Route::controller(ProfileOpdController::class)->group(function () {
+    //     Route::get('/user/profile', 'index')->middleware(['auth', 'verified'])->name('useropd');
+    //     Route::get('/profile/edit', 'edit_profil');
+    //     Route::patch('/profile/update', 'update');
+    //     Route::patch('/foto-profile/update', 'update_image');
        
-    });
+    // });
+
 });
 
-Route::group(['middleware' => 'cekopd'], function () {
-    
-    Route::controller(ProfileOpdController::class)->group(function () {
-        Route::get('/user/profile', 'index')->middleware(['auth', 'verified'])->name('useropd');
-        Route::get('/profile/edit', 'edit_profil');
-        Route::patch('/profile/update', 'update');
-        Route::patch('/foto-profile/update', 'update_image');
-       
-    });
 
-    // ajuan agenda dari opd
-    Route::controller(AjuanAgenda::class)->group(function () {
-        Route::get('/ajuan-agenda', 'index');
-        Route::get('/create-ajuan-agenda', 'create');
-        Route::post('/ajuan-agenda', 'store');
-        Route::get('/ajuan-agenda/edit/{id}', 'edit');
-        Route::post('/download-opd-surat', 'download_surat_opd');  
-        Route::post('/download-opd-acara', 'download_acara_opd');  
-        Route::post('/download-opd-sambutan', 'download_sambutan_opd'); 
-       
-    });
-    Route::controller(BenneropdController::class)->group(function () {
-        Route::get('/ajuan-benner', 'index');
-        Route::get('/create-ajuan-benner', 'create');
-        Route::post('/ajuan-benner', 'store');
-        Route::get('/ajuan-benner/edit/{id}', 'edit');
-        Route::delete('/ajuan-benner/{id}/destroy', 'destroy');
-       
-    });
-});
-    
 require __DIR__.'/auth.php';

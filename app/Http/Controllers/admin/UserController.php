@@ -14,7 +14,7 @@ class UserController extends Controller
      public function __construct()
     {
          $this->middleware('auth'); 
-        //  $this->middleware(['permission:users.index|users.create|users.edit|users.delete']);
+         $this->middleware(['permission:manajemen_pengguna|data_pengguna|user.edit|user.delete']);
     }
 
     /**
@@ -25,12 +25,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::where('utype', 'ADM')->get();
-
-        $opd =User::join('opds','users.id_opd','=','opds.id')
-        ->select('users.*','opds.nm_opd')
-        ->where('utype','OPD')
-        ->get();
-        return view('admin.user.index', compact('users','opd'));
+        return view('admin.user.index', compact('users'));
     }
 
     /**

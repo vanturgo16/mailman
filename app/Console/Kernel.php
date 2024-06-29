@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
+use Carbon\Carbon;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
@@ -15,7 +16,21 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $now=Carbon::now()->format('YmdHis');
+
+        $schedule->command('GenerateMailNumber')
+            ->timezone('Asia/Jakarta')
+            ->everyMinute();
+            // ->everyFiveMinutes();
+            // ->dailyAt('08:00');
+            // ->sendOutputTo("storage/logs/LogGenMailNumber_".$now.".txt");
+
+        $schedule->command('GenerateAgendaNumber')
+            ->timezone('Asia/Jakarta')
+            ->everyMinute();
+            // ->everyFiveMinutes();
+            // ->dailyAt('08:00');
+            // ->sendOutputTo("storage/logs/LogGenAgendaNumber_".$now.".txt");
     }
 
     /**
