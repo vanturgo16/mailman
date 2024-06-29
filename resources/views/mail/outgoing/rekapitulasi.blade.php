@@ -78,7 +78,7 @@
             </div>
             @endif
 
-            <table id="server-side-table" class="table table-bordered" style="font-size: small">
+            <table id="server-side-table" class="table table-bordered" style="font-size: small" width="100%">
                 <thead>
                     <tr>
                         <th class="align-middle text-center">No.</th>
@@ -198,6 +198,7 @@
         $('#server-side-table').DataTable({
             processing: true,
             serverSide: true,
+            scrollX: true,
             ajax: {
                 url: '{!! route('outgoingmail.rekapitulasi') !!}',
                 type: 'GET',

@@ -25,7 +25,8 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-start align-items-center">
                     <a href="{{ route('outgoingmail.create') }}" type="button" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tambah Baru</a>
-                    <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#addBulk"><i class="mdi mdi-plus-box-multiple"></i> Tambah Baru (Bulk) </a>
+                    <a href="{{ route('outgoingmail.createbulk') }}" type="button" class="btn btn-sm btn-info ml-1"><i class="mdi mdi-plus-box-multiple"></i> Tambah Baru (Bulk) </a>
+                    {{-- <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#addBulk"><i class="mdi mdi-plus-box-multiple"></i> Tambah Baru (Bulk) </a> --}}
                     {{-- <a href="" type="button" class="btn btn-sm btn-warning ml-1" data-toggle="modal" data-target="#genNumber"><i class="mdi mdi-reload-alert"></i> Generate No. Surat</a> --}}
                     <a href="{{ route('outgoingmail.rekapitulasi') }}" type="button" class="btn btn-sm btn-primary ml-1"><i class="mdi mdi-printer-search"></i> Rekapitulasi</a>
                 </div>
@@ -70,9 +71,21 @@
             </div>
             @endif
 
-            <table id="server-side-table" class="table table-bordered" style="font-size: small">
+            <table id="server-side-table" class="table table-bordered" style="font-size: small" width="100%">
                 <thead>
                     <tr>
+                        <th class="align-middle text-center">No.</th>
+                        <th class="align-middle text-center">Tgl. Surat</th>
+                        <th class="align-middle text-center">No. Surat</th>
+                        <th class="align-middle text-center">Penerima</th>
+                        <th class="align-middle text-center">Perihal / Tentang</th>
+                        <th class="align-middle text-center">Lampiran</th>
+                        <th class="align-middle text-center">Dari / Konseptor</th>
+                        <th class="align-middle text-center">Keterangan</th>
+                        <th class="align-middle text-center">Tgl. Dibuat</th>
+                        <th class="align-middle text-center">Aksi</th>
+                    </tr>
+                    {{-- <tr>
                         <th class="align-middle text-center">No.</th>
                         <th class="align-middle text-center">No. Surat</th>
                         <th class="align-middle text-center">Jenis</th>
@@ -83,7 +96,7 @@
                         <th class="align-middle text-center">Tgl. Perubahan</th>
                         <th class="align-middle text-center">Tgl. Dibuat</th>
                         <th class="align-middle text-center">Aksi</th>
-                    </tr>
+                    </tr> --}}
                 </thead>
             </table>
 
@@ -92,7 +105,7 @@
 </div>
 
 {{-- Add Bulk --}}
-<div class="modal fade" id="addBulk" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
+{{-- <div class="modal fade" id="addBulk" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #0074F1; color: white;">
@@ -154,7 +167,7 @@
             </script>
         </div>
     </div>
-</div>
+</div> --}}
 
 <script>
     $('select[id="mst_letter"]').on('change', function() {
@@ -336,6 +349,23 @@
                     className: 'text-center',
                 },
                 {
+                    data: 'mail_date',
+                    name: 'mail_date',
+                    orderable: true,
+                    searchable: true,
+                    className: 'text-center',
+                    render: function(data, type, row) {
+                        var html
+                        if(row.mail_date == null){
+                            html = '<span class="badge bg-secondary">Null</span>';
+                        } else {
+                            const formattedDate = formatDateToDMY(row.mail_date);
+                            html = formattedDate;
+                        }
+                        return html;
+                    },
+                },
+                {
                     data: 'mail_number',
                     name: 'mail_number',
                     orderable: true,
@@ -352,16 +382,49 @@
                     },
                 },
                 {
-                    data: 'let_name',
-                    name: 'let_name',
+                    data: 'receiver',
+                    name: 'receiver',
+                    orderable: true,
+                    searchable: true,
+                    className: 'text-center',
+                    render: function(data, type, row) {
+                        var html
+                        if(row.receiver == null){
+                            html = '<span class="badge bg-secondary">Null</span>';
+                        } else {
+                            html = row.receiver;
+                        }
+                        return html;
+                    },
+                },
+                {
+                    data: 'mail_regarding',
+                    name: 'mail_regarding',
                     orderable: true,
                     searchable: true,
                     render: function(data, type, row) {
-                        var html
-                        if(row.let_name == null){
+                        var html;
+                        if (row.mail_regarding == null) {
                             html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
                         } else {
-                            html = '<span class="text-bold">'+row.let_name+'</span>';
+                            var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
+                            html = truncatedData;
+                        }
+                        return html;
+                    },
+                },
+                {
+                    data: 'attachment_text',
+                    name: 'attachment_text',
+                    orderable: true,
+                    searchable: true,
+                    render: function(data, type, row) {
+                        var html;
+                        if (row.attachment_text == null) {
+                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                        } else {
+                            var truncatedData = row.attachment_text.length > 150 ? row.attachment_text.substr(0, 150) + '...' : row.attachment_text;
+                            html = truncatedData;
                         }
                         return html;
                     },
@@ -383,86 +446,17 @@
                     },
                 },
                 {
-                    data: 'mail_date',
-                    name: 'mail_date',
-                    orderable: true,
-                    searchable: true,
-                    className: 'text-center',
-                    render: function(data, type, row) {
-                        var html
-                        if(row.mail_date == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
-                        } else {
-                            const formattedDate = formatDateToDMY(row.mail_date);
-                            html = formattedDate;
-                        }
-                        return html;
-                    },
-                },
-                {
-                    data: 'mail_regarding',
-                    name: 'mail_regarding',
+                    data: 'information',
+                    name: 'information',
                     orderable: true,
                     searchable: true,
                     render: function(data, type, row) {
                         var html;
-                        if (row.mail_regarding == null) {
+                        if (row.information == null) {
                             html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
                         } else {
-                            var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
+                            var truncatedData = row.information.length > 150 ? row.information.substr(0, 150) + '...' : row.information;
                             html = truncatedData;
-                        }
-                        return html;
-                    },
-                },
-                // {
-                //     data: 'mail_regarding',
-                //     name: 'mail_regarding',
-                //     orderable: true,
-                //     searchable: true,
-                //     className: 'align-middle',
-                //     render: function(data, type, row) {
-                //         var html;
-                //         if (row.mail_regarding == null) {
-                //             html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
-                //         } else {
-                //             var tempElement = document.createElement('div');
-                //             tempElement.innerHTML = row.mail_regarding;
-                //             var textContent = tempElement.textContent || tempElement.innerText || '';
-                //             var truncatedData = textContent.length > 150 ? textContent.substr(0, 150) + '...' : textContent;
-                //             html = truncatedData;
-                //         }
-                //         return html;
-                //     },
-                // },
-                {
-                    data: 'receiver',
-                    name: 'receiver',
-                    orderable: true,
-                    searchable: true,
-                    className: 'text-center',
-                    render: function(data, type, row) {
-                        var html
-                        if(row.receiver == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
-                        } else {
-                            html = row.receiver;
-                        }
-                        return html;
-                    },
-                },
-                {
-                    data: 'last_update',
-                    name: 'last_update',
-                    orderable: true,
-                    searchable: true,
-                    render: function(data, type, row) {
-                        var html
-                        if(row.updated_by == null){
-                            html = '<div class="text-center"><span class="badge bg-secondary text-white">Null</span></div>';
-                        } else {
-                            var date = row.last_update.replace('T', ' ').split('.')[0];
-                            html = date+'<br><b>'+row.updated_by;
                         }
                         return html;
                     },
