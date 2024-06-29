@@ -25,7 +25,8 @@
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-start align-items-center">
                     <a href="{{ route('incommingmail.create') }}" type="button" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Tambah Baru</a>
-                    <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#addBulk"><i class="mdi mdi-plus-box-multiple"></i> Tambah Baru (Bulk) </a>
+                    <a href="{{ route('incommingmail.createbulk') }}" type="button" class="btn btn-sm btn-info ml-1"><i class="mdi mdi-plus-box-multiple"></i> Tambah Baru (Bulk) </a>
+                    {{-- <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#addBulk"><i class="mdi mdi-plus-box-multiple"></i> Tambah Baru (Bulk) </a> --}}
                     <a href="{{ route('incommingmail.rekapitulasi') }}" type="button" class="btn btn-sm btn-primary ml-1"><i class="mdi mdi-printer-search"></i> Rekapitulasi</a>
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
@@ -68,9 +69,25 @@
             </div>
             @endif
 
-            <table id="server-side-table" class="table table-bordered" style="font-size: small">
+            <table id="server-side-table" class="table table-bordered" style="font-size: small" width="100%">
                 <thead>
                     <tr>
+                        <th rowspan="2" class="align-middle text-center">No.</th>
+                        <th rowspan="2" class="align-middle text-center">Tgl. Agenda</th>
+                        <th rowspan="2" class="align-middle text-center">No. Agenda</th>
+                        <th colspan="3" class="align-middle text-center">Naskah / Surat</th>
+                        <th rowspan="2" class="align-middle text-center">Lampiran</th>
+                        <th rowspan="2" class="align-middle text-center">Kepada</th>
+                        <th rowspan="2" class="align-middle text-center">Keterangan</th>
+                        <th rowspan="2" class="align-middle text-center">Tgl. Dibuat</th>
+                        <th rowspan="2" class="align-middle text-center">Aksi</th>
+                    </tr>
+                    <tr>
+                        <th class="align-middle text-center">No. Surat</th>
+                        <th class="align-middle text-center">Terima Dari</th>
+                        <th class="align-middle text-center">Isi / Perihal</th>
+                    </tr>
+                    {{-- <tr>
                         <th class="align-middle text-center">No.</th>
                         <th class="align-middle text-center">Buku Agenda</th>
                         <th class="align-middle text-center">Pengirim</th>
@@ -82,7 +99,7 @@
                         <th class="align-middle text-center">Tgl. Perubahan</th>
                         <th class="align-middle text-center">Tgl. Dibuat</th>
                         <th class="align-middle text-center">Aksi</th>
-                    </tr>
+                    </tr> --}}
                 </thead>
             </table>
 
@@ -296,51 +313,20 @@
                     orderable: false,
                     searchable: false,
                     className: 'text-center',
-                },
+                }, 
                 {
-                    data: 'placeman',
-                    name: 'placeman',
+                    data: 'mail_date',
+                    name: 'mail_date',
                     orderable: true,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
                         var html
-                        if(row.placeman == null){
+                        if(row.mail_date == null){
                             html = '<span class="badge bg-secondary">Null</span>';
                         } else {
-                            html = '<span class="text-bold">'+row.placeman+'</span>';
-                        }
-                        return html;
-                    },
-                },
-                {
-                    data: 'sender',
-                    name: 'sender',
-                    orderable: true,
-                    searchable: true,
-                    className: 'text-center',
-                    render: function(data, type, row) {
-                        var html
-                        if(row.sender == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
-                        } else {
-                            html = row.sender;
-                        }
-                        return html;
-                    },
-                },
-                {
-                    data: 'mail_number',
-                    name: 'mail_number',
-                    orderable: true,
-                    searchable: true,
-                    className: 'text-center',
-                    render: function(data, type, row) {
-                        var html
-                        if(row.mail_number == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
-                        } else {
-                            html = '<span class="text-bold">'+row.mail_number+'</span>';
+                            const formattedDate = formatDateToDMY(row.mail_date);
+                            html = formattedDate;
                         }
                         return html;
                     },
@@ -362,18 +348,33 @@
                     },
                 },
                 {
-                    data: 'mail_date',
-                    name: 'mail_date',
+                    data: 'mail_number',
+                    name: 'mail_number',
                     orderable: true,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
                         var html
-                        if(row.mail_date == null){
+                        if(row.mail_number == null){
                             html = '<span class="badge bg-secondary">Null</span>';
                         } else {
-                            const formattedDate = formatDateToDMY(row.mail_date);
-                            html = formattedDate;
+                            html = '<span class="text-bold">'+row.mail_number+'</span>';
+                        }
+                        return html;
+                    },
+                },
+                {
+                    data: 'sender',
+                    name: 'sender',
+                    orderable: true,
+                    searchable: true,
+                    className: 'text-center',
+                    render: function(data, type, row) {
+                        var html
+                        if(row.sender == null){
+                            html = '<span class="badge bg-secondary">Null</span>';
+                        } else {
+                            html = row.sender;
                         }
                         return html;
                     },
@@ -389,6 +390,22 @@
                             html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
                         } else {
                             var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
+                            html = truncatedData;
+                        }
+                        return html;
+                    },
+                },
+                {
+                    data: 'attachment_text',
+                    name: 'attachment_text',
+                    orderable: true,
+                    searchable: true,
+                    render: function(data, type, row) {
+                        var html;
+                        if (row.attachment_text == null) {
+                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                        } else {
+                            var truncatedData = row.attachment_text.length > 150 ? row.attachment_text.substr(0, 150) + '...' : row.attachment_text;
                             html = truncatedData;
                         }
                         return html;
@@ -411,21 +428,150 @@
                     },
                 },
                 {
-                    data: 'last_update',
-                    name: 'last_update',
+                    data: 'information',
+                    name: 'information',
                     orderable: true,
                     searchable: true,
                     render: function(data, type, row) {
-                        var html
-                        if(row.updated_by == null){
-                            html = '<div class="text-center"><span class="badge bg-secondary text-white">Null</span></div>';
+                        var html;
+                        if (row.information == null) {
+                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
                         } else {
-                            var date = row.last_update.replace('T', ' ').split('.')[0];
-                            html = date+'<br><b>'+row.updated_by;
+                            var truncatedData = row.information.length > 150 ? row.information.substr(0, 150) + '...' : row.information;
+                            html = truncatedData;
                         }
                         return html;
                     },
                 },
+                // {
+                //     data: 'placeman',
+                //     name: 'placeman',
+                //     orderable: true,
+                //     searchable: true,
+                //     className: 'text-center',
+                //     render: function(data, type, row) {
+                //         var html
+                //         if(row.placeman == null){
+                //             html = '<span class="badge bg-secondary">Null</span>';
+                //         } else {
+                //             html = '<span class="text-bold">'+row.placeman+'</span>';
+                //         }
+                //         return html;
+                //     },
+                // },
+                // {
+                //     data: 'sender',
+                //     name: 'sender',
+                //     orderable: true,
+                //     searchable: true,
+                //     className: 'text-center',
+                //     render: function(data, type, row) {
+                //         var html
+                //         if(row.sender == null){
+                //             html = '<span class="badge bg-secondary">Null</span>';
+                //         } else {
+                //             html = row.sender;
+                //         }
+                //         return html;
+                //     },
+                // },
+                // {
+                //     data: 'mail_number',
+                //     name: 'mail_number',
+                //     orderable: true,
+                //     searchable: true,
+                //     className: 'text-center',
+                //     render: function(data, type, row) {
+                //         var html
+                //         if(row.mail_number == null){
+                //             html = '<span class="badge bg-secondary">Null</span>';
+                //         } else {
+                //             html = '<span class="text-bold">'+row.mail_number+'</span>';
+                //         }
+                //         return html;
+                //     },
+                // },
+                // {
+                //     data: 'agenda_number',
+                //     name: 'agenda_number',
+                //     orderable: true,
+                //     searchable: true,
+                //     className: 'text-center',
+                //     render: function(data, type, row) {
+                //         var html
+                //         if(row.agenda_number == null){
+                //             html = '<span class="badge bg-warning"><i class="fas fa-spinner"></i> Menunggu..</span>';
+                //         } else {
+                //             html = '<span class="text-bold">'+row.agenda_number+'</span>';
+                //         }
+                //         return html;
+                //     },
+                // },
+                // {
+                //     data: 'mail_date',
+                //     name: 'mail_date',
+                //     orderable: true,
+                //     searchable: true,
+                //     className: 'text-center',
+                //     render: function(data, type, row) {
+                //         var html
+                //         if(row.mail_date == null){
+                //             html = '<span class="badge bg-secondary">Null</span>';
+                //         } else {
+                //             const formattedDate = formatDateToDMY(row.mail_date);
+                //             html = formattedDate;
+                //         }
+                //         return html;
+                //     },
+                // },
+                // {
+                //     data: 'mail_regarding',
+                //     name: 'mail_regarding',
+                //     orderable: true,
+                //     searchable: true,
+                //     render: function(data, type, row) {
+                //         var html;
+                //         if (row.mail_regarding == null) {
+                //             html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                //         } else {
+                //             var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
+                //             html = truncatedData;
+                //         }
+                //         return html;
+                //     },
+                // },
+                // {
+                //     data: 'receiver_name',
+                //     name: 'receiver_name',
+                //     orderable: true,
+                //     searchable: true,
+                //     className: 'text-center',
+                //     render: function(data, type, row) {
+                //         var html
+                //         if(row.receiver_name == null){
+                //             html = '<span class="badge bg-secondary">Null</span>';
+                //         } else {
+                //             html = row.receiver_name;
+                //         }
+                //         return html;
+                //     },
+                // },
+                // {
+                //     data: 'last_update',
+                //     name: 'last_update',
+                //     orderable: true,
+                //     searchable: true,
+                //     render: function(data, type, row) {
+                //         var html
+                //         if(row.updated_by == null){
+                //             html = '<div class="text-center"><span class="badge bg-secondary text-white">Null</span></div>';
+                //         } else {
+                //             var date = row.last_update.replace('T', ' ').split('.')[0];
+                //             html = date+'<br><b>'+row.updated_by;
+                //         }
+                //         return html;
+                //     },
+                // },
                 {
                     data: 'created',
                     name: 'created',

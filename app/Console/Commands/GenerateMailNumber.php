@@ -75,7 +75,8 @@ class GenerateMailNumber extends Command
     
                     foreach($patterns as $pat){
                         if($pat == "Naskah Dinas"){
-                            $value = strtoupper(Letter::where('id', $q->id_mst_letter)->first()->let_code);
+                            // $value = strtoupper(Letter::where('id', $q->id_mst_letter)->first()->let_code);
+                            $value = Letter::where('id', $q->id_mst_letter)->first()->let_code;
                             $mail_number[] = $value;
                         } elseif($pat == "Unit Kerja") {
                             $value = Sator::where('id', $q->org_unit)->first()->sator_name;
