@@ -303,45 +303,104 @@ class IncommingMailController extends Controller
         }
     }
 
+    public function createbulk(Request $request)
+    {
+        $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
+        $complains = Complain::get();
+        $letters = Letter::get();
+        $workunits = WorkUnit::get();
+        $unitletters = UnitLetter::get();
+        $classifications = Classification::get();
+        $results = Dropdown::where('category', 'Hasil Penelitian')->get();
+        $approveds = Dropdown::where('category', 'Disetujui Oleh')->get();
+        $mailtypes = Dropdown::where('category', 'Jenis Surat')->get();
+        $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
+
+        $sators = Sator::orderBy('sator_name','asc')->get();
+
+        return view('mail.incomming.createbulk', compact('placemans', 'complains', 'letters', 'workunits', 'unitletters', 'classifications', 'results', 'approveds', 'mailtypes', 'receivedvias',
+            'sators'));
+    }
     public function storebulk(Request $request)
     {
         // dd($request->all());
         $request->validate([
             "placeman" => "required",
-            "amount_letter" => "required",
-        ], [
+            "mail_regarding" => "required",
+            "entry_date" => "required",
+            "mail_date" => "required",
+            "receiver" => "required",
+            "mail_quantity" => "required",
+            "mail_unit" => "required",
+            "id_mst_complain" => "required_if:placeman,PENGADUAN",
+            "id_mst_letter" => "required_unless:placeman,PENGADUAN",
+        ], 
+        [
             'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
-            'amount_letter.required' => 'Jumlah Naskah Wajib Untuk Diisi.',
+            'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
+            'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
+            'mail_date.required' => 'Tanggal Surat Wajib Untuk Diisi.',
+            'receiver.required' => 'Penerima Wajib Untuk Diisi.',
+            'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
+            'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
+            'id_mst_complain.required' => 'Jenis Pengaduan Wajib Untuk Diisi.',
+            'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
         ]);
 
-        $placeman = $request->placeman;
         $amountLetter = $request->amount_letter;
-
-        if($placeman == 'PENGADUAN'){
-            $id_mst_letter = null;
-            $id_mst_complain = $request->id_mst_complain;
-            $mst_letter_que = 0;
-        } else {
-            $id_mst_letter = $request->id_mst_letter;
-            $id_mst_complain = null;
-            $mst_letter_que = $request->id_mst_letter;
-        }
         
         DB::beginTransaction();
         try {
+            if($request->placeman == "LITNADIN"){
+                $sender = $request->senderSelect;
+                $mail_type = null;
+                $result = $request->result;
+                $approved_by = $request->approved_by;
+                $received_via = $request->received_viaInput;
+            } else {
+                $sender = $request->senderInput;
+                $mail_type = $request->mail_type;
+                $result = null;
+                $approved_by = null;
+                $received_via = $request->received_viaSelect;
+            }
+
             for ($i = 0; $i < $amountLetter; $i++) {
-                // Store Incomming Mail
+                
                 $store = IncommingMail::create([
-                    'placeman' => $placeman,
-                    'id_mst_letter' => $id_mst_letter,
-                    'id_mst_complain' => $id_mst_complain,
+                    'placeman' => $request->placeman,
+                    'id_mst_letter' => $request->id_mst_letter,
+                    'id_mst_complain' => $request->id_mst_complain,
+                    'sender' => $sender,
+                    'mail_number' => $request->mail_number,
+                    'mail_regarding' => $request->mail_regarding,
+                    'entry_date' => $request->entry_date,
+                    'mail_date' => $request->mail_date,
+                    'receiver' => $request->receiver,
+                    'mail_quantity' => $request->mail_quantity,
+                    'mail_unit' => $request->mail_unit,
+                    'archive_classification' => $request->archive_classification,
+                    'mail_retention_from' => $request->mail_retention_from,
+                    'mail_retention_to' => $request->mail_retention_to,
+                    'mail_type' => $mail_type,
+                    'result' => $result,
+                    'approved_by' => $approved_by,
+                    'received_via' => $received_via,
+                    'attachment_text' => $request->attachment_text,
+                    'information' => $request->information,
                     'status' => null,
                     'created_by' => auth()->user()->name,
                 ]);
+
                 // Register Que
+                if($request->placeman == "PENGADUAN"){
+                    $id_mst_letter = 0;
+                } else {
+                    $id_mst_letter = $request->id_mst_letter;
+                }
                 QueNumbIncMail::create([
                     'id_mail' => $store->id,
-                    'id_mst_letter' => $mst_letter_que
+                    'id_mst_letter' => $id_mst_letter
                 ]);
             }
 
@@ -352,6 +411,55 @@ class IncommingMailController extends Controller
             return redirect()->back()->with(['fail' => 'Gagal Tambah Data (Bulk)!']);
         }
     }
+    // public function storebulk(Request $request)
+    // {
+    //     // dd($request->all());
+    //     $request->validate([
+    //         "placeman" => "required",
+    //         "amount_letter" => "required",
+    //     ], [
+    //         'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
+    //         'amount_letter.required' => 'Jumlah Naskah Wajib Untuk Diisi.',
+    //     ]);
+
+    //     $placeman = $request->placeman;
+    //     $amountLetter = $request->amount_letter;
+
+    //     if($placeman == 'PENGADUAN'){
+    //         $id_mst_letter = null;
+    //         $id_mst_complain = $request->id_mst_complain;
+    //         $mst_letter_que = 0;
+    //     } else {
+    //         $id_mst_letter = $request->id_mst_letter;
+    //         $id_mst_complain = null;
+    //         $mst_letter_que = $request->id_mst_letter;
+    //     }
+        
+    //     DB::beginTransaction();
+    //     try {
+    //         for ($i = 0; $i < $amountLetter; $i++) {
+    //             // Store Incomming Mail
+    //             $store = IncommingMail::create([
+    //                 'placeman' => $placeman,
+    //                 'id_mst_letter' => $id_mst_letter,
+    //                 'id_mst_complain' => $id_mst_complain,
+    //                 'status' => null,
+    //                 'created_by' => auth()->user()->name,
+    //             ]);
+    //             // Register Que
+    //             QueNumbIncMail::create([
+    //                 'id_mail' => $store->id,
+    //                 'id_mst_letter' => $mst_letter_que
+    //             ]);
+    //         }
+
+    //         DB::commit();
+    //         return redirect()->route('incommingmail.index')->with(['success' => 'Sukses Tambah Data (Bulk) Dengan Jumlah : '.$amountLetter.'']);
+    //     } catch (Throwable $th) {
+    //         DB::rollback();
+    //         return redirect()->back()->with(['fail' => 'Gagal Tambah Data (Bulk)!']);
+    //     }
+    // }
     
     public function detail($id)
     {

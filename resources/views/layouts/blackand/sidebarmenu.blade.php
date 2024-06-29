@@ -215,14 +215,14 @@
               </a>
             </li>
             @endcan
-            @can('data_retensi_surat')
+            {{-- @can('data_retensi_surat')
             <li class="nav-item">
               <a href="/agenda-pejabat" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Data Retensi Surat</p>
               </a>
             </li>
-            @endcan
+            @endcan --}}
 
           </ul>
         </li>
