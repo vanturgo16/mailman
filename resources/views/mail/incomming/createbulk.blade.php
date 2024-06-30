@@ -1,4 +1,4 @@
-@extends('layouts.blackand.app')
+@extends('layouts.blackand.appother')
 @section('content')
 
 @include('mail.head')
