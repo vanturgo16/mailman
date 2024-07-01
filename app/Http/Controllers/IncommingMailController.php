@@ -36,6 +36,8 @@ class IncommingMailController extends Controller
         $mail_number = $request->get('mail_number');
         $placeman = $request->get('placeman');
 
+        $workunits = WorkUnit::get();
+
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
         $complains = Complain::get();
         $letters = Letter::get();
@@ -72,8 +74,58 @@ class IncommingMailController extends Controller
             return $data;
         }
 
-        return view('mail.incomming.index', compact('placemans', 'complains', 'letters',
+        return view('mail.incomming.index', compact('workunits', 'placemans', 'complains', 'letters',
             'entry_date', 'mail_date', 'mail_number', 'placeman'));
+    }
+    
+    public function directupdate(Request $request, $id)
+    {
+        $id = $id;
+
+        if($request[1] != null){
+            $date = new DateTime($request[1]);
+            $dateVal = $date->format('Y-m-d H:i:s');
+        } else {
+            $dateVal = null;
+        }
+
+        // Check With Data Before
+        $databefore = IncommingMail::where('id', $id)->first();
+        $databefore->mail_date = $dateVal;
+        $databefore->agenda_number = $request[2];
+        $databefore->mail_number = $request[3];
+        $databefore->sender = $request[4];
+        $databefore->mail_regarding = $request[5];
+        $databefore->attachment_text = $request[6];
+        $databefore->receiver = $request[7];
+        $databefore->information = $request[8];
+
+        if($databefore->isDirty()){
+            DB::beginTransaction();
+            try {
+                // Update Incomming Mail
+                IncommingMail::where('id', $id)->update([
+                    'mail_date' => $request[1],
+                    'agenda_number' => $request[2],
+                    'mail_number' => $request[3],
+                    'sender' => $request[4],
+                    'mail_regarding' => $request[5],
+                    'attachment_text' => $request[6],
+                    'receiver' => $request[7],
+                    'information' => $request[8],
+                    'updated_by' => auth()->user()->name,
+                ]);
+    
+                DB::commit();
+                return response()->json(['success' => true]);
+            } catch (Throwable $th) {
+                DB::rollback();
+                return response()->json(['success' => false]);
+            }
+        }
+        else {
+            return response()->json(['success' => "Same"]);
+        }
     }
 
     public function rekapitulasi(Request $request)

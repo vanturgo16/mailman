@@ -52,6 +52,8 @@ class OutgoingMailController extends Controller
         $mail_number = $request->get('mail_number');
         $id_mst_letter = $request->get('id_mst_letter');
         $archive_remain = $request->get('archive_remain');
+        
+        $workunits = WorkUnit::get();
 
         $letters = Letter::get();
         $sators = Sator::orderBy('sator_name','asc')->get();
@@ -81,6 +83,8 @@ class OutgoingMailController extends Controller
         }
     
         // Get Query
+        // $datas = $datas->take(3)->get();
+
         $datas = $datas->get();
 
         // $datas = $datas->map(function($item) {
@@ -97,7 +101,46 @@ class OutgoingMailController extends Controller
             return $data;
         }
 
-        return view('mail.outgoing.index', compact('letters', 'sators', 'archive_remains', 'datas', 'out_date', 'mail_date', 'mail_number', 'id_mst_letter', 'archive_remain'));
+        return view('mail.outgoing.index', compact('workunits', 'letters', 'sators', 'archive_remains', 'datas', 'out_date', 'mail_date', 'mail_number', 'id_mst_letter', 'archive_remain'));
+    }
+
+    public function directupdate(Request $request, $id)
+    {
+        $id = $id;
+
+        // Check With Data Before
+        $databefore = OutgoingMail::where('id', $id)->first();
+        $databefore->mail_number = $request[2];
+        $databefore->receiver = $request[3];
+        $databefore->mail_regarding = $request[4];
+        $databefore->attachment_text = $request[5];
+        $databefore->drafter = $request[6];
+        $databefore->information = $request[7];
+
+        if($databefore->isDirty()){
+            DB::beginTransaction();
+            try {
+                // Update Outgoing Mail
+                OutgoingMail::where('id', $id)->update([
+                    'mail_number' => $request[2],
+                    'drafter' => $request[6],
+                    'mail_regarding' => $request[4],
+                    'receiver' => $request[3],
+                    'attachment_text' => $request[5],
+                    'information' => $request[7],
+                    'updated_by' => auth()->user()->name,
+                ]);
+    
+                DB::commit();
+                return response()->json(['success' => true]);
+            } catch (Throwable $th) {
+                DB::rollback();
+                return response()->json(['success' => false]);
+            }
+        }
+        else {
+            return response()->json(['success' => "Same"]);
+        }
     }
 
     public function checkChanges()
