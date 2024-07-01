@@ -173,6 +173,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
         Route::prefix('surat-masuk')->group(function () {
             Route::get('/', 'index')->name('incommingmail.index');
             Route::post('/', 'index')->name('incommingmail.index');
+            Route::post('/directupdate/{id}', 'directupdate')->name('incommingmail.directupdate');
             Route::get('/check-table-changes', 'checkChanges')->name('incommingmail.checkChanges');
             Route::get('/check-table-changes-update', 'checkChangeUpdate')->name('incommingmail.checkChangeUpdate');
             Route::get('/tambah', 'create')->name('incommingmail.create');
@@ -192,6 +193,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
         Route::prefix('surat-keluar')->group(function () {
             Route::get('/', 'index')->name('outgoingmail.index');
             Route::post('/', 'index')->name('outgoingmail.index');
+            Route::post('/directupdate/{id}', 'directupdate')->name('outgoingmail.directupdate');
             Route::get('/check-table-changes', 'checkChanges')->name('outgoingmail.checkChanges');
             Route::get('/check-table-changes-update', 'checkChangeUpdate')->name('outgoingmail.checkChangeUpdate');
             Route::get('/tambah', 'create')->name('outgoingmail.create');
