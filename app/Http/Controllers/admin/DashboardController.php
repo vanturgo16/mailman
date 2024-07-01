@@ -16,7 +16,7 @@ class DashboardController extends Controller
         $this->middleware('auth'); 
         // $this->middleware(['permission:permissions.index']);
     } 
-    public function index()
+    public function index(Request $request)
     {
         // belum
         $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'outgoing_mails.created_at as created',
@@ -35,10 +35,32 @@ class DashboardController extends Controller
                     ->orderBy('created_at', 'desc')
                     ->get(); // Execute the query
         
-        // dd($datas_in); // Dump and die to inspect the data
+        // grafik st masuk
+$incomingMails = IncommingMail::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+                ->whereYear('created_at', Carbon::now()->year)
+                ->groupBy('month')
+                ->pluck('count', 'month')
+                ->toArray();
+
+    $monthlyIncomingMails = array_fill(1, 12, 0);
+    foreach ($incomingMails as $month => $count) {
+        $monthlyIncomingMails[$month] = $count;
+    }
+
+        // grafik st masuk
+        $outgoingMails = OutgoingMail::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+        ->whereYear('created_at', Carbon::now()->year)
+        ->groupBy('month')
+        ->pluck('count', 'month')
+        ->toArray();
+
+    $monthlyOutgoingMails = array_fill(1, 12, 0);
+    foreach ($outgoingMails as $month => $count) {
+    $monthlyOutgoingMails[$month] = $count;
+    }
         
 
-        return view('admin.dashboard',compact('datas','datas_in'));
+        return view('admin.dashboard',compact('datas','datas_in','monthlyIncomingMails','monthlyOutgoingMails'));
     }
 
    
