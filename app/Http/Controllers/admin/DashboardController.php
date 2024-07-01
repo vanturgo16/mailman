@@ -5,14 +5,9 @@ namespace App\Http\Controllers\admin;
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Profildesa;
-use App\Models\Sk_domisili;
-use App\Models\PesanWarga;
-use App\Models\AgendaPejabat;
-use App\Models\Pejabat_daerah;
-use App\Models\Jabat;
-use App\Models\opd;
-
+use App\Models\OutgoingMail;
+use App\Models\IncommingMail;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -24,71 +19,28 @@ class DashboardController extends Controller
     public function index()
     {
         // belum
-        $ag   = 0;
-        $ap   = 0;
+        $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'outgoing_mails.created_at as created',
+        'draft.work_name as drafter_name', 'master_letter.let_name')
+        ->leftJoin('master_workunit as draft', 'draft.id', '=', 'outgoing_mails.drafter')
+        ->leftJoin('master_letter', 'master_letter.id', '=', 'outgoing_mails.id_mst_letter')
+        ->whereDate('outgoing_mails.updated_at', Carbon::today()->toDateString()) // Only compare the date part
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        $profil_desa = "";
-        $pesan = "";
 
-        return view('admin.dashboard',compact('pesan','profil_desa','ag','ap'));
-    }
-
-    public function index_pesan()
-    {
-        $warga=PesanWarga::get();
-        return view('admin.pesanwarga.index',compact('warga'));
-    }
-
-    public function index_trash()
-    {
-        $pesan_trash =PesanWarga::onlyTrashed()->get();
-        return view('admin.pesanwarga.trash',compact('pesan_trash'));
-    }
-
-    public function show_pesan($id)
-    {
-        $profil_desa=Profildesa::first();
-        $warga=PesanWarga::where('id', $id)->first();
-        return view('admin.pesanwarga.show',compact('warga','profil_desa')); 
-    }
-
-    public function pesan_destroy($id)
-    {
-        $warga= PesanWarga::findOrFail($id);
-        $warga->delete();
+        $datas_in = IncommingMail::select('incomming_mails.*', 'receiv.work_name as receiver_name',
+                    'incomming_mails.updated_at as last_update', 'incomming_mails.created_at as created')
+                    ->leftJoin('master_workunit as receiv', 'receiv.id', '=', 'incomming_mails.receiver')
+                    ->whereDate('incomming_mails.updated_at', Carbon::today()->toDateString())
+                    ->orderBy('created_at', 'desc')
+                    ->get(); // Execute the query
         
-        return back();
-      
+        // dd($datas_in); // Dump and die to inspect the data
+        
+
+        return view('admin.dashboard',compact('datas','datas_in'));
     }
 
-    public function pesan_restore($id)
-    {
-        $warga = PesanWarga::withTrashed()->findOrFail($id);
-        if($warga->trashed()){
-            
-            $warga->restore();
-            Alert::info('InfoAlert','Data Berhasil Di Kembalikan');
-            return back();
-        
-        } else {
-        
-            Alert::error('ErrorAlert','Gagal Di Kembalikan');
-            return back();
-        }
-       
-    }
-
-    public function deletePermanent($id)
-    {
-        $warga = PesanWarga::withTrashed()->findOrFail($id);
-        if(!$warga->trashed())
-        {
-            return back();
-
-        } else {
-            $warga->forceDelete();
-            return back();
-        }
-    }   
+   
   
 }

@@ -61,12 +61,7 @@ Route::controller(FrondandController::class)->group(function () {
 Route::group(['middleware' => 'cekadmin'], function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
-        Route::get('/pesan/{id}/show', 'show_pesan');
-        Route::get('/data-pesan', 'index_pesan');
-        Route::get('/pesan-trash', 'index_trash');
-        Route::delete('/data-pesan/{id}/destroy', 'pesan_destroy');
-        Route::post('/pesan-trash/{id}/restore', 'pesan_restore');
-        Route::delete('/pesan-trash/{id}/delete-permanent', 'deletePermanent');
+
     });
 
     //opd
