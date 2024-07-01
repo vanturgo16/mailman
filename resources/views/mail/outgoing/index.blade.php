@@ -83,7 +83,7 @@
                 </div>
                 @endif
                 <div class="table-responsive">
-                    <table id="server-side-table" class="table table-bordered" style="font-size: small">
+                    <table id="server-side-table" class="table table-bordered" style="font-size: small" width="100%">
                         <thead>
                         <tr>
                             <th class="align-middle text-center">No.</th>
@@ -426,14 +426,14 @@
                 }).get();
 
                 $row.find('td').each(function(index) {
-                    if (index >= 2 && index <= 7) {
+                    if (index >= 3 && index <= 7) {
                         var $this = $(this);
                         var currentValue = $this.text().trim();
                         currentValue = (currentValue === "Null") ? "" : currentValue;
-                        if(index === 2) {
-                            $this.html('<input type="text" name="mail_number" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
-                        }
-                        else if(index === 3) {
+                        // if(index === 2) {
+                        //     $this.html('<input type="text" name="mail_number" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
+                        // }
+                        if(index === 3) {
                             $this.html('<input type="text" name="receiver" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
                         }
                         else if(index === 4) {
@@ -469,7 +469,7 @@
             function saveRowData($row) {
                 var rowData = {};
                 $row.find('td').each(function(index) {
-                    if (index >= 2 && index <= 7) {
+                    if (index >= 3 && index <= 7) {
                         var $this = $(this);
                         var newValue;
                         if(index == 4) {
@@ -536,7 +536,7 @@
 
             function cancelRowEditing($row) {
                 $row.find('td').each(function(index) {
-                if (index >= 2 && index <= 7) {
+                if (index >= 3 && index <= 7) {
                     $(this).html(originalData[$row.index()][index]);
                 }
                 });

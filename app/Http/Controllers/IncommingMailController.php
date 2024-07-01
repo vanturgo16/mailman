@@ -92,7 +92,7 @@ class IncommingMailController extends Controller
         // Check With Data Before
         $databefore = IncommingMail::where('id', $id)->first();
         $databefore->mail_date = $dateVal;
-        $databefore->agenda_number = $request[2];
+        // $databefore->agenda_number = $request[2];
         $databefore->mail_number = $request[3];
         $databefore->sender = $request[4];
         $databefore->mail_regarding = $request[5];
@@ -106,7 +106,7 @@ class IncommingMailController extends Controller
                 // Update Incomming Mail
                 IncommingMail::where('id', $id)->update([
                     'mail_date' => $request[1],
-                    'agenda_number' => $request[2],
+                    // 'agenda_number' => $request[2],
                     'mail_number' => $request[3],
                     'sender' => $request[4],
                     'mail_regarding' => $request[5],
