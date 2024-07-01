@@ -453,9 +453,9 @@
                             }
                             $this.html('<input type="datetime-local" class="form-control form-control-sm small-date-input" value="' + dateVal + '">');
                         }
-                        else if(index === 2) {
-                            $this.html('<input type="text" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
-                        }
+                        // else if(index === 2) {
+                        //     $this.html('<input type="text" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
+                        // }
                         else if(index === 3) {
                             $this.html('<input type="text" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
                         }
@@ -515,9 +515,9 @@
                         if(index == 1) {
                             newValue = $this.find('input').val();
                         }
-                        else if(index == 2) {
-                            newValue = $this.find('input').val();
-                        }
+                        // else if(index == 2) {
+                        //     newValue = $this.find('input').val();
+                        // }
                         else if(index == 3) {
                             newValue = $this.find('input').val();
                         }

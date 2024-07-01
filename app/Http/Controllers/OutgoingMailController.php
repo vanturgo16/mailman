@@ -110,7 +110,7 @@ class OutgoingMailController extends Controller
 
         // Check With Data Before
         $databefore = OutgoingMail::where('id', $id)->first();
-        $databefore->mail_number = $request[2];
+        // $databefore->mail_number = $request[2];
         $databefore->receiver = $request[3];
         $databefore->mail_regarding = $request[4];
         $databefore->attachment_text = $request[5];
@@ -122,7 +122,7 @@ class OutgoingMailController extends Controller
             try {
                 // Update Outgoing Mail
                 OutgoingMail::where('id', $id)->update([
-                    'mail_number' => $request[2],
+                    // 'mail_number' => $request[2],
                     'drafter' => $request[6],
                     'mail_regarding' => $request[4],
                     'receiver' => $request[3],
