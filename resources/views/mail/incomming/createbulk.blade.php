@@ -7,7 +7,7 @@
   <div class="container-fluid">
       <div class="row mb-2">
           <div class="col-sm-6">
-              <h1 class="m-0"><i class="fas fa-plus"></i> Tambah Surat Masuk</h1>
+              <h1 class="m-0"><i class="fas fa-plus"></i> Tambah Surat Masuk (BULK)</h1>
           </div>
           <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -60,7 +60,7 @@
               Formulir Tambah Surat Masuk
           </h3>
       </div>
-      <form action="{{ route('incommingmail.store') }}" method="POST" enctype="multipart/form-data" id="formIncommingMail">
+      <form action="{{ route('incommingmail.storebulk') }}" method="POST" enctype="multipart/form-data" id="formIncommingMail">
         @csrf
         <div class="card-body" style="max-height: 65vh; overflow-y: auto;">
           <div class="row px-1">
@@ -323,6 +323,14 @@
                     <td><label>Keterangan</label></td>
                     <td>
                       <textarea class="form-control" rows="3" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}"></textarea>
+                    </td>
+                  </tr>
+
+                  {{-- Jumlah --}}
+                  <tr>
+                    <td><label class="text-danger">Jumlah Naskah *</label></td>
+                    <td>
+                      <input type="number" name="amount_letter" class="form-control" placeholder="Masukkan Jumlah Naskah Dalam Angka.." required>
                     </td>
                   </tr>
                 </tbody>

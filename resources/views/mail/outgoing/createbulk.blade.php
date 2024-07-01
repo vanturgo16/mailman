@@ -7,13 +7,13 @@
   <div class="container-fluid">
       <div class="row mb-2">
           <div class="col-sm-6">
-              <h1 class="m-0"><i class="mdi mdi-file-edit"></i> Ubah Surat Keluar</h1>
+              <h1 class="m-0"><i class="fas fa-plus"></i> Tambah Surat Keluar (BULK)</h1>
           </div>
           <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Beranda</a></li>
                   <li class="breadcrumb-item"><a href="{{ route('outgoingmail.index') }}"> Daftar Surat Keluar</a></li>
-                    <li class="breadcrumb-item active">Ubah</li>
+                    <li class="breadcrumb-item active">Tambah</li>
               </ol>
           </div>
       </div>
@@ -57,10 +57,10 @@
   <div class="card card-primary card-outline">
       <div class="card-header">
           <h3 class="card-title">
-              Formulir Ubah Surat Keluar
+              Formulir Tambah Surat Keluar
           </h3>
       </div>
-      <form action="{{ route('outgoingmail.update', encrypt($data->id)) }}" method="POST" enctype="multipart/form-data" id="formOutgoingMail">
+      <form action="{{ route('outgoingmail.storebulk') }}" method="POST" enctype="multipart/form-data" id="formOutgoingMail">
         @csrf
         <div class="card-body" style="max-height: 65vh; overflow-y: auto;">
           <div class="card p-3" style="background-color:rgb(240, 240, 240);">
@@ -72,8 +72,12 @@
                     <tr>
                       <td><label class="text-danger">Jenis Naskah *</label></td>
                       <td>
-                        <input type="hidden" name="id_mst_letter" value="{{ $data->id_mst_letter }}" class="form-control">
-                        <input type="text" value="{{ $data->let_name }}" class="form-control" readonly>
+                        <select class="form-control js-example-basic-single" id="mst_letter" name="id_mst_letter" style="width: 100%;" required>
+                          <option value="">- Pilih -</option>
+                          @foreach($letters as $letter)
+                            <option value="{{ $letter->id }}">{{ $letter->let_name }}</option>
+                          @endforeach
+                        </select>
                       </td>
                     </tr>
                     {{-- Konseptor --}}
@@ -83,25 +87,21 @@
                         <select class="form-control js-example-basic-single" name="drafter" style="width: 100%;" required>
                           <option value="">- Pilih -</option>
                           @foreach($workunits as $workunit)
-                            <option value="{{ $workunit->id }}" @if($data->drafter == $workunit->id) selected="selected" @endif>
-                              {{ $workunit->work_name }}
-                            </option>
+                            <option value="{{ $workunit->id }}">{{ $workunit->work_name }}</option>
                           @endforeach
                         </select>
                       </td>
                     </tr>
                     {{-- Kode Satuan Organisasi --}}
                     <tr>
-                      <td><label>Kode Satuan Organisasi</label></td>
+                      <td><label id="labelkso">Kode Satuan Organisasi</label></td>
                       <td>
                         <div class="row">
                           <div class="col-md-9">
                             <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
                               <option value="">- Pilih -</option>
                               @foreach($sators as $sator)
-                                <option value="{{ $sator->id }}" @if($data->org_unit == $sator->id) selected="selected" @endif>
-                                  {{ $sator->sator_name }}
-                                </option>
+                                <option value="{{ $sator->id }}">{{ $sator->sator_name }}</option>
                               @endforeach
                             </select>
                           </div>
@@ -126,7 +126,7 @@
                   <tr>
                     <td><label class="text-danger">Perihal / Tentang *</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat..">{{ $data->mail_regarding }}</textarea>
+                      <textarea class="form-control" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat.." value=""></textarea>
                     </td>
                   </tr>
                   {{-- Tanggal --}}
@@ -136,11 +136,11 @@
                       <div class="row">
                         <div class="col-6">
                           <label  class="text-danger">Tanggal Keluar *</label>
-                          <input type="date" name="out_date" value="{{ \Carbon\Carbon::parse($data->out_date)->format('Y-m-d') }}" class="form-control" required>
+                          <input type="date" name="out_date" value="{{ old('out_date') }}" class="form-control" required>
                         </div>
                         <div class="col-6">
                           <label  class="text-danger">Tanggal Surat *</label>
-                          <input type="date" name="mail_date" value="{{ \Carbon\Carbon::parse($data->mail_date)->format('Y-m-d') }}" class="form-control" required readonly>
+                          <input type="date" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
                         </div>
                       </div>
                     </td>
@@ -154,9 +154,7 @@
                           <select class="form-control js-example-basic-single" name="signing" style="width: 100%;" required>
                             <option value="">- Pilih -</option>
                             @foreach($workunits as $workunit)
-                              <option value="{{ $workunit->id }}" @if($data->signing == $workunit->id) selected="selected" @endif>
-                                {{ $workunit->work_name }}
-                              </option>
+                              <option value="{{ $workunit->id }}">{{ $workunit->work_name }}</option>
                             @endforeach
                           </select>
                         </div>
@@ -170,14 +168,14 @@
                   <tr>
                     <td><label>Penandatanganan Pihak Instansi Lain</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="signing_other" placeholder="Masukkan Pihak Instansi Lain..">{{ $data->signing_other }}</textarea>
+                      <textarea class="form-control" rows="2" type="text" name="signing_other" placeholder="Masukkan Pihak Instansi Lain.." value="{{ old('signing_other') }}"></textarea>
                     </td>
                   </tr>
                   {{-- Penerima --}}
                   <tr>
                     <td><label class="text-danger">Penerima *</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="receiver" placeholder="Masukkan Penerima..">{{ $data->receiver }}</textarea>
+                      <textarea class="form-control" rows="2" type="text" name="receiver" placeholder="Masukkan Penerima.." value="{{ old('receiver') }}"></textarea>
                     </td>
                   </tr>
                   {{-- Jumlah --}}
@@ -188,7 +186,7 @@
                         <div class="col-md-5">
                           <div class="form-group">
                             <label  class="text-danger">Jumlah *</label>
-                            <input type="number" name="mail_quantity" value="{{ $data->mail_quantity }}" class="form-control" placeholder="Masukkan Jumlah.." required>
+                            <input type="number" name="mail_quantity" value="{{ old('mail_quantity') }}" class="form-control" placeholder="Masukkan Jumlah.." required>
                           </div>
                         </div>
                         {{-- Satuan --}}
@@ -198,9 +196,7 @@
                             <select class="form-control js-example-basic-single" name="mail_unit" style="width: 100%;" required>
                               <option value="">- Pilih -</option>
                               @foreach($unitletters as $unitletter)
-                                <option value="{{ $unitletter->id }}" @if($data->mail_unit == $unitletter->id) selected="selected" @endif>
-                                  {{ $unitletter->unit_name }}
-                                </option>
+                                <option value="{{ $unitletter->id }}">{{ $unitletter->unit_name }}</option>
                               @endforeach
                             </select>
                           </div>
@@ -224,7 +220,7 @@
                             <select class="form-control js-example-basic-single" name="archive_remain" style="width: 100%;" required>
                               <option value="">- Pilih -</option>
                               @foreach($archive_remains as $archive_remain)
-                                <option value="{{ $archive_remain->name_value }}" @if($data->archive_remains == $archive_remain->name_value) selected="selected" @endif>{{ $archive_remain->name_value }}</option>
+                                <option value="{{ $archive_remain->name_value }}">{{ $archive_remain->name_value }}</option>
                               @endforeach
                             </select>
                           </div>
@@ -245,9 +241,7 @@
                             <select class="form-control js-example-basic-single" name="archive_classification" style="width: 100%;">
                               <option value="">- Pilih -</option>
                               @foreach($classifications as $classification)
-                                <option value="{{ $classification->id }}" @if($data->archive_classification == $classification->id) selected="selected" @endif>
-                                  {{ $classification->classification_name }}
-                                </option>
+                                <option value="{{ $classification->id }}">{{ $classification->classification_name }}</option>
                               @endforeach
                             </select>
                           </div>
@@ -265,11 +259,11 @@
                       <div class="row">
                         <div class="col-6">
                           <label>Dari</label>
-                          <input type="date" name="mail_retention_from" value="{{ \Carbon\Carbon::parse($data->mail_retention_from)->format('Y-m-d') }}" class="form-control">
+                          <input type="date" name="mail_retention_from" value="{{ old('mail_retention_from') }}" class="form-control">
                         </div>
                         <div class="col-6">
                           <label>Hingga</label>
-                          <input type="date" name="mail_retention_to" value="{{ \Carbon\Carbon::parse($data->mail_retention_to)->format('Y-m-d') }}" class="form-control">
+                          <input type="date" name="mail_retention_to" value="{{ old('mail_retention_to') }}" class="form-control">
                         </div>
                       </div>
                     </td>
@@ -280,7 +274,7 @@
                     <td>
                       <div class="row">
                         <div class="col-md-9">
-                          <input type="text" name="save_location" id="saveLocation" value="{{ $data->location_save }}" class="form-control" placeholder="Pilih Lokasi Simpan.." readonly>
+                          <input type="text" name="save_location" id="saveLocation" value="{{ old('save_location') }}" class="form-control" placeholder="Pilih Lokasi Simpan.." readonly>
                         </div>
                         <div class="col-md-3">
                           <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#locSave">...</button>
@@ -295,9 +289,7 @@
                       <select class="form-control js-example-basic-single" name="received_via" style="width: 100%;">
                         <option value="">- Pilih -</option>
                         @foreach($receivedvias as $receivedvia)
-                          <option value="{{ $receivedvia->name_value }}" @if($data->received_via == $receivedvia->name_value) selected="selected" @endif>
-                            {{ $receivedvia->name_value }}
-                          </option>
+                          <option value="{{ $receivedvia->name_value }}">{{ $receivedvia->name_value }}</option>
                         @endforeach
                       </select>
                     </td>
@@ -306,30 +298,40 @@
                   <tr>
                     <td><label>Nomor Referensi</label></td>
                     <td>
-                      <input type="text" name="ref_number" value="{{ $data->ref_number }}" class="form-control" placeholder="Masukan Nomor Referensi..">
+                      <input type="text" name="ref_number" value="{{ old('ref_number') }}" class="form-control" placeholder="Masukkan Nomor Referensi..">
                     </td>
                   </tr>
                   {{-- Referensi Surat --}}
                   {{-- <tr>
                     <td><label>Referensi Surat</label></td>
                     <td>
-                      <input type="text" id="mail_ref" name="mail_ref" value="{{ $data->ref_mail }}" class="form-control" placeholder="Masukkan Referensi Surat..">
+                      <input type="text" id="mail_ref" name="mail_ref" value="{{ old('mail_ref') }}" class="form-control" placeholder="Masukkan Referensi Surat..">
                     </td>
                   </tr> --}}
                   {{-- Lampiran --}}
                   <tr>
                     <td><label>Lampiran</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran..">{{ $data->attachment_text }}</textarea>
+                      <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." value="{{ old('attachment_text') }}"></textarea>
                     </td>
                   </tr>
                   {{-- Keterangan --}}
                   <tr>
                     <td><label>Keterangan</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="information" placeholder="Masukkan Keterangan..">{{ $data->information }}</textarea>
+                      <textarea class="form-control" rows="3" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}"></textarea>
                     </td>
                   </tr>
+
+                  
+                  {{-- Jumlah --}}
+                  <tr>
+                    <td><label class="text-danger">Jumlah Naskah *</label></td>
+                    <td>
+                      <input type="number" name="amount_letter" class="form-control" placeholder="Masukkan Jumlah Naskah Dalam Angka.." required>
+                    </td>
+                  </tr>
+                  
                 </tbody>
               </table>
             </div>
@@ -351,7 +353,7 @@
                     <select class="form-control js-example-basic-single" name="namaGedung" id="namaGedung" style="width: 100%;">
                       <option value="">- Pilih -</option>
                       @foreach($gedungs as $gedung)
-                        <option value="{{ $gedung->id }}" @if($path->idGedung == $gedung->id) selected="selected" @endif>{{ $gedung->nama_gedung }}</option>
+                        <option value="{{ $gedung->id }}">{{ $gedung->nama_gedung }}</option>
                       @endforeach
                     </select>
                   </div>
@@ -359,54 +361,36 @@
                     <label class="text-danger">Nama Lantai*</label>
                     <select class="form-control js-example-basic-single" name="namaLantai" id="namaLantai" style="width: 100%;">
                       <option value="">- Pilih -</option>
-                      @foreach($listLantai as $lantai)
-                        <option value="{{ $lantai->id }}" @if($path->idLantai == $lantai->id) selected="selected" @endif>{{ $lantai->nama_lantai }}</option>
-                      @endforeach
                     </select>
                   </div>
                   <div class="form-group">
                     <label class="text-danger">Nama Ruang*</label>
                     <select class="form-control js-example-basic-single" name="namaRuang" id="namaRuang" style="width: 100%;">
                       <option value="">- Pilih -</option>
-                      @foreach($listRuang as $ruang)
-                        <option value="{{ $ruang->id }}" @if($path->idRuang == $ruang->id) selected="selected" @endif>{{ $ruang->nama_ruang }}</option>
-                      @endforeach
                     </select>
                   </div>
                   <div class="form-group">
                     <label class="text-danger">Nama Rak*</label>
                     <select class="form-control js-example-basic-single" name="namaRak" id="namaRak" style="width: 100%;">
                       <option value="">- Pilih -</option>
-                      @foreach($listRak as $rak)
-                        <option value="{{ $rak->id }}" @if($path->idRak == $rak->id) selected="selected" @endif>{{ $rak->nama_rak }}</option>
-                      @endforeach
                     </select>
                   </div>
                   <div class="form-group">
                     <label class="text-danger">Nama Baris*</label>
                     <select class="form-control js-example-basic-single" name="namaBaris" id="namaBaris" style="width: 100%;">
                       <option value="">- Pilih -</option>
-                      @foreach($listBaris as $baris)
-                        <option value="{{ $baris->id }}" @if($path->idBaris == $baris->id) selected="selected" @endif>{{ $baris->nama_baris }}</option>
-                      @endforeach
                     </select>
                   </div>
                   <div class="form-group">
                     <label class="text-danger">Nama Kolom*</label>
                     <select class="form-control js-example-basic-single" name="namaKolom" id="namaKolom" style="width: 100%;">
                       <option value="">- Pilih -</option>
-                      @foreach($listKolom as $kolom)
-                        <option value="{{ $kolom->id }}" @if($path->idKolom == $kolom->id) selected="selected" @endif>{{ $kolom->nama_kolom }}</option>
-                      @endforeach
                     </select>
                   </div>
                   <div class="form-group">
                     <label class="text-danger">Nama Boks*</label>
                     <select class="form-control js-example-basic-single" name="namaBoks" id="namaBoks" style="width: 100%;">
                       <option value="">- Pilih -</option>
-                      @foreach($listBoks as $boks)
-                        <option value="{{ $boks->id }}" @if($path->idBoks == $boks->id) selected="selected" @endif>{{ $boks->nama_box }}</option>
-                      @endforeach
                     </select>
                   </div>
                 </div>
@@ -611,11 +595,12 @@
             </div>
           </div>
         </div>
+
         <div class="card-footer">
           <div class="row">
             <div class="col-12" style="text-align: right">
               <a href="{{ route('outgoingmail.index') }}" type="button" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Kembali</a>
-              <button type="submit" class="btn btn-primary" id="sbFormOutgoingMail"><i class="mdi mdi-update"></i> Ubah Data</button>
+              <button type="submit" class="btn btn-primary" id="sbFormOutgoingMail"><i class="fa fa-paper-plane"></i> Kirim Data</button>
             </div>
           </div>
         </div>
@@ -641,6 +626,35 @@
 <script>
   $(".js-example-basic-single").select2().on("select2:open", function () {
       document.querySelector(".select2-search__field").focus();
+  });
+</script>
+
+
+<script>
+  $('select[id="mst_letter"]').on('change', function() {
+      const id_mst_letter = $(this).val();
+      var url = '{{ route("outgoingmail.checkpattern", ":id") }}';
+      url = url.replace(':id', id_mst_letter);
+      if (id_mst_letter) {
+          $.ajax({
+              url: url,
+              type: "GET",
+              dataType: "json",
+              success: function(data) {
+                  const label = document.getElementById('labelkso');
+                  const select = document.querySelector('select[name="org_unit"]');
+                  if (data === "R") {
+                      label.classList.add('text-danger');
+                      label.textContent = "Kode Satuan Organisasi *";
+                      select.setAttribute('required', 'required');
+                  } else {
+                      label.classList.remove('text-danger');
+                      label.textContent = "Kode Satuan Organisasi";
+                      select.removeAttribute('required');
+                  }
+              }
+          });
+      }
   });
 </script>
 
