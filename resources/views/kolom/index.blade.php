@@ -16,6 +16,7 @@
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <div class="row">
     <div class="container-fluid">
         <div class="row">
@@ -126,7 +127,8 @@
                                             </button>
                                         </div>
                                         @endif
-                                        <table id="example3" class="table table-bordered">
+                                        
+                                        <table id="server-side-table" class="table table-bordered" style="font-size: small" width="100%">
                                             <thead>
                                                 <tr>
                                                     <th scope="col" style="text-align: center;width: 6%">No.</th>
@@ -272,10 +274,13 @@
             <!-- /.row -->
         </div>
     </div>
-    
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</div>
     <script>
         $(document).ready(function() {
+            var table = $('#server-side-table').DataTable({
+                "scrollX": true,
+            });
+
             $('#nama_gedung').change(function() {
                 var gedungId = $(this).val();
                 var url = '{{ route("mappingLantai", ":id") }}';
@@ -517,5 +522,4 @@
             });
         });
     </script>
-</div>
     @endsection
