@@ -35,16 +35,14 @@ class IncommingMailController extends Controller
         $mail_date = $request->get('mail_date');
         $mail_number = $request->get('mail_number');
         $placeman = $request->get('placeman');
-
+        $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
         $workunits = WorkUnit::get();
 
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
         $complains = Complain::get();
         $letters = Letter::get();
 
-        $datas = IncommingMail::select('incomming_mails.*', 'receiv.work_name as receiver_name',
-                'incomming_mails.updated_at as last_update', 'incomming_mails.created_at as created')
-            ->leftjoin('master_workunit as receiv', 'receiv.id', 'incomming_mails.receiver')
+        $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'incomming_mails.created_at as created')
             ->orderBy('created_at', 'desc');
 
         // FIlter
@@ -75,7 +73,7 @@ class IncommingMailController extends Controller
         }
 
         return view('mail.incomming.index', compact('workunits', 'placemans', 'complains', 'letters',
-            'entry_date', 'mail_date', 'mail_number', 'placeman'));
+            'entry_date', 'mail_date', 'mail_number', 'placeman', 'receiverMails'));
     }
     
     public function directupdate(Request $request, $id)
@@ -144,8 +142,7 @@ class IncommingMailController extends Controller
         
         if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman)) 
         {
-            $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'receiv.work_name as receiver_name')
-            ->leftjoin('master_workunit as receiv', 'receiv.id', 'incomming_mails.receiver')
+            $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update')
             ->orderBy('created_at', 'desc');
 
             // FIlter
@@ -198,8 +195,7 @@ class IncommingMailController extends Controller
         
         if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman)) 
         {
-            $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'receiv.work_name as receiver_name')
-            ->leftjoin('master_workunit as receiv', 'receiv.id', 'incomming_mails.receiver')
+            $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update')
             ->orderBy('created_at', 'desc');
 
             // FIlter
@@ -255,6 +251,7 @@ class IncommingMailController extends Controller
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
         $complains = Complain::get();
         $letters = Letter::get();
+        $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
         $workunits = WorkUnit::get();
         $unitletters = UnitLetter::get();
         $classifications = Classification::get();
@@ -265,7 +262,7 @@ class IncommingMailController extends Controller
 
         $sators = Sator::orderBy('sator_name','asc')->get();
 
-        return view('mail.incomming.create', compact('placemans', 'complains', 'letters', 'workunits', 'unitletters', 'classifications', 'results', 'approveds', 'mailtypes', 'receivedvias',
+        return view('mail.incomming.create', compact('placemans', 'complains', 'letters', 'workunits', 'receiverMails', 'unitletters', 'classifications', 'results', 'approveds', 'mailtypes', 'receivedvias',
             'sators'));
     }
 
@@ -276,7 +273,6 @@ class IncommingMailController extends Controller
             "placeman" => "required",
             "mail_regarding" => "required",
             "entry_date" => "required",
-            "mail_date" => "required",
             "receiver" => "required",
             "mail_quantity" => "required",
             "mail_unit" => "required",
@@ -287,7 +283,6 @@ class IncommingMailController extends Controller
             'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
             'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
             'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
-            'mail_date.required' => 'Tanggal Surat Wajib Untuk Diisi.',
             'receiver.required' => 'Penerima Wajib Untuk Diisi.',
             'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
             'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',

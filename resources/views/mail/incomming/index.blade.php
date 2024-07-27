@@ -349,17 +349,17 @@
                         },
                     },
                     {
-                        data: 'receiver_name',
-                        name: 'receiver_name',
+                        data: 'receiver',
+                        name: 'receiver',
                         orderable: true,
                         searchable: true,
                         className: 'text-center',
                         render: function(data, type, row) {
                             var html
-                            if(row.receiver_name == null){
+                            if(row.receiver == null){
                                 html = '<span class="badge bg-secondary">Null</span>';
                             } else {
-                                html = row.receiver_name;
+                                html = row.receiver;
                             }
                             return html;
                         },
@@ -467,7 +467,7 @@
                                 options += '<option value="">- Pilih -</option>';
                                 @foreach($workunits as $workunit)
                                     var work_name = '{{ $workunit->work_name }}';
-                                    options += '<option value="{{ $workunit->id }}" ' + (work_name === selectValue ? 'selected' : '') + '>{{ $workunit->work_name }}</option>';
+                                    options += '<option value="{{ $workunit->work_name }}" ' + (work_name === selectValue ? 'selected' : '') + '>{{ $workunit->work_name }}</option>';
                                 @endforeach
                                 options += '</select>';
                                 $this.html(options);
@@ -486,9 +486,9 @@
                             var selectValue = $this.text();
                             var options = '<select class="form-control js-example-basic-single">';
                             options += '<option value="">- Pilih -</option>';
-                            @foreach($workunits as $workunit)
-                                var work_name = '{{ $workunit->work_name }}';
-                                options += '<option value="{{ $workunit->id }}" ' + (work_name === selectValue ? 'selected' : '') + '>{{ $workunit->work_name }}</option>';
+                            @foreach($receiverMails as $receiver)
+                                var receiver = '{{ $receiver->name_value }}';
+                                options += '<option value="{{ $receiver->name_value }}" ' + (receiver === selectValue ? 'selected' : '') + '>{{ $receiver->name_value }}</option>';
                             @endforeach
                             options += '</select>';
                             $this.html(options);

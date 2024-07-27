@@ -148,8 +148,8 @@
                           <input type="date" name="entry_date" value="{{ old('entry_date') }}" class="form-control" required>
                         </div>
                         <div class="col-6">
-                          <label  class="text-danger">Tanggal Surat *</label>
-                          <input type="datetime-local" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
+                          <label>Tanggal Surat</label>
+                          <input type="datetime-local" name="mail_date" value="{{ old('mail_date') }}" class="form-control">
                         </div>
                       </div>
                     </td>
@@ -162,13 +162,13 @@
                         <div class="col-md-9">
                           <select class="form-control js-example-basic-single" name="receiver" style="width: 100%;" required>
                             <option value="">- Pilih -</option>
-                            @foreach($workunits as $workunit)
-                              <option value="{{ $workunit->id }}">{{ $workunit->work_name }}</option>
+                            @foreach($receiverMails as $receiver)
+                              <option value="{{ $receiver->name_value }}">{{ $receiver->name_value }}</option>
                             @endforeach
                           </select>
                         </div>
                         <div class="col-md-3">
-                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#unitKerja"><i class="fa fa-plus"></i> Tambah Baru</button>
+                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#penerimaSurat"><i class="fa fa-plus"></i> Tambah Baru</button>
                         </div>
                       </div>
                     </td>

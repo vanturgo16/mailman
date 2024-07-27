@@ -188,10 +188,10 @@
                   @endif
                 </td>
                 <td class="align-top text-left px-1">
-                  @if($item->receiver_name == null)
+                  @if($item->receiver == null)
                     -
                   @else
-                    {{ $item->receiver_name }}
+                    {{ $item->receiver }}
                   @endif
                 </td>
                 <td class="align-top text-left px-1">

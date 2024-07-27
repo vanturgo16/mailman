@@ -153,8 +153,8 @@
                           <input type="date" name="entry_date" value="{{ \Carbon\Carbon::parse($data->entry_date)->format('Y-m-d') }}" class="form-control" required>
                         </div>
                         <div class="col-6">
-                          <label  class="text-danger">Tanggal Surat *</label>
-                          <input type="datetime-local" name="mail_date" value="{{ $data->mail_date }}" class="form-control" required>
+                          <label>Tanggal Surat</label>
+                          <input type="datetime-local" name="mail_date" value="{{ $data->mail_date }}" class="form-control">
                         </div>
                       </div>
                     </td>

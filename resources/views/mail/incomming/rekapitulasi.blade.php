@@ -369,17 +369,17 @@
                     },
                 },
                 {
-                    data: 'receiver_name',
-                    name: 'receiver_name',
+                    data: 'receiver',
+                    name: 'receiver',
                     orderable: true,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
                         var html
-                        if(row.receiver_name == null){
+                        if(row.receiver == null){
                             html = '<span class="badge bg-secondary">Null</span>';
                         } else {
-                            html = row.receiver_name;
+                            html = row.receiver;
                         }
                         return html;
                     },

@@ -330,3 +330,45 @@
     </div>
   </div>
 </div>
+{{-- Penerima --}}
+<div class="modal fade" id="penerimaSurat" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+        <div class="modal-header" style="background-color: #0074F1; color: white;">
+          <h5 class="modal-title font-weight-bold" id="modalAddLabel">Tambah Daftar Penerima</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white">
+              <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{{ route('dropdown.store') }}" method="POST" enctype="multipart/form-data" id="modalForm8">
+          @csrf
+          <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
+            <input type="hidden" class="form-control" name="category" value="Penerima Surat Masuk" required>
+            <input type="hidden" class="form-control" name="code_format" value="PSM" required>
+
+            <div class="form-group">
+              <label class="text-danger">Penerima Surat*</label>
+              <input type="text" class="form-control" id="" name="name_value" placeholder="Masukkan Penerima Surat.." required>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            <button type="submit" class="btn btn-primary" id="sbForm8">Simpan</button>
+          </div>
+        </form>
+        <script>
+            document.getElementById('modalForm8').addEventListener('submit', function(event) {
+                if (!this.checkValidity()) {
+                    event.preventDefault();
+                    return false;
+                }
+                var submitButton = this.querySelector('button[id="sbForm8"]');
+                submitButton.disabled = true;
+                submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
+                return true;
+            });
+        </script>
+    </div>
+  </div>
+</div>
