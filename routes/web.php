@@ -36,6 +36,7 @@ use App\Http\Controllers\MappingLokasiSimpanController;
 use App\Http\Controllers\PatternController;
 use App\Http\Controllers\SatorController;
 use App\Http\Controllers\SaveLocationMapController;
+use App\Http\Controllers\SubSatorController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UnitLetterController;
 use App\Http\Controllers\WorkUnitController;
@@ -137,6 +138,9 @@ Route::group(['middleware' => 'cekadmin'], function () {
 
     Route::resource('sator', SatorController::class);
     Route::patch('/sator/aktif/{id}', [SatorController::class, 'aktif']);
+
+    Route::resource('sub-sator', SubSatorController::class);
+    Route::patch('/sub-sator/aktif/{id}', [SubSatorController::class, 'aktif']);
 
     Route::resource('unitkerja', WorkUnitController::class);
     Route::patch('/unitkerja/aktif/{id}', [WorkUnitController::class, 'aktif']);
