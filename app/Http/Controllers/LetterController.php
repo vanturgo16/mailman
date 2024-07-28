@@ -26,8 +26,8 @@ class LetterController extends Controller
         ->leftJoin('master_pattern','master_letter.id','master_pattern.let_id')
         ->orderBy('let_code','asc')
         ->orderBy('let_name','asc')->get();
-        $dropdowns = Dropdown::where('category','Tipe Penomoran')->get();
-        $strucNos  = Dropdown::where('category','Struktur Nomor')->get();
+        $dropdowns = Dropdown::where('category','Tipe Penomoran')->orderBy('name_value','asc')->get();
+        $strucNos  = Dropdown::where('category','Struktur Nomor')->orderBy('name_value','asc')->get();
         return view('parameter.naskah.index',compact('datas','dropdowns','strucNos'));
     }
 
@@ -76,8 +76,8 @@ class LetterController extends Controller
 
     public function createPattern($id){
         $data = Letter::where('id',decrypt($id))->first();
-        $dropdowns = Dropdown::where('category','Tipe Penomoran')->get();
-        $strucNos  = Dropdown::where('category','Struktur Nomor')->get();
+        $dropdowns = Dropdown::where('category','Tipe Penomoran')->orderBy('name_value','asc')->get();
+        $strucNos  = Dropdown::where('category','Struktur Nomor')->orderBy('name_value','asc')->get();
         return view('parameter.naskah.create_pattern',compact('data','dropdowns','strucNos','id'));
     }
 

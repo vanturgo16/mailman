@@ -172,7 +172,19 @@
             <li class="nav-item">
               <a href="{{ url('/sator') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Data Satuan Organisasi</p>
+                <p>Data Sat. Organisasi</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url('/sub-sator') }}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Data Sub Sat. Organisasi</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{{ url('/tipe-kka') }}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Tipe KKA</p>
               </a>
             </li>
           </ul>
