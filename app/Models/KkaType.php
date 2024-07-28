@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class KkaType extends Model
 {
     use HasFactory;
+    protected $guarded = [
+        'id'
+    ];
 }
