@@ -101,6 +101,12 @@ class IncommingMailController extends Controller
         if($databefore->isDirty()){
             DB::beginTransaction();
             try {
+                if($request[6] != null){
+                    $jmlHal = $databefore->mail_quantity + $request[6];
+                } else {
+                    $jmlHal = $databefore->mail_quantity;
+                }
+                
                 // Update Incomming Mail
                 IncommingMail::where('id', $id)->update([
                     'mail_date' => $request[1],
@@ -110,6 +116,7 @@ class IncommingMailController extends Controller
                     'mail_regarding' => $request[5],
                     'attachment_text' => $request[6],
                     'receiver' => $request[7],
+                    'jml_hal' => $jmlHal,
                     'information' => $request[8],
                     'updated_by' => auth()->user()->name,
                 ]);
@@ -306,10 +313,19 @@ class IncommingMailController extends Controller
                 $approved_by = null;
                 $received_via = $request->received_viaSelect;
             }
+
+            if($request->attachment_text != null){
+                $jmlHal = $request->mail_quantity + $request->attachment_text;
+            } else {
+                $jmlHal = $request->mail_quantity;
+            }
+            
             $store = IncommingMail::create([
                 'placeman' => $request->placeman,
                 'id_mst_letter' => $request->id_mst_letter,
                 'id_mst_complain' => $request->id_mst_complain,
+                'org_unit' => $request->org_unit,
+                'sub_org_unit' => $request->sub_org_unit,
                 'sender' => $sender,
                 'mail_number' => $request->mail_number,
                 'mail_regarding' => $request->mail_regarding,
@@ -327,6 +343,7 @@ class IncommingMailController extends Controller
                 'received_via' => $received_via,
                 'attachment_text' => $request->attachment_text,
                 'information' => $request->information,
+                'jml_hal' => $jmlHal,
                 'status' => null,
                 'created_by' => auth()->user()->name,
             ]);
@@ -355,6 +372,7 @@ class IncommingMailController extends Controller
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
         $complains = Complain::get();
         $letters = Letter::get();
+        $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
         $workunits = WorkUnit::get();
         $unitletters = UnitLetter::get();
         $classifications = Classification::get();
@@ -365,7 +383,7 @@ class IncommingMailController extends Controller
 
         $sators = Sator::orderBy('sator_name','asc')->get();
 
-        return view('mail.incomming.createbulk', compact('placemans', 'complains', 'letters', 'workunits', 'unitletters', 'classifications', 'results', 'approveds', 'mailtypes', 'receivedvias',
+        return view('mail.incomming.createbulk', compact('placemans', 'complains', 'letters', 'workunits', 'receiverMails', 'unitletters', 'classifications', 'results', 'approveds', 'mailtypes', 'receivedvias',
             'sators'));
     }
     public function storebulk(Request $request)
@@ -412,11 +430,19 @@ class IncommingMailController extends Controller
                 $received_via = $request->received_viaSelect;
             }
 
+            if($request->attachment_text != null){
+                $jmlHal = $request->mail_quantity + $request->attachment_text;
+            } else {
+                $jmlHal = $request->mail_quantity;
+            }
+
             for ($i = 0; $i < $amountLetter; $i++) {
                 
                 $store = IncommingMail::create([
                     'placeman' => $request->placeman,
                     'id_mst_letter' => $request->id_mst_letter,
+                    'org_unit' => $request->org_unit,
+                    'sub_org_unit' => $request->sub_org_unit,
                     'id_mst_complain' => $request->id_mst_complain,
                     'sender' => $sender,
                     'mail_number' => $request->mail_number,
@@ -435,6 +461,7 @@ class IncommingMailController extends Controller
                     'received_via' => $received_via,
                     'attachment_text' => $request->attachment_text,
                     'information' => $request->information,
+                    'jml_hal' => $jmlHal,
                     'status' => null,
                     'created_by' => auth()->user()->name,
                 ]);
@@ -514,11 +541,13 @@ class IncommingMailController extends Controller
         // dd($id);
 
         $data = IncommingMail::select('incomming_mails.*', 'master_letter.let_name', 'master_complain.com_name', 'receiv.work_name as receiver_name',
-            'master_unit_letter.unit_name', 'master_classification.classification_name'
+            'master_unit_letter.unit_name', 'master_classification.classification_name', 'org.sator_name', 'suborg.sub_sator_name'
         )
             ->leftjoin('master_letter', 'master_letter.id', 'incomming_mails.id_mst_letter')
             ->leftjoin('master_complain', 'master_complain.id', 'incomming_mails.id_mst_complain')
             ->leftjoin('master_unit_letter', 'master_unit_letter.id', 'incomming_mails.mail_unit')
+            ->leftjoin('master_sator as org', 'org.id', 'incomming_mails.org_unit')
+            ->leftjoin('master_sub_sator as suborg', 'suborg.id', 'incomming_mails.sub_org_unit')
             ->leftjoin('master_workunit as receiv', 'receiv.id', 'incomming_mails.receiver')
             ->leftjoin('master_classification', 'master_classification.id', 'incomming_mails.archive_classification')
             ->where('incomming_mails.id', $id)
@@ -622,6 +651,8 @@ class IncommingMailController extends Controller
 
         $databefore->placeman = $request->placeman;
         $databefore->sender = $sender;
+        $databefore->org_unit = $request->org_unit;
+        $databefore->sub_org_unit = $request->sub_org_unit;
         $databefore->mail_number = $request->mail_number;
         $databefore->mail_regarding = $request->mail_regarding;
         $databefore->entry_date = $entry_date;
@@ -636,6 +667,12 @@ class IncommingMailController extends Controller
         $databefore->attachment_text = $request->attachment_text;
         $databefore->information = $request->information;
 
+        if($request->attachment_text != null){
+            $jmlHal = $request->mail_quantity + $request->attachment_text;
+        } else {
+            $jmlHal = $request->mail_quantity;
+        }
+
         if($databefore->isDirty()){
             DB::beginTransaction();
             try {
@@ -644,6 +681,8 @@ class IncommingMailController extends Controller
                     'id_mst_letter' => $request->id_mst_letter,
                     'id_mst_complain' => $request->id_mst_complain,
                     'sender' => $sender,
+                    'org_unit' => $request->org_unit,
+                    'sub_org_unit' => $request->sub_org_unit,
                     'mail_number' => $request->mail_number,
                     'mail_regarding' => $request->mail_regarding,
                     'entry_date' => $request->entry_date,
@@ -659,6 +698,7 @@ class IncommingMailController extends Controller
                     'approved_by' => $approved_by,
                     'received_via' => $received_via,
                     'attachment_text' => $request->attachment_text,
+                    'jml_hal' => $jmlHal,
                     'information' => $request->information,
                     'updated_by' => auth()->user()->name,
                 ]);

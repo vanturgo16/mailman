@@ -91,7 +91,7 @@
                             <th rowspan="2" class="align-middle text-center">Tgl. Agenda</th>
                             <th rowspan="2" class="align-middle text-center">No. Agenda</th>
                             <th colspan="3" class="align-middle text-center">Naskah / Surat</th>
-                            <th rowspan="2" class="align-middle text-center">Lampiran</th>
+                            <th rowspan="2" class="align-middle text-center">Jumlah Lampiran</th>
                             <th rowspan="2" class="align-middle text-center">Kepada</th>
                             <th rowspan="2" class="align-middle text-center">Keterangan</th>
                             <th rowspan="2" class="align-middle text-center">Tgl. Dibuat</th>
@@ -337,6 +337,7 @@
                         name: 'attachment_text',
                         orderable: true,
                         searchable: true,
+                        className: 'text-center',
                         render: function(data, type, row) {
                             var html;
                             if (row.attachment_text == null) {
@@ -480,7 +481,7 @@
                             $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
                         }
                         else if(index === 6) {
-                            $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
+                            $this.html('<input type="number" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
                         } 
                         else if(index === 7) {
                             var selectValue = $this.text();
@@ -533,7 +534,7 @@
                             newValue = $this.find('textarea').val();
                         }
                         else if(index == 6) {
-                            newValue = $this.find('textarea').val();
+                            newValue = $this.find('input').val();
                         } 
                         else if(index == 7) {
                             newValue = $this.find('select').val();

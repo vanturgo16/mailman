@@ -64,56 +64,127 @@
         @csrf
         <div class="card-body" style="max-height: 65vh; overflow-y: auto;">
           <div class="card p-3" style="background-color:rgb(240, 240, 240);">
-            <div class="row">
-              <div class="col-md-12">
-                <table class="table table-bordered">
-                  <tbody>
-                    {{-- Jenis Naskah --}}
-                    <tr>
-                      <td><label class="text-danger">Jenis Naskah *</label></td>
-                      <td>
-                        <input type="hidden" name="id_mst_letter" value="{{ $data->id_mst_letter }}" class="form-control">
-                        <input type="text" value="{{ $data->let_name }}" class="form-control" readonly>
-                      </td>
-                    </tr>
-                    {{-- Konseptor --}}
-                    <tr>
-                      <td><label class="text-danger">Konseptor *</label></td>
-                      <td>
-                        <select class="form-control js-example-basic-single" name="drafter" style="width: 100%;" required>
-                          <option value="">- Pilih -</option>
-                          @foreach($workunits as $workunit)
-                            <option value="{{ $workunit->id }}" @if($data->drafter == $workunit->id) selected="selected" @endif>
-                              {{ $workunit->work_name }}
-                            </option>
-                          @endforeach
-                        </select>
-                      </td>
-                    </tr>
-                    {{-- Kode Satuan Organisasi --}}
-                    <tr>
-                      <td><label>Kode Satuan Organisasi</label></td>
-                      <td>
-                        <div class="row">
-                          <div class="col-md-9">
-                            <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
-                              <option value="">- Pilih -</option>
-                              @foreach($sators as $sator)
-                                <option value="{{ $sator->id }}" @if($data->org_unit == $sator->id) selected="selected" @endif>
-                                  {{ $sator->sator_name }}
-                                </option>
-                              @endforeach
-                            </select>
-                          </div>
-                          <div class="col-md-3">
-                            <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#satuanOrg"><i class="fa fa-plus"></i> Tambah Baru</button>
-                          </div>
-                        </div>
-                        <small>* (Harus diisi khusus untuk Jenis Naskah Surat, Nota Dinas, Surat Pengantar dan Telaahan Staf jika bukan ditandatangani oleh Kapolri/Wakapolri)</small>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+            {{-- Jenis Naskah --}}
+            <div class="row row-separator">
+              <div class="col-3">
+                <label class="text-danger">Jenis Naskah *</label>
+              </div>
+              <div class="col-9">
+                <input type="hidden" name="id_mst_letter" value="{{ $data->id_mst_letter }}" class="form-control">
+                <input type="text" value="{{ $data->let_name }}" class="form-control" readonly>
+              </div>
+            </div>
+            {{-- Konseptor --}}
+            <div class="row row-separator">
+              <div class="col-3">
+                <label class="text-danger">Konseptor *</label>
+              </div>
+              <div class="col-9">
+                <select class="form-control js-example-basic-single" name="drafter" style="width: 100%;" required>
+                  <option value="">- Pilih -</option>
+                  @foreach($workunits as $workunit)
+                    <option value="{{ $workunit->id }}" @if($data->drafter == $workunit->id) selected="selected" @endif>
+                      {{ $workunit->work_name }}
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+            {{-- Kode Satuan Organisasi --}}
+            <div class="row row-separator">
+              <div class="col-3">
+                <label id="labelkso">Kode Satuan Organisasi</label>
+                <br>
+                <small>* (Harus diisi khusus untuk Jenis Naskah Surat, Nota Dinas, Surat Pengantar dan Telaahan Staf jika bukan ditandatangani oleh Kapolri/Wakapolri)</small>
+              </div>
+              <div class="col-9">
+                <div class="row">
+                  <div class="col-12">
+                    <label>Induk Satuan Organisasi</label>
+                  </div>
+                  <div class="col-9">
+                    <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
+                      <option value="">- Pilih -</option>
+                      @foreach($sators as $sator)
+                        <option value="{{ $sator->id }}" @if($data->org_unit == $sator->id) selected="selected" @endif>
+                          {{ $sator->sator_name }}
+                        </option>
+                      @endforeach
+                    </select>
+                  </div>
+                  <div class="col-3">
+                    <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#satuanOrg"><i class="fa fa-plus"></i> Tambah Baru</button>
+                  </div>
+                  <div class="col-12 mt-3">
+                    <label id="labelSubSator">Sub Satuan Organisasi</label>
+                  </div>
+                  <div class="col-9">
+                    <select class="form-control js-example-basic-single" name="sub_org_unit" id="sub_org_unit" style="width: 100%;">
+                      <option value="">- Pilih -</option>
+                    </select>
+                  </div>
+                  <div class="col-3">
+                  </div>
+                  <script>
+                    var satorBefore = "{{ $data->org_unit }}";
+                    var subSatorBefore = "{{ $data->sub_org_unit }}";
+                    if(satorBefore != null){
+                      $('#labelSubSator').addClass("text-danger");
+                      $('#labelSubSator').html("Sub Satuan Organisasi *");
+                      var url = '{{ route("sator.mapSator", ":id") }}';
+                      url = url.replace(':id', satorBefore);
+                      if (satorBefore) {
+                          $.ajax({
+                              url: url,
+                              type: "GET",
+                              dataType: "json",
+                              success: function(data) {
+                                  $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
+                                  $.each(data, function(div, value) {
+                                      var selected = (subSatorBefore == value.id) ? ' selected' : '';
+                                      $('#sub_org_unit').append(
+                                          '<option value="' + value.id + '"' + selected + '>' + value.sub_sator_name + '</option>'
+                                      );
+                                  });
+                              }
+                          });
+                      } else {
+                          $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
+                      }
+                    }
+                    // Map Sator 
+                    $('select[name="org_unit"]').on('change', function() {
+                      const sator = $(this).val();
+                      if(sator == null || sator == ""){
+                        $('#labelSubSator').removeClass("text-danger");
+                        $('#labelSubSator').html("Sub Satuan Organisasi");
+                        $('select[name="sub_org_unit"]').removeAttr('required');
+                      } else {
+                        $('#labelSubSator').addClass("text-danger");
+                        $('#labelSubSator').html("Sub Satuan Organisasi *");
+                        $('select[name="sub_org_unit"]').attr('required', 'required');
+                      }
+                      var url = '{{ route("sator.mapSator", ":id") }}';
+                      url = url.replace(':id', sator);
+                      if (sator) {
+                          $.ajax({
+                              url: url,
+                              type: "GET",
+                              dataType: "json",
+                              success: function(data) {
+                                  $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
+                                  $.each(data, function(div, value) {
+                                      $('#sub_org_unit').append(
+                                          '<option value="' + value.id + '">' + value.sub_sator_name + '</option>');
+                                  });
+                              }
+                          });
+                      } else {
+                          $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
+                      }
+                    });
+                  </script>
+                </div>
               </div>
             </div>
           </div>
@@ -318,9 +389,10 @@
                   </tr> --}}
                   {{-- Lampiran --}}
                   <tr>
-                    <td><label>Lampiran</label></td>
+                    <td><label>Jumlah Lampiran</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran..">{{ $data->attachment_text }}</textarea>
+                      <input type="number" class="form-control" name="attachment_text" value="{{ $data->attachment_text }}" placeholder="Masukkan Jumlah Lampiran..">
+                      {{-- <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran..">{{ $data->attachment_text }}</textarea> --}}
                     </td>
                   </tr>
                   {{-- Keterangan --}}
