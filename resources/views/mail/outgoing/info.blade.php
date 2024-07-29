@@ -64,6 +64,30 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="form-group">
+                        <div><span class="text-bold">KKA Type :</span></div>
+                        <span>
+                            @if($kka_type == null)
+                                <span class="badge bg-secondary">-</span>
+                            @else
+                                <b>{{ $kka_type->kka_primary_code }}</b> - {{ $kka_type->kka_type }}
+                            @endif
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <div><span class="text-bold">KKA Code :</span></div>
+                        <span>
+                            @if($kka_codes == null)
+                                <span class="badge bg-secondary">-</span>
+                            @else
+                                <b>{{ $kka_codes->kka_code }}</b> - {{ $kka_codes->kka_desc }}
+                            @endif
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
                         <div><span class="text-bold">Konseptor :</span></div>
                         <span>
                             @if($data->drafter_name == null)
@@ -74,14 +98,28 @@
                         </span>
                     </div>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-lg-4">
                     <div class="form-group">
-                        <div><span class="text-bold">Kode Satuan Organisasi :</span></div>
+                        <div><span class="text-bold">Kode Satuan Organisasi (Induk) :</span></div>
                         <span>
                             @if($data->sator_name == null)
                                 <span class="badge bg-secondary">Tidak Diisi..</span>
                             @else
                                 {{ $data->sator_name }}
+                            @endif
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <div><span class="text-bold">Kode Satuan Organisasi (Sub) :</span></div>
+                        <span>
+                            @if($data->sub_sator_name == null)
+                                <span class="badge bg-secondary">Tidak Diisi..</span>
+                            @else
+                                {{ $data->sub_sator_name }}
                             @endif
                         </span>
                     </div>
@@ -283,19 +321,26 @@
                     </span>
                 </div>
             </div> --}}
-            <div class="col-lg-6">
+            <div class="col-lg-4">
                 <div class="form-group">
-                    <div><span class="text-bold">Lampiran :</span></div>
-                    <div class="card p-2 mt-1" style="background-color:rgb(253, 253, 253);">
+                    <div><span class="text-bold">Jumlah Lampiran :</span></div>
+                    <span>
                         @if($data->attachment_text == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
                             {{ $data->attachment_text }}
                         @endif
-                    </div>
+                    </span>
+                    {{-- <div class="card p-2 mt-1" style="background-color:rgb(253, 253, 253);">
+                        @if($data->attachment_text == null)
+                            <span class="badge bg-secondary">Tidak Diisi..</span>
+                        @else
+                            {{ $data->attachment_text }}
+                        @endif
+                    </div> --}}
                 </div>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <div class="form-group">
                     <div><span class="text-bold">Keterangan :</span></div>
                     <div class="card p-2 mt-1" style="background-color:rgb(253, 253, 253);">

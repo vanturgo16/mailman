@@ -51,6 +51,8 @@
                             <input type="hidden" name="mail_date" value="">
                             <input type="hidden" name="mail_number" value="">
                             <input type="hidden" name="placeman" value="">
+                            <input type="hidden" name="org_unit" value="">
+                            <input type="hidden" name="jmlHal" value="">
                             <button type="submit" class="btn btn-sm btn-secondary" id="resetbtn"><i class="mdi mdi-reload"></i> Reset Filter</button>
                         </form>
                         <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#search"><span class="mdi mdi-filter"></span> Filter & Cari </a>
@@ -91,9 +93,10 @@
                             <th rowspan="2" class="align-middle text-center">Tgl. Agenda</th>
                             <th rowspan="2" class="align-middle text-center">No. Agenda</th>
                             <th colspan="3" class="align-middle text-center">Naskah / Surat</th>
-                            <th rowspan="2" class="align-middle text-center">Lampiran</th>
+                            <th rowspan="2" class="align-middle text-center">Jumlah<br>Lampiran</th>
                             <th rowspan="2" class="align-middle text-center">Kepada</th>
                             <th rowspan="2" class="align-middle text-center">Keterangan</th>
+                            <th rowspan="2" class="align-middle text-center">Jumlah<br>Halaman</th>
                             <th rowspan="2" class="align-middle text-center">Tgl. Dibuat</th>
                             <th rowspan="2" class="align-middle text-center">Ubah</th>
                             <th rowspan="2" class="align-middle text-center">Aksi</th>
@@ -148,6 +151,28 @@
                                     <option value="">- Pilih -</option>
                                     @foreach($placemans as $item)
                                       <option value="{{ $item->name_value }}" @if($placeman == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
+                                    @endforeach
+                                </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                <label>Kode Satuan Organisasi (Induk)</label>
+                                <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
+                                    <option value="">- Pilih -</option>
+                                    @foreach($sators as $sator)
+                                        <option value="{{ $sator->id }}" @if($org_unit == $sator->id) selected="selected" @endif>{{ $sator->sator_name }}</option>
+                                    @endforeach
+                                </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                <label>Jumlah Halaman</label>
+                                <select class="form-control js-example-basic-single" name="jmlHal" style="width: 100%;">
+                                    <option value="">- Pilih -</option>
+                                    @foreach($jmlHals as $item)
+                                        <option value="{{ $item->name_value }}" @if($jmlHal == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
                                     @endforeach
                                 </select>
                                 </div>
@@ -238,7 +263,9 @@
                         entry_date: '{{ $entry_date }}',
                         mail_date: '{{ $mail_date }}',
                         mail_number: '{{ $mail_number }}',
-                        placeman: '{{ $placeman }}'
+                        placeman: '{{ $placeman }}',
+                        org_unit: '{{ $org_unit }}',
+                        jmlHal: '{{ $jmlHal }}'
                     }
                 },
                 "columns": [
@@ -337,6 +364,7 @@
                         name: 'attachment_text',
                         orderable: true,
                         searchable: true,
+                        className: 'text-center',
                         render: function(data, type, row) {
                             var html;
                             if (row.attachment_text == null) {
@@ -349,17 +377,17 @@
                         },
                     },
                     {
-                        data: 'receiver_name',
-                        name: 'receiver_name',
+                        data: 'receiver',
+                        name: 'receiver',
                         orderable: true,
                         searchable: true,
                         className: 'text-center',
                         render: function(data, type, row) {
                             var html
-                            if(row.receiver_name == null){
+                            if(row.receiver == null){
                                 html = '<span class="badge bg-secondary">Null</span>';
                             } else {
-                                html = row.receiver_name;
+                                html = row.receiver;
                             }
                             return html;
                         },
@@ -378,6 +406,22 @@
                                 html = truncatedData;
                             }
                             return html;
+                        },
+                    },
+                    {
+                        data: 'jml_hal',
+                        name: 'jml_hal',
+                        orderable: true,
+                        searchable: true,
+                        className: 'text-center',
+                        render: function(data, type, row) {
+                        var html;
+                        if(row.jml_hal == null){
+                            html = '<span class="badge bg-secondary">Null</span>';
+                        } else {
+                            html = row.jml_hal;
+                        }
+                        return html;
                         },
                     },
                     {
@@ -467,7 +511,7 @@
                                 options += '<option value="">- Pilih -</option>';
                                 @foreach($workunits as $workunit)
                                     var work_name = '{{ $workunit->work_name }}';
-                                    options += '<option value="{{ $workunit->id }}" ' + (work_name === selectValue ? 'selected' : '') + '>{{ $workunit->work_name }}</option>';
+                                    options += '<option value="{{ $workunit->work_name }}" ' + (work_name === selectValue ? 'selected' : '') + '>{{ $workunit->work_name }}</option>';
                                 @endforeach
                                 options += '</select>';
                                 $this.html(options);
@@ -480,15 +524,15 @@
                             $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
                         }
                         else if(index === 6) {
-                            $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
+                            $this.html('<input type="number" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
                         } 
                         else if(index === 7) {
                             var selectValue = $this.text();
                             var options = '<select class="form-control js-example-basic-single">';
                             options += '<option value="">- Pilih -</option>';
-                            @foreach($workunits as $workunit)
-                                var work_name = '{{ $workunit->work_name }}';
-                                options += '<option value="{{ $workunit->id }}" ' + (work_name === selectValue ? 'selected' : '') + '>{{ $workunit->work_name }}</option>';
+                            @foreach($receiverMails as $receiver)
+                                var receiver = '{{ $receiver->name_value }}';
+                                options += '<option value="{{ $receiver->name_value }}" ' + (receiver === selectValue ? 'selected' : '') + '>{{ $receiver->name_value }}</option>';
                             @endforeach
                             options += '</select>';
                             $this.html(options);
@@ -533,7 +577,7 @@
                             newValue = $this.find('textarea').val();
                         }
                         else if(index == 6) {
-                            newValue = $this.find('textarea').val();
+                            newValue = $this.find('input').val();
                         } 
                         else if(index == 7) {
                             newValue = $this.find('select').val();

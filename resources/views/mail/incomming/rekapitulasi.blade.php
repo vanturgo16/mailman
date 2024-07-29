@@ -85,7 +85,7 @@
                         <th rowspan="2" class="align-middle text-center">Tgl. Agenda</th>
                         <th rowspan="2" class="align-middle text-center">No. Agenda</th>
                         <th colspan="3" class="align-middle text-center">Naskah / Surat</th>
-                        <th rowspan="2" class="align-middle text-center">Lampiran</th>
+                        <th rowspan="2" class="align-middle text-center">Jumlah<br>Lampiran</th>
                         <th rowspan="2" class="align-middle text-center">Kepada</th>
                         <th rowspan="2" class="align-middle text-center">Keterangan</th>
                     </tr>
@@ -116,7 +116,7 @@
                 <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
                     <div class="row">
                         <div class="col-12">
-                            <label>Tanggal Surat</label>
+                            <label>Tanggal Terima</label>
                         </div>
                         <div class="col-6">
                             <div class="form-group">
@@ -132,12 +132,6 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                            <label>Nomor Surat</label>
-                            <input type="text" name="mail_number" value="{{ $mail_number }}" class="form-control" placeholder="Masukkan Kata Kunci Nomor Surat..">
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
                             <label>Pejabat / Naskah</label>
                             <select class="form-control js-example-basic-single" id="placeman" name="placeman" style="width: 100%;">
                                 <option value="">- Pilih -</option>
@@ -145,6 +139,12 @@
                                   <option value="{{ $item->name_value }}" @if($placeman == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
                                 @endforeach
                             </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Nomor Surat / Perihal / Pengirim / No.Agenda / Ket.</label>
+                                <input type="text" name="mail_number" value="{{ $mail_number }}" class="form-control" placeholder="Masukkan Kata Kunci..">
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -357,6 +357,7 @@
                     name: 'attachment_text',
                     orderable: true,
                     searchable: true,
+                    className: 'text-center',
                     render: function(data, type, row) {
                         var html;
                         if (row.attachment_text == null) {
@@ -369,17 +370,17 @@
                     },
                 },
                 {
-                    data: 'receiver_name',
-                    name: 'receiver_name',
+                    data: 'receiver',
+                    name: 'receiver',
                     orderable: true,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
                         var html
-                        if(row.receiver_name == null){
+                        if(row.receiver == null){
                             html = '<span class="badge bg-secondary">Null</span>';
                         } else {
-                            html = row.receiver_name;
+                            html = row.receiver;
                         }
                         return html;
                     },
@@ -405,10 +406,10 @@
     });
 </script>
 
-<script>
+{{-- <script>
     $(".js-example-basic-single").select2().on("select2:open", function () {
         document.querySelector(".select2-search__field").focus();
     });
-</script>
+</script> --}}
 
 @endsection
