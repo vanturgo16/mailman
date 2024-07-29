@@ -55,12 +55,15 @@ class OutgoingMailController extends Controller
         $mail_number = $request->get('mail_number');
         $id_mst_letter = $request->get('id_mst_letter');
         $archive_remain = $request->get('archive_remain');
+        $org_unit = $request->get('org_unit');
+        $jmlHal = $request->get('jmlHal');
         
         $workunits = WorkUnit::get();
 
         $letters = Letter::get();
         $sators = Sator::orderBy('sator_name','asc')->get();
         $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
+        $jmlHals = Dropdown::where('category', 'Jumlah Halaman')->get();
         
         $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'outgoing_mails.created_at as created',
                 'draft.work_name as drafter_name', 'master_letter.let_name')
@@ -84,6 +87,18 @@ class OutgoingMailController extends Controller
         if ($archive_remain != null) {
             $datas->where('outgoing_mails.archive_remains', $archive_remain);
         }
+        if ($org_unit != null) {
+            $datas->where('org_unit', $org_unit);
+        }
+        if ($jmlHal != null) {
+            if ($jmlHal == '1-3') {
+                $datas->whereBetween('outgoing_mails.jml_hal', [1, 3]);
+            } elseif ($jmlHal == '4-20') {
+                $datas->whereBetween('outgoing_mails.jml_hal', [4, 20]);
+            } else {
+                $datas->where('outgoing_mails.jml_hal', '>', 20);
+            }
+        }
     
         // Get Query
         // $datas = $datas->take(3)->get();
@@ -104,7 +119,8 @@ class OutgoingMailController extends Controller
             return $data;
         }
 
-        return view('mail.outgoing.index', compact('workunits', 'letters', 'sators', 'archive_remains', 'datas', 'out_date', 'mail_date', 'mail_number', 'id_mst_letter', 'archive_remain'));
+        return view('mail.outgoing.index', compact('workunits', 'letters', 'sators', 'archive_remains', 'datas',
+                'out_date', 'mail_date', 'mail_number', 'id_mst_letter', 'archive_remain', 'org_unit', 'jmlHal', 'jmlHals'));
     }
 
     public function directupdate(Request $request, $id)
@@ -191,8 +207,9 @@ class OutgoingMailController extends Controller
         $startdate = $request->get('startdate');
         $enddate = $request->get('enddate');
         $mail_number = $request->get('mail_number');
+        $drafter = $request->get('drafter');
         $id_mst_letter = $request->get('id_mst_letter');
-        $workunit = $request->get('workunits');
+        $workunit = $request->get('workunit');
         $archive_remain = $request->get('archive_remain');
 
         $letters = Letter::get();
@@ -200,7 +217,7 @@ class OutgoingMailController extends Controller
         $sators = Sator::orderBy('sator_name','asc')->get();
         $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
         
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($id_mst_letter) || isset($workunit) || isset($archive_remain)) 
+        if (isset($startdate) || isset($enddate) || isset($drafter) || isset($mail_number) || isset($id_mst_letter) || isset($workunit) || isset($archive_remain)) 
         {
             $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'draft.work_name as drafter_name')
             ->leftjoin('master_workunit as draft', 'draft.id', 'outgoing_mails.drafter')
@@ -213,8 +230,12 @@ class OutgoingMailController extends Controller
             if ($enddate != null) {
                 $datas->where('outgoing_mails.mail_date', '<=', $enddate);
             }
+            if ($drafter != null) {
+                $datas->where('outgoing_mails.drafter', $drafter);
+            }
             if ($mail_number != null) {
-                $datas->where('outgoing_mails.mail_number', 'like', '%' . $mail_number . '%');
+                $datas->where('outgoing_mails.mail_number', 'like', '%' . $mail_number . '%')
+                ->orWhere('outgoing_mails.mail_regarding', 'like', '%' . $mail_number . '%');
             }
             if ($id_mst_letter != null) {
                 $datas->where('outgoing_mails.id_mst_letter', $id_mst_letter);
@@ -253,7 +274,7 @@ class OutgoingMailController extends Controller
         }
 
         return view('mail.outgoing.rekapitulasi', compact('letters', 'sators', 'workunits', 'archive_remains',
-            'datas', 'startdate', 'enddate', 'mail_number', 'id_mst_letter', 'workunit', 'archive_remain'));
+            'datas', 'startdate', 'enddate', 'drafter', 'mail_number', 'id_mst_letter', 'workunit', 'archive_remain'));
     }
 
     public function rekapitulasiPrint(Request $request)
@@ -261,12 +282,13 @@ class OutgoingMailController extends Controller
         // Initiate Variable Filter
         $startdate = $request->get('startdate');
         $enddate = $request->get('enddate');
+        $drafter = $request->get('drafter');
         $mail_number = $request->get('mail_number');
         $id_mst_letter = $request->get('id_mst_letter');
         $workunit = $request->get('workunits');
         $archive_remain = $request->get('archive_remain');
 
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($id_mst_letter) || isset($workunit) || isset($archive_remain)) 
+        if (isset($startdate) || isset($enddate) || isset($drafter) || isset($mail_number) || isset($id_mst_letter) || isset($workunit) || isset($archive_remain)) 
         {
             $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'draft.work_name as drafter_name')
             ->leftjoin('master_workunit as draft', 'draft.id', 'outgoing_mails.drafter')
@@ -279,8 +301,12 @@ class OutgoingMailController extends Controller
             if ($enddate != null) {
                 $datas->where('outgoing_mails.mail_date', '<=', $enddate);
             }
+            if ($drafter != null) {
+                $datas->where('outgoing_mails.drafter', $drafter);
+            }
             if ($mail_number != null) {
-                $datas->where('outgoing_mails.mail_number', 'like', '%' . $mail_number . '%');
+                $datas->where('outgoing_mails.mail_number', 'like', '%' . $mail_number . '%')
+                ->orWhere('outgoing_mails.mail_regarding', 'like', '%' . $mail_number . '%');
             }
             if ($id_mst_letter != null) {
                 $datas->where('outgoing_mails.id_mst_letter', $id_mst_letter);

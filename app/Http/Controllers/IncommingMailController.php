@@ -37,10 +37,14 @@ class IncommingMailController extends Controller
         $placeman = $request->get('placeman');
         $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
         $workunits = WorkUnit::get();
+        $org_unit = $request->get('org_unit');
+        $jmlHal = $request->get('jmlHal');
 
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
         $complains = Complain::get();
         $letters = Letter::get();
+        $jmlHals = Dropdown::where('category', 'Jumlah Halaman')->get();
+        $sators = Sator::orderBy('sator_name','asc')->get();
 
         $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'incomming_mails.created_at as created')
             ->orderBy('created_at', 'desc');
@@ -58,6 +62,18 @@ class IncommingMailController extends Controller
         if ($placeman != null) {
             $datas->where('placeman', $placeman);
         }
+        if ($org_unit != null) {
+            $datas->where('org_unit', $org_unit);
+        }
+        if ($jmlHal != null) {
+            if ($jmlHal == '1-3') {
+                $datas->whereBetween('incomming_mails.jml_hal', [1, 3]);
+            } elseif ($jmlHal == '4-20') {
+                $datas->whereBetween('incomming_mails.jml_hal', [4, 20]);
+            } else {
+                $datas->where('incomming_mails.jml_hal', '>', 20);
+            }
+        }
     
         // Get Query
         $datas = $datas->get();
@@ -73,7 +89,7 @@ class IncommingMailController extends Controller
         }
 
         return view('mail.incomming.index', compact('workunits', 'placemans', 'complains', 'letters',
-            'entry_date', 'mail_date', 'mail_number', 'placeman', 'receiverMails'));
+            'entry_date', 'mail_date', 'mail_number', 'placeman', 'receiverMails', 'org_unit', 'jmlHal', 'jmlHals', 'sators'));
     }
     
     public function directupdate(Request $request, $id)
@@ -147,7 +163,7 @@ class IncommingMailController extends Controller
         $complains = Complain::get();
         $letters = Letter::get();
         
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman)) 
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman) || isset($letter)) 
         {
             $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update')
             ->orderBy('created_at', 'desc');
@@ -162,13 +178,16 @@ class IncommingMailController extends Controller
                 $datas->where('incomming_mails.mail_date', '<=', $enddatesearch);
             }
             if ($mail_number != null) {
-                $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
+                // $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
+
+                $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.agenda_number', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.mail_regarding', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.information', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.sender', 'like', '%' . $mail_number . '%');
             }
             if ($placeman != null) {
                 $datas->where('incomming_mails.placeman', $placeman);
-            }
-            if ($complain != null) {
-                $datas->where('incomming_mails.id_mst_letter', $complain);
             }
             if ($letter != null) {
                 $datas->where('incomming_mails.id_mst_letter', $letter);
@@ -200,7 +219,7 @@ class IncommingMailController extends Controller
         $complain = $request->get('complain');
         $letter = $request->get('letter');
         
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman)) 
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman) || isset($letter)) 
         {
             $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update')
             ->orderBy('created_at', 'desc');
@@ -215,13 +234,16 @@ class IncommingMailController extends Controller
                 $datas->where('incomming_mails.mail_date', '<=', $enddatesearch);
             }
             if ($mail_number != null) {
-                $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
+                // $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
+
+                $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.agenda_number', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.mail_regarding', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.information', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.sender', 'like', '%' . $mail_number . '%');
             }
             if ($placeman != null) {
                 $datas->where('incomming_mails.placeman', $placeman);
-            }
-            if ($complain != null) {
-                $datas->where('incomming_mails.id_mst_letter', $complain);
             }
             if ($letter != null) {
                 $datas->where('incomming_mails.id_mst_letter', $letter);
@@ -563,6 +585,7 @@ class IncommingMailController extends Controller
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
         $complains = Complain::get();
         $letters = Letter::get();
+        $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
         $workunits = WorkUnit::get();
         $unitletters = UnitLetter::get();
         $classifications = Classification::get();
@@ -584,7 +607,7 @@ class IncommingMailController extends Controller
             ->where('incomming_mails.id', $id)
             ->first();
 
-        return view('mail.incomming.edit', compact('placemans', 'complains', 'letters', 'workunits', 'unitletters', 'classifications',
+        return view('mail.incomming.edit', compact('placemans', 'complains', 'letters', 'receiverMails', 'workunits', 'unitletters', 'classifications',
             'results', 'approveds', 'mailtypes', 'receivedvias', 'sators', 'data'));
     }
     
@@ -597,7 +620,6 @@ class IncommingMailController extends Controller
             "placeman" => "required",
             "mail_regarding" => "required",
             "entry_date" => "required",
-            "mail_date" => "required",
             "receiver" => "required",
             "mail_quantity" => "required",
             "mail_unit" => "required",
@@ -608,7 +630,6 @@ class IncommingMailController extends Controller
             'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
             'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
             'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
-            'mail_date.required' => 'Tanggal Surat Wajib Untuk Diisi.',
             'receiver.required' => 'Penerima Wajib Untuk Diisi.',
             'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
             'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
@@ -617,7 +638,11 @@ class IncommingMailController extends Controller
         ]);
 
         $entry_date = (new DateTime($request->entry_date))->format('Y-m-d H:i:s');
-        $mail_date = (new DateTime($request->mail_date))->format('Y-m-d H:i:s');
+        if($request->mail_date != null)
+            $mail_date = (new DateTime($request->mail_date))->format('Y-m-d H:i:s');
+        else {
+            $mail_date = null;
+        }
         $mail_retention_from = (new DateTime($request->mail_retention_from))->format('Y-m-d H:i:s');
         $mail_retention_to = (new DateTime($request->mail_retention_to))->format('Y-m-d H:i:s');
 

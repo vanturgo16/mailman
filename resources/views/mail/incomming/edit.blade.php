@@ -268,13 +268,13 @@
                         <div class="col-md-9">
                           <select class="form-control js-example-basic-single" name="receiver" style="width: 100%;" required>
                             <option value="">- Pilih -</option>
-                            @foreach($workunits as $workunit)
-                              <option value="{{ $workunit->id }}" @if($data->receiver == $workunit->id) selected="selected" @endif>{{ $workunit->work_name }}</option>
+                            @foreach($receiverMails as $receiver)
+                              <option value="{{ $receiver->name_value }}" @if($data->receiver == $receiver->name_value) selected="selected" @endif>{{ $receiver->name_value }}</option>
                             @endforeach
                           </select>
                         </div>
                         <div class="col-md-3">
-                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#unitKerja"><i class="fa fa-plus"></i> Tambah Baru</button>
+                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#penerimaSurat"><i class="fa fa-plus"></i> Tambah Baru</button>
                         </div>
                       </div>
                     </td>

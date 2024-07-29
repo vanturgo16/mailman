@@ -438,7 +438,7 @@
                   <tr>
                     <td><label>Jumlah Lampiran</label></td>
                     <td>
-                      <input type="number"  min="0" class="form-control" name="attachment_text" value="{{ old('attachment_text') }}" placeholder="Masukkan Jumlah Lampiran..">
+                      <input type="number" class="form-control" name="attachment_text" value="{{ old('attachment_text') }}" placeholder="Masukkan Jumlah Lampiran..">
                       {{-- <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." value="{{ old('attachment_text') }}"></textarea> --}}
                     </td>
                   </tr>

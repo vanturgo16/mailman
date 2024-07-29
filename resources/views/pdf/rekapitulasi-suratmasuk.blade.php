@@ -130,7 +130,7 @@
               <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Tgl. Agenda</th>
               <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">No. Agenda</th>
               <th colspan="3" class="align-middle text-center px-1" style="font-weight: normal;">Naskah / Surat</th>
-              <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Lampiran</th>
+              <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Jumlah<br>Lampiran</th>
               <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Kepada</th>
               <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Keterangan</th>
           </tr>
@@ -150,9 +150,9 @@
             @foreach ($datas as $item)
               <?php $no++; ?>
               <tr>
-                <td class="align-middle text-center">{{ $no }}</td>
-                <td class="align-middle text-center text-left px-1">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
-                <td class="align-middle text-center text-left px-1">
+                <td class="align-top text-center">{{ $no }}</td>
+                <td class="align-top text-center text-left px-1">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
+                <td class="align-top text-center text-left px-1">
                   @if($item->agenda_number == null)
                     -
                   @else
@@ -180,7 +180,7 @@
                     {{ $item->mail_regarding }}
                   @endif
                 </td>
-                <td class="align-top text-left px-1">
+                <td class="align-top text-center">
                   @if($item->attachment_text == null)
                     -
                   @else
