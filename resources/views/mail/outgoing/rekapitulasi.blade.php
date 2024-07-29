@@ -30,6 +30,7 @@
                         <input type="hidden" name="startdate" value="{{ $startdate }}">
                         <input type="hidden" name="enddate" value="{{ $enddate }}">
                         <input type="hidden" name="mail_number" value="{{ $mail_number }}">
+                        <input type="hidden" name="drafter" value="{{ $drafter }}">
                         <input type="hidden" name="id_mst_letter" value="{{ $id_mst_letter }}">
                         <input type="hidden" name="workunit" value="{{ $workunit }}">
                         <input type="hidden" name="archive_remain" value="{{ $archive_remain }}">
@@ -42,6 +43,7 @@
                         <input type="hidden" name="startdate" value="">
                         <input type="hidden" name="enddate" value="">
                         <input type="hidden" name="mail_number" value="">
+                        <input type="hidden" name="drafter" value="">
                         <input type="hidden" name="id_mst_letter" value="">
                         <input type="hidden" name="workunit" value="">
                         <input type="hidden" name="archive_remain" value="">
@@ -86,7 +88,7 @@
                         <th class="align-middle text-center">No. Surat</th>
                         <th class="align-middle text-center">Penerima</th>
                         <th class="align-middle text-center">Perihal / Tentang</th>
-                        <th class="align-middle text-center">Lampiran</th>
+                        <th class="align-middle text-center">Jumlah<br>Lampiran</th>
                         <th class="align-middle text-center">Dari / Konseptor</th>
                         <th class="align-middle text-center">Keterangan</th>
                     </tr>
@@ -112,7 +114,7 @@
                 <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
                     <div class="row">
                         <div class="col-12">
-                            <label>Tanggal Surat</label>
+                            <label>Tanggal Terima</label>
                         </div>
                         <div class="col-6">
                             <div class="form-group">
@@ -128,8 +130,19 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                            <label>Nomor Surat</label>
-                            <input type="text" name="mail_number" value="{{ $mail_number }}" class="form-control" placeholder="Masukkan Kata Kunci Nomor Surat..">
+                            <label>Nomor Surat / Perihal</label>
+                            <input type="text" name="mail_number" value="{{ $mail_number }}" class="form-control" placeholder="Masukkan Kata Kunci..">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                            <label>Konseptor</label>
+                            <select class="form-control js-example-basic-single" name="drafter" style="width: 100%;">
+                                <option value="">- Pilih -</option>
+                                @foreach($workunits as $item)
+                                    <option value="{{ $item->id }}" @if($drafter == $item->id) selected="selected" @endif>{{ $item->work_name }}</option>
+                                @endforeach
+                            </select>
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -206,6 +219,7 @@
                     startdate: '{{ $startdate }}',
                     enddate: '{{ $enddate }}',
                     mail_number: '{{ $mail_number }}',
+                    drafter: '{{ $drafter }}',
                     id_mst_letter: '{{ $id_mst_letter }}',
                     workunit: '{{ $workunit }}',
                     archive_remain: '{{ $archive_remain }}'
@@ -291,6 +305,7 @@
                     name: 'attachment_text',
                     orderable: true,
                     searchable: true,
+                    className: 'text-center',
                     render: function(data, type, row) {
                         var html;
                         if (row.attachment_text == null) {
@@ -339,10 +354,10 @@
     });
 </script>
 
-<script>
+{{-- <script>
     $(".js-example-basic-single").select2().on("select2:open", function () {
         document.querySelector(".select2-search__field").focus();
     });
-</script>
+</script> --}}
 
 @endsection

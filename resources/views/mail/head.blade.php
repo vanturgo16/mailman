@@ -73,4 +73,11 @@
   .modal-header-custom button.btn-close-custom {
       background-color: #ffffff;
   }
+  
+  .row-separator {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+  }
+
 </style>

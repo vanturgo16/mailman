@@ -35,16 +35,18 @@ class IncommingMailController extends Controller
         $mail_date = $request->get('mail_date');
         $mail_number = $request->get('mail_number');
         $placeman = $request->get('placeman');
-
+        $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
         $workunits = WorkUnit::get();
+        $org_unit = $request->get('org_unit');
+        $jmlHal = $request->get('jmlHal');
 
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
         $complains = Complain::get();
         $letters = Letter::get();
+        $jmlHals = Dropdown::where('category', 'Jumlah Halaman')->get();
+        $sators = Sator::orderBy('sator_name','asc')->get();
 
-        $datas = IncommingMail::select('incomming_mails.*', 'receiv.work_name as receiver_name',
-                'incomming_mails.updated_at as last_update', 'incomming_mails.created_at as created')
-            ->leftjoin('master_workunit as receiv', 'receiv.id', 'incomming_mails.receiver')
+        $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'incomming_mails.created_at as created')
             ->orderBy('created_at', 'desc');
 
         // FIlter
@@ -59,6 +61,18 @@ class IncommingMailController extends Controller
         }
         if ($placeman != null) {
             $datas->where('placeman', $placeman);
+        }
+        if ($org_unit != null) {
+            $datas->where('org_unit', $org_unit);
+        }
+        if ($jmlHal != null) {
+            if ($jmlHal == '1-3') {
+                $datas->whereBetween('incomming_mails.jml_hal', [1, 3]);
+            } elseif ($jmlHal == '4-20') {
+                $datas->whereBetween('incomming_mails.jml_hal', [4, 20]);
+            } else {
+                $datas->where('incomming_mails.jml_hal', '>', 20);
+            }
         }
     
         // Get Query
@@ -75,7 +89,7 @@ class IncommingMailController extends Controller
         }
 
         return view('mail.incomming.index', compact('workunits', 'placemans', 'complains', 'letters',
-            'entry_date', 'mail_date', 'mail_number', 'placeman'));
+            'entry_date', 'mail_date', 'mail_number', 'placeman', 'receiverMails', 'org_unit', 'jmlHal', 'jmlHals', 'sators'));
     }
     
     public function directupdate(Request $request, $id)
@@ -103,6 +117,12 @@ class IncommingMailController extends Controller
         if($databefore->isDirty()){
             DB::beginTransaction();
             try {
+                if($request[6] != null){
+                    $jmlHal = $databefore->mail_quantity + $request[6];
+                } else {
+                    $jmlHal = $databefore->mail_quantity;
+                }
+                
                 // Update Incomming Mail
                 IncommingMail::where('id', $id)->update([
                     'mail_date' => $request[1],
@@ -112,6 +132,7 @@ class IncommingMailController extends Controller
                     'mail_regarding' => $request[5],
                     'attachment_text' => $request[6],
                     'receiver' => $request[7],
+                    'jml_hal' => $jmlHal,
                     'information' => $request[8],
                     'updated_by' => auth()->user()->name,
                 ]);
@@ -142,10 +163,9 @@ class IncommingMailController extends Controller
         $complains = Complain::get();
         $letters = Letter::get();
         
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman)) 
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman) || isset($letter)) 
         {
-            $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'receiv.work_name as receiver_name')
-            ->leftjoin('master_workunit as receiv', 'receiv.id', 'incomming_mails.receiver')
+            $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update')
             ->orderBy('created_at', 'desc');
 
             // FIlter
@@ -158,13 +178,16 @@ class IncommingMailController extends Controller
                 $datas->where('incomming_mails.mail_date', '<=', $enddatesearch);
             }
             if ($mail_number != null) {
-                $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
+                // $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
+
+                $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.agenda_number', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.mail_regarding', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.information', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.sender', 'like', '%' . $mail_number . '%');
             }
             if ($placeman != null) {
                 $datas->where('incomming_mails.placeman', $placeman);
-            }
-            if ($complain != null) {
-                $datas->where('incomming_mails.id_mst_letter', $complain);
             }
             if ($letter != null) {
                 $datas->where('incomming_mails.id_mst_letter', $letter);
@@ -196,10 +219,9 @@ class IncommingMailController extends Controller
         $complain = $request->get('complain');
         $letter = $request->get('letter');
         
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman)) 
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman) || isset($letter)) 
         {
-            $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'receiv.work_name as receiver_name')
-            ->leftjoin('master_workunit as receiv', 'receiv.id', 'incomming_mails.receiver')
+            $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update')
             ->orderBy('created_at', 'desc');
 
             // FIlter
@@ -212,13 +234,16 @@ class IncommingMailController extends Controller
                 $datas->where('incomming_mails.mail_date', '<=', $enddatesearch);
             }
             if ($mail_number != null) {
-                $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
+                // $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
+
+                $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.agenda_number', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.mail_regarding', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.information', 'like', '%' . $mail_number . '%')
+                    ->orWhere('incomming_mails.sender', 'like', '%' . $mail_number . '%');
             }
             if ($placeman != null) {
                 $datas->where('incomming_mails.placeman', $placeman);
-            }
-            if ($complain != null) {
-                $datas->where('incomming_mails.id_mst_letter', $complain);
             }
             if ($letter != null) {
                 $datas->where('incomming_mails.id_mst_letter', $letter);
@@ -255,6 +280,7 @@ class IncommingMailController extends Controller
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
         $complains = Complain::get();
         $letters = Letter::get();
+        $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
         $workunits = WorkUnit::get();
         $unitletters = UnitLetter::get();
         $classifications = Classification::get();
@@ -265,7 +291,7 @@ class IncommingMailController extends Controller
 
         $sators = Sator::orderBy('sator_name','asc')->get();
 
-        return view('mail.incomming.create', compact('placemans', 'complains', 'letters', 'workunits', 'unitletters', 'classifications', 'results', 'approveds', 'mailtypes', 'receivedvias',
+        return view('mail.incomming.create', compact('placemans', 'complains', 'letters', 'workunits', 'receiverMails', 'unitletters', 'classifications', 'results', 'approveds', 'mailtypes', 'receivedvias',
             'sators'));
     }
 
@@ -276,7 +302,6 @@ class IncommingMailController extends Controller
             "placeman" => "required",
             "mail_regarding" => "required",
             "entry_date" => "required",
-            "mail_date" => "required",
             "receiver" => "required",
             "mail_quantity" => "required",
             "mail_unit" => "required",
@@ -287,7 +312,6 @@ class IncommingMailController extends Controller
             'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
             'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
             'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
-            'mail_date.required' => 'Tanggal Surat Wajib Untuk Diisi.',
             'receiver.required' => 'Penerima Wajib Untuk Diisi.',
             'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
             'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
@@ -311,10 +335,19 @@ class IncommingMailController extends Controller
                 $approved_by = null;
                 $received_via = $request->received_viaSelect;
             }
+
+            if($request->attachment_text != null){
+                $jmlHal = $request->mail_quantity + $request->attachment_text;
+            } else {
+                $jmlHal = $request->mail_quantity;
+            }
+            
             $store = IncommingMail::create([
                 'placeman' => $request->placeman,
                 'id_mst_letter' => $request->id_mst_letter,
                 'id_mst_complain' => $request->id_mst_complain,
+                'org_unit' => $request->org_unit,
+                'sub_org_unit' => $request->sub_org_unit,
                 'sender' => $sender,
                 'mail_number' => $request->mail_number,
                 'mail_regarding' => $request->mail_regarding,
@@ -332,6 +365,7 @@ class IncommingMailController extends Controller
                 'received_via' => $received_via,
                 'attachment_text' => $request->attachment_text,
                 'information' => $request->information,
+                'jml_hal' => $jmlHal,
                 'status' => null,
                 'created_by' => auth()->user()->name,
             ]);
@@ -360,6 +394,7 @@ class IncommingMailController extends Controller
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
         $complains = Complain::get();
         $letters = Letter::get();
+        $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
         $workunits = WorkUnit::get();
         $unitletters = UnitLetter::get();
         $classifications = Classification::get();
@@ -370,7 +405,7 @@ class IncommingMailController extends Controller
 
         $sators = Sator::orderBy('sator_name','asc')->get();
 
-        return view('mail.incomming.createbulk', compact('placemans', 'complains', 'letters', 'workunits', 'unitletters', 'classifications', 'results', 'approveds', 'mailtypes', 'receivedvias',
+        return view('mail.incomming.createbulk', compact('placemans', 'complains', 'letters', 'workunits', 'receiverMails', 'unitletters', 'classifications', 'results', 'approveds', 'mailtypes', 'receivedvias',
             'sators'));
     }
     public function storebulk(Request $request)
@@ -417,11 +452,19 @@ class IncommingMailController extends Controller
                 $received_via = $request->received_viaSelect;
             }
 
+            if($request->attachment_text != null){
+                $jmlHal = $request->mail_quantity + $request->attachment_text;
+            } else {
+                $jmlHal = $request->mail_quantity;
+            }
+
             for ($i = 0; $i < $amountLetter; $i++) {
                 
                 $store = IncommingMail::create([
                     'placeman' => $request->placeman,
                     'id_mst_letter' => $request->id_mst_letter,
+                    'org_unit' => $request->org_unit,
+                    'sub_org_unit' => $request->sub_org_unit,
                     'id_mst_complain' => $request->id_mst_complain,
                     'sender' => $sender,
                     'mail_number' => $request->mail_number,
@@ -440,6 +483,7 @@ class IncommingMailController extends Controller
                     'received_via' => $received_via,
                     'attachment_text' => $request->attachment_text,
                     'information' => $request->information,
+                    'jml_hal' => $jmlHal,
                     'status' => null,
                     'created_by' => auth()->user()->name,
                 ]);
@@ -519,11 +563,13 @@ class IncommingMailController extends Controller
         // dd($id);
 
         $data = IncommingMail::select('incomming_mails.*', 'master_letter.let_name', 'master_complain.com_name', 'receiv.work_name as receiver_name',
-            'master_unit_letter.unit_name', 'master_classification.classification_name'
+            'master_unit_letter.unit_name', 'master_classification.classification_name', 'org.sator_name', 'suborg.sub_sator_name'
         )
             ->leftjoin('master_letter', 'master_letter.id', 'incomming_mails.id_mst_letter')
             ->leftjoin('master_complain', 'master_complain.id', 'incomming_mails.id_mst_complain')
             ->leftjoin('master_unit_letter', 'master_unit_letter.id', 'incomming_mails.mail_unit')
+            ->leftjoin('master_sator as org', 'org.id', 'incomming_mails.org_unit')
+            ->leftjoin('master_sub_sator as suborg', 'suborg.id', 'incomming_mails.sub_org_unit')
             ->leftjoin('master_workunit as receiv', 'receiv.id', 'incomming_mails.receiver')
             ->leftjoin('master_classification', 'master_classification.id', 'incomming_mails.archive_classification')
             ->where('incomming_mails.id', $id)
@@ -539,6 +585,7 @@ class IncommingMailController extends Controller
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
         $complains = Complain::get();
         $letters = Letter::get();
+        $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
         $workunits = WorkUnit::get();
         $unitletters = UnitLetter::get();
         $classifications = Classification::get();
@@ -560,7 +607,7 @@ class IncommingMailController extends Controller
             ->where('incomming_mails.id', $id)
             ->first();
 
-        return view('mail.incomming.edit', compact('placemans', 'complains', 'letters', 'workunits', 'unitletters', 'classifications',
+        return view('mail.incomming.edit', compact('placemans', 'complains', 'letters', 'receiverMails', 'workunits', 'unitletters', 'classifications',
             'results', 'approveds', 'mailtypes', 'receivedvias', 'sators', 'data'));
     }
     
@@ -573,7 +620,6 @@ class IncommingMailController extends Controller
             "placeman" => "required",
             "mail_regarding" => "required",
             "entry_date" => "required",
-            "mail_date" => "required",
             "receiver" => "required",
             "mail_quantity" => "required",
             "mail_unit" => "required",
@@ -584,7 +630,6 @@ class IncommingMailController extends Controller
             'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
             'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
             'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
-            'mail_date.required' => 'Tanggal Surat Wajib Untuk Diisi.',
             'receiver.required' => 'Penerima Wajib Untuk Diisi.',
             'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
             'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
@@ -593,7 +638,11 @@ class IncommingMailController extends Controller
         ]);
 
         $entry_date = (new DateTime($request->entry_date))->format('Y-m-d H:i:s');
-        $mail_date = (new DateTime($request->mail_date))->format('Y-m-d H:i:s');
+        if($request->mail_date != null)
+            $mail_date = (new DateTime($request->mail_date))->format('Y-m-d H:i:s');
+        else {
+            $mail_date = null;
+        }
         $mail_retention_from = (new DateTime($request->mail_retention_from))->format('Y-m-d H:i:s');
         $mail_retention_to = (new DateTime($request->mail_retention_to))->format('Y-m-d H:i:s');
 
@@ -627,6 +676,8 @@ class IncommingMailController extends Controller
 
         $databefore->placeman = $request->placeman;
         $databefore->sender = $sender;
+        $databefore->org_unit = $request->org_unit;
+        $databefore->sub_org_unit = $request->sub_org_unit;
         $databefore->mail_number = $request->mail_number;
         $databefore->mail_regarding = $request->mail_regarding;
         $databefore->entry_date = $entry_date;
@@ -641,6 +692,12 @@ class IncommingMailController extends Controller
         $databefore->attachment_text = $request->attachment_text;
         $databefore->information = $request->information;
 
+        if($request->attachment_text != null){
+            $jmlHal = $request->mail_quantity + $request->attachment_text;
+        } else {
+            $jmlHal = $request->mail_quantity;
+        }
+
         if($databefore->isDirty()){
             DB::beginTransaction();
             try {
@@ -649,6 +706,8 @@ class IncommingMailController extends Controller
                     'id_mst_letter' => $request->id_mst_letter,
                     'id_mst_complain' => $request->id_mst_complain,
                     'sender' => $sender,
+                    'org_unit' => $request->org_unit,
+                    'sub_org_unit' => $request->sub_org_unit,
                     'mail_number' => $request->mail_number,
                     'mail_regarding' => $request->mail_regarding,
                     'entry_date' => $request->entry_date,
@@ -664,6 +723,7 @@ class IncommingMailController extends Controller
                     'approved_by' => $approved_by,
                     'received_via' => $received_via,
                     'attachment_text' => $request->attachment_text,
+                    'jml_hal' => $jmlHal,
                     'information' => $request->information,
                     'updated_by' => auth()->user()->name,
                 ]);

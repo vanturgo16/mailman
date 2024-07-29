@@ -149,7 +149,7 @@
             <th class="align-middle text-center px-1" style="font-weight: normal;"><b>No. Verbal</b></th>
             <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Penerima</b></th>
             <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Perihal / Tentang</b></th>
-            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Lampiran</b></th>
+            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Jumlah<br>Lampiran</b></th>
             <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Dari / Konseptor</b></th>
             <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Keterangan</b></th>
           </tr>
@@ -164,12 +164,12 @@
             @foreach ($datas as $item)
               <?php $no++; ?>
               <tr>
-                <td class="align-middle text-center">{{ $no }}</td>
-                <td class="align-top text-left px-1">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
-                <td class="align-top text-left px-1"><b>{{ $item->mail_number }}</b></td>
+                <td class="align-top text-center">{{ $no }}</td>
+                <td class="align-top text-center">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
+                <td class="align-top text-center"><b>{{ $item->mail_number }}</b></td>
                 <td class="align-top text-left px-1">{{ $item->receiver }}</td>
                 <td class="align-top text-left px-1">{{ $item->mail_regarding }}</td>
-                <td class="align-top text-left px-1">{{ $item->attachment_text }}</td>
+                <td class="align-top text-center">{{ $item->attachment_text }}</td>
                 <td class="align-top text-left px-1">{{ $item->drafter_name }}</td>
                 <td class="align-top text-left px-1">{{ $item->information }}</td>
               </tr>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sator;
+use App\Models\SubSator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -162,5 +163,10 @@ class SatorController extends Controller
             DB::rollback();
             return redirect()->back()->with(['fail' => 'Gagal Ubah Data Satuan Organisasi!']);
         }
+    }
+    public function mapSator($id)
+    {
+        $subSator = SubSator::where('id_sator', $id)->get();
+        return $subSator;
     }
 }

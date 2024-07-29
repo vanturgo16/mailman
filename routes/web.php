@@ -139,6 +139,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
 
     Route::resource('sator', SatorController::class);
     Route::patch('/sator/aktif/{id}', [SatorController::class, 'aktif']);
+    Route::get('sator/map-sator/{id}', [SatorController::class, 'mapSator'])->name('sator.mapSator');
 
     Route::resource('sub-sator', SubSatorController::class);
     Route::patch('/sub-sator/aktif/{id}', [SubSatorController::class, 'aktif']);
@@ -199,6 +200,8 @@ Route::group(['middleware' => 'cekadmin'], function () {
             Route::get('/', 'index')->name('outgoingmail.index');
             Route::post('/', 'index')->name('outgoingmail.index');
             Route::post('/directupdate/{id}', 'directupdate')->name('outgoingmail.directupdate');
+            Route::get('/checkNumberingKka/{id}', 'checkNumberingKka')->name('outgoingmail.checkNumberingKka');
+            Route::get('/mapKka/{id}', 'mapKka')->name('outgoingmail.mapKka');
             Route::get('/check-table-changes', 'checkChanges')->name('outgoingmail.checkChanges');
             Route::get('/check-table-changes-update', 'checkChangeUpdate')->name('outgoingmail.checkChangeUpdate');
             Route::get('/tambah', 'create')->name('outgoingmail.create');

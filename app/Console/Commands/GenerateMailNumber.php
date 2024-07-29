@@ -29,7 +29,7 @@ class GenerateMailNumber extends Command
     {
         $today = Carbon::today();
 
-        $que = QueNumbOutMail::select('que_numb_outgoing_mail.*', 'outgoing_mails.org_unit', 'outgoing_mails.created_at as created_mail', 'master_pattern.pat_simple', 'master_pattern.pat_mix', 'master_pattern.pat_type')
+        $que = QueNumbOutMail::select('que_numb_outgoing_mail.*', 'outgoing_mails.org_unit', 'outgoing_mails.kka_code', 'outgoing_mails.created_at as created_mail', 'master_pattern.pat_simple', 'master_pattern.pat_mix', 'master_pattern.pat_type')
             ->leftjoin('outgoing_mails', 'que_numb_outgoing_mail.id_mail', 'outgoing_mails.id')
             ->leftjoin('master_pattern', 'que_numb_outgoing_mail.id_mst_letter', 'master_pattern.let_id')
             ->get();
@@ -78,7 +78,10 @@ class GenerateMailNumber extends Command
                             // $value = strtoupper(Letter::where('id', $q->id_mst_letter)->first()->let_code);
                             $value = Letter::where('id', $q->id_mst_letter)->first()->let_code;
                             $mail_number[] = $value;
-                        } elseif($pat == "Unit Kerja") {
+                        } elseif($pat == "Kode Klasifikasi Arsip (KKA)") {
+                            $value = $q->kka_code;
+                            $mail_number[] = $value;
+                        }  elseif($pat == "Unit Kerja") {
                             $value = Sator::where('id', $q->org_unit)->first()->sator_name;
                             $mail_number[] = $value;
                         } elseif($pat == "Sifat Surat") {
@@ -100,6 +103,12 @@ class GenerateMailNumber extends Command
                         } elseif($pat == "Bulan Terbit") {
                             $timestamp = strtotime($q->created_mail);
                             $value = date('m', $timestamp);
+                            $romanMonths = [
+                                '01' => 'I', '02' => 'II', '03' => 'III', '04' => 'IV',
+                                '05' => 'V', '06' => 'VI', '07' => 'VII', '08' => 'VIII',
+                                '09' => 'IX', '10' => 'X', '11' => 'XI', '12' => 'XII'
+                            ];
+                            $value = $romanMonths[$value];
                             $mail_number[] = $value;
                         } elseif($pat == "Tahun Terbit") {
                             $timestamp = strtotime($q->created_mail);
