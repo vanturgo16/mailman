@@ -181,6 +181,12 @@
                 <p>Data Sub Sat. Organisasi</p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="{{ url('/tipe-kka') }}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Tipe KKA</p>
+              </a>
+            </li>
           </ul>
         </li>
         @endcan

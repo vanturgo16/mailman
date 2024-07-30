@@ -30,6 +30,7 @@ use App\Http\Controllers\opd\AjuanAgenda;
 use App\Http\Controllers\front\SliderController;
 use App\Http\Controllers\IncommingMailController;
 use App\Http\Controllers\InstansiController;
+use App\Http\Controllers\KkaTypeController;
 use App\Http\Controllers\LetterController;
 use App\Http\Controllers\OutgoingMailController;
 use App\Http\Controllers\MappingLokasiSimpanController;
@@ -142,6 +143,11 @@ Route::group(['middleware' => 'cekadmin'], function () {
 
     Route::resource('sub-sator', SubSatorController::class);
     Route::patch('/sub-sator/aktif/{id}', [SubSatorController::class, 'aktif']);
+
+    Route::resource('tipe-kka', KkaTypeController::class);
+    Route::patch('/tipe-kka/aktif/{id}', [KkaTypeController::class, 'aktif']);
+    Route::put('/kka/store/{id}', [KkaTypeController::class, 'storeKKA']);
+    Route::get('/kka/{id}', [KkaTypeController::class, 'listKKA']);
 
     Route::resource('unitkerja', WorkUnitController::class);
     Route::patch('/unitkerja/aktif/{id}', [WorkUnitController::class, 'aktif']);
