@@ -175,7 +175,7 @@
 <script src="{{ asset('blackend/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
 <!-- AdminLTE App -->
 <script src="{{ asset('blackend/dist/js/adminlte.js') }}"></script>
-
+{{-- 
 <script>
   $(document).on("shown.bs.modal", ".modal", function () {
     $(".js-example-basic-single").select2({
@@ -188,6 +188,6 @@
   $(document).on("hidden.bs.modal", ".modal", function () {
       $(".js-example-basic-single").select2();
   });
-</script>
+</script> --}}
 </body>
 </html>
