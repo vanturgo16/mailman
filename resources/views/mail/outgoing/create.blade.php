@@ -265,8 +265,8 @@
                           <input type="date" name="out_date" value="{{ old('out_date') }}" class="form-control" required>
                         </div>
                         <div class="col-6">
-                          <label  class="text-danger">Tanggal Surat *</label>
-                          <input type="date" name="mail_date" value="{{ old('mail_date') }}" class="form-control" required>
+                          <label>Tanggal Surat</label>
+                          <input type="date" name="mail_date" value="{{ old('mail_date') }}" class="form-control">
                         </div>
                       </div>
                     </td>
