@@ -376,8 +376,8 @@
                     <td>
                       <select class="form-control js-example-basic-single" name="status" style="width: 100%;">
                         <option value="" @if($data->status == null) selected="selected" @endif>- Pilih -</option>
-                        <option value="1" @if($data->status == "1") selected="selected" @endif>Aktif</option>
-                        <option value="0" @if($data->status == "0") selected="selected" @endif>Tidak Aktif</option>
+                        <option value="1" @if($data->status == "1") selected="selected" @endif>Selesai</option>
+                        <option value="0" @if($data->status == "0") selected="selected" @endif>Revisi</option>
                       </select>
                     </td>
                   {{-- Keterangan --}}
