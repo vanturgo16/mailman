@@ -209,6 +209,12 @@
                 <p>Surat Masuk</p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="{{ route('incommingmail.indexLitnadin') }}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Surat Masuk (Litnadin)</p>
+              </a>
+            </li>
             @endcan
             @can('surat_keluar')
             <li class="nav-item">

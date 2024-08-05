@@ -194,6 +194,24 @@ Route::group(['middleware' => 'cekadmin'], function () {
             Route::post('/rekapitulasi/Cetak', 'rekapitulasiPrint')->name('incommingmail.rekapitulasiPrint');
         });
     });
+    //SURAT MASUK (LITNADIN)
+    Route::controller(IncommingMailController::class)->group(function () {
+        Route::prefix('surat-masuk-litnadin')->group(function () {
+            Route::get('/', 'indexLitnadin')->name('incommingmail.indexLitnadin');
+            Route::post('/', 'indexLitnadin')->name('incommingmail.indexLitnadin');
+            Route::post('/directupdate/{id}', 'directupdateLitnadin')->name('incommingmail.directupdateLitnadin');
+            Route::get('/tambah', 'createLitnadin')->name('incommingmail.createLitnadin');
+            Route::post('/store', 'storeLitnadin')->name('incommingmail.storeLitnadin');
+            Route::get('/tambahbulk', 'createbulkLitnadin')->name('incommingmail.createbulkLitnadin');
+            Route::post('/store/bulk', 'storebulkLitnadin')->name('incommingmail.storebulkLitnadin');
+            Route::get('/detail/{id}', 'detailLitnadin')->name('incommingmail.detailLitnadin');
+            Route::get('/ubah/{id}', 'editLitnadin')->name('incommingmail.editLitnadin');
+            Route::post('/update/{id}', 'updateLitnadin')->name('incommingmail.updateLitnadin');
+            Route::get('/rekapitulasi', 'rekapitulasiLitnadin')->name('incommingmail.rekapitulasiLitnadin');
+            Route::post('/rekapitulasi', 'rekapitulasiLitnadin')->name('incommingmail.rekapitulasiLitnadin');
+            Route::post('/rekapitulasi/Cetak', 'rekapitulasiPrintLitnadin')->name('incommingmail.rekapitulasiPrintLitnadin');
+        });
+    });
     //SURAT KELUAR
     Route::controller(OutgoingMailController::class)->group(function () {
         Route::prefix('surat-keluar')->group(function () {

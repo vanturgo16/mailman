@@ -11,6 +11,7 @@ use DateTime;
 // Model
 use App\Models\Letter;
 use App\Models\LastNumberingIncomming;
+use App\Models\LastNumberingIncommingLitnadin;
 use App\Models\QueNumbIncMail;
 use App\Traits\GenerateNumber;
 
@@ -70,7 +71,11 @@ class GenerateAgendaNumber extends Command
                     QueNumbIncMail::where('id_mail', $queinc->id_mail)->delete();
                 } else {
                     //LastNumb
-                    $lastnumber = LastNumberingIncomming::where('id_mst_letter', $queinc->id_mst_letter)->first();
+                    if($queinc->placeman == "LITNADIN"){
+                        $lastnumber = LastNumberingIncommingLitnadin::where('id_mst_letter', $queinc->id_mst_letter)->first();
+                    } else {
+                        $lastnumber = LastNumberingIncomming::where('id_mst_letter', $queinc->id_mst_letter)->first();
+                    }
                     $number = $lastnumber ? $lastnumber->last_number : 0;
                     $number++;
                     //Code
@@ -91,14 +96,29 @@ class GenerateAgendaNumber extends Command
                     //Update Agenda Number
                     IncommingMail::where('id', $queinc->id_mail)->update(["agenda_number" => $agenda_number]);
                     //Update Last Number
-                    $lastnumber = LastNumberingIncomming::where('id_mst_letter', $queinc->id_mst_letter)->first();
-                    if($lastnumber){
-                        LastNumberingIncomming::where('id_mst_letter', $queinc->id_mst_letter)->update(["last_number" => $number]);
+                    if($queinc->placeman == "LITNADIN"){
+                        $lastnumber = LastNumberingIncommingLitnadin::where('id_mst_letter', $queinc->id_mst_letter)->first();
                     } else {
-                        LastNumberingIncomming::create([
-                            'id_mst_letter' => $queinc->id_mst_letter,
-                            'last_number' => $number,
-                        ]);
+                        $lastnumber = LastNumberingIncomming::where('id_mst_letter', $queinc->id_mst_letter)->first();
+                    }
+                    if($lastnumber){
+                        if($queinc->placeman == "LITNADIN"){
+                            LastNumberingIncommingLitnadin::where('id_mst_letter', $queinc->id_mst_letter)->update(["last_number" => $number]);
+                        } else {
+                            LastNumberingIncomming::where('id_mst_letter', $queinc->id_mst_letter)->update(["last_number" => $number]);
+                        }
+                    } else {
+                        if($queinc->placeman == "LITNADIN"){
+                            LastNumberingIncommingLitnadin::create([
+                                'id_mst_letter' => $queinc->id_mst_letter,
+                                'last_number' => $number,
+                            ]);
+                        } else {
+                            LastNumberingIncomming::create([
+                                'id_mst_letter' => $queinc->id_mst_letter,
+                                'last_number' => $number,
+                            ]);
+                        }
                     }
                     //Delete Que
                     QueNumbIncMail::where('id_mail', $queinc->id_mail)->delete();
