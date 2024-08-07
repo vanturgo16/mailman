@@ -210,6 +210,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
             Route::get('/rekapitulasi', 'rekapitulasiLitnadin')->name('incommingmail.rekapitulasiLitnadin');
             Route::post('/rekapitulasi', 'rekapitulasiLitnadin')->name('incommingmail.rekapitulasiLitnadin');
             Route::post('/rekapitulasi/Cetak', 'rekapitulasiPrintLitnadin')->name('incommingmail.rekapitulasiPrintLitnadin');
+            Route::post('/progress/store/{id}', 'createProgressLitnadin')->name('incommingmail.createProgressLitnadin');
         });
     });
     //SURAT KELUAR

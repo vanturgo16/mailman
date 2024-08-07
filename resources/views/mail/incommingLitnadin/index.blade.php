@@ -535,19 +535,19 @@
                             $this.html(options);
                             $this.find('.js-example-basic-single').select2();
                         }
-                        else if(index === 7) {
-                            $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
-                        }
-                        else if(index === 8) {
-                            var selectValue = $this.text();
-                            var options = '<select class="form-control js-example-basic-single">';
-                            options += '<option value="" ' + ('' === selectValue ? 'selected' : '') + '>- Pilih -</option>';
-                            options += '<option value="1" ' + ('Selesai' === selectValue ? 'selected' : '') + '>Selesai</option>';
-                            options += '<option value="0" ' + ('Revisi' === selectValue ? 'selected' : '') + '>Revisi</option>';
-                            options += '</select>';
-                            $this.html(options);
-                            $this.find('.js-example-basic-single').select2();
-                        }
+                        // else if(index === 7) {
+                        //     $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
+                        // }
+                        // else if(index === 8) {
+                        //     var selectValue = $this.text();
+                        //     var options = '<select class="form-control js-example-basic-single">';
+                        //     options += '<option value="" ' + ('' === selectValue ? 'selected' : '') + '>- Pilih -</option>';
+                        //     options += '<option value="1" ' + ('Selesai' === selectValue ? 'selected' : '') + '>Selesai</option>';
+                        //     options += '<option value="0" ' + ('Revisi' === selectValue ? 'selected' : '') + '>Revisi</option>';
+                        //     options += '</select>';
+                        //     $this.html(options);
+                        //     $this.find('.js-example-basic-single').select2();
+                        // }
                     }
                 });
 
@@ -586,12 +586,12 @@
                         else if(index == 6) {
                             newValue = $this.find('select').val();
                         }
-                        else if(index == 7) {
-                            newValue = $this.find('textarea').val();
-                        }
-                        else if(index == 8) {
-                            newValue = $this.find('select').val();
-                        }
+                        // else if(index == 7) {
+                        //     newValue = $this.find('textarea').val();
+                        // }
+                        // else if(index == 8) {
+                        //     newValue = $this.find('select').val();
+                        // }
                         $this.html(newValue);
                         rowData[index] = newValue;
                     }
