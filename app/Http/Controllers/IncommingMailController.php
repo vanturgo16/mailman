@@ -19,6 +19,7 @@ use App\Models\WorkUnit;
 use App\Models\Classification;
 use App\Models\Complain;
 use App\Models\Dropdown;
+use App\Models\ProgressIncommingMail;
 
 class IncommingMailController extends Controller
 {
@@ -756,6 +757,12 @@ class IncommingMailController extends Controller
     
         // Get Query
         $datas = $datas->get();
+        foreach($datas as $item){
+            $countProgress = ProgressIncommingMail::where('id_incomming_mails', $item->id)->count();
+            $progressStatus = ProgressIncommingMail::where('id_incomming_mails', $item->id)->get()->toArray();
+            $item->progressStatus = $progressStatus;
+            $item->countProgress = $countProgress;
+        }
         // dd($datas);
 
         if ($request->ajax()) {
@@ -790,8 +797,8 @@ class IncommingMailController extends Controller
         $databefore->mail_regarding = $request[4];
         $databefore->attachment_text = $request[5];
         $databefore->receiver = $request[6];
-        $databefore->information = $request[7];
-        $databefore->status = $request[8];
+        // $databefore->information = $request[7];
+        // $databefore->status = $request[8];
 
         if($databefore->isDirty()){
             DB::beginTransaction();
@@ -811,8 +818,8 @@ class IncommingMailController extends Controller
                     'attachment_text' => $request[5],
                     'receiver' => $request[6],
                     'jml_hal' => $jmlHal,
-                    'information' => $request[7],
-                    'status' => $request[8],
+                    // 'information' => $request[7],
+                    // 'status' => $request[8],
                     'updated_by' => auth()->user()->name,
                 ]);
     
@@ -1293,6 +1300,44 @@ class IncommingMailController extends Controller
         }
         else {
             return redirect()->route('incommingmail.indexLitnadin')->with(['info' => 'Tidak ada perubahan, data sama dengan yang sebelumnya']);
+        }
+    }
+
+    public function createProgressLitnadin(Request $request, $id)
+    {
+        $id = decrypt($id);
+
+        $request->validate([
+            "information" => "required",
+            "status" => "required",
+        ], 
+        [
+            'information.required' => 'Keterangan Wajib Untuk Diisi.',
+            'status.required' => 'Status Wajib Untuk Diisi.',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Update Incomming Mail
+            IncommingMail::where('id', $id)->update([
+                'information' => $request->information,
+                'status' => $request->status,
+                'updated_by' => auth()->user()->name,
+            ]);
+
+            // Create Progress
+            ProgressIncommingMail::create([
+                'id_incomming_mails' => $id,
+                'information' => $request->information,
+                'status' => $request->status,
+                'created_by' => auth()->user()->name,
+            ]);
+
+            DB::commit();
+            return redirect()->route('incommingmail.indexLitnadin')->with(['success' => 'Sukses Ubah Data']);
+        } catch (Throwable $th) {
+            DB::rollback();
+            return redirect()->back()->with(['fail' => 'Gagal Ubah Data!']);
         }
     }
 }

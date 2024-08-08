@@ -191,9 +191,9 @@
                   @if($item->status == null)
                     -
                   @elseif($item->status == 1)
-                    Aktif
+                    Selesai
                   @else
-                    Tidak Aktif
+                    Revisi
                   @endif
                 </td>
                 <td class="align-top text-left px-1">
