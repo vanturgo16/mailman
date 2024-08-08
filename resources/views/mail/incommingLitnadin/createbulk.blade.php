@@ -352,8 +352,8 @@
                     <td>
                       <select class="form-control js-example-basic-single" name="status" style="width: 100%;">
                         <option value="">- Pilih -</option>
-                        <option value="1">Aktif</option>
-                        <option value="0">Tidak Aktif</option>
+                        <option value="1">Selesai</option>
+                        <option value="0">Revisi</option>
                       </select>
                     </td>
                   </tr>

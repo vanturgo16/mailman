@@ -374,17 +374,15 @@
                   <tr>
                     <td><label>Status</label></td>
                     <td>
-                      <select class="form-control js-example-basic-single" name="status" style="width: 100%;">
-                        <option value="" @if($data->status == null) selected="selected" @endif>- Pilih -</option>
-                        <option value="1" @if($data->status == "1") selected="selected" @endif>Aktif</option>
-                        <option value="0" @if($data->status == "0") selected="selected" @endif>Tidak Aktif</option>
-                      </select>
+                      <input type="hidden" name="status" value="{{ $data->status }}">
+                      <input type="text" class="form-control" value="{{ $data->status == 1 ? 'Selesai' : 'Revisi' }}" style="width: 100%;" readonly>
                     </td>
                   {{-- Keterangan --}}
                   <tr>
                     <td><label>Keterangan</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="information" placeholder="Masukkan Keterangan..">{{ $data->information }}</textarea>
+                      <input type="hidden" name="information" value="{{ $data->information }}">
+                      <textarea class="form-control" rows="3" type="text" placeholder="Masukkan Keterangan.." readonly>{{ $data->information }}</textarea>
                     </td>
                   </tr>
                 </tbody>

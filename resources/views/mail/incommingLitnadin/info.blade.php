@@ -311,6 +311,20 @@
                     </div>
                 </div>
             </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                  <div><span class="text-bold">Status :</span></div>
+                  <span>
+                    @if($data->status == 1)
+                        <span class="badge bg-success text-white">Selesai</span>
+                    @elseif($data->status == 0) 
+                        <span class="badge bg-warning text-white">Revisi</span></div>
+                    @else
+                        <span class="badge bg-secondary text-white">Null</span></div>
+                    @endif
+                  </span>
+              </div>
+            </div>
             
             <div class="col-lg-6">
               <div class="form-group">
