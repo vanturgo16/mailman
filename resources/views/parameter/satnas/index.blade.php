@@ -55,6 +55,15 @@
                                                             <label>Keterangan</label>
                                                             <textarea class="form-control" id="" rows="2" name="keterangan"></textarea>
                                                         </div>
+                                                        <div class="form-group">
+                                                            <label>Kategori</label>
+                                                            <select name="kategori" id="kategori" class="form-control">
+                                                                <option value="">-- Pilih Kategori --</option>
+                                                                <option value="1">Surat Masuk</option>
+                                                                <option value="2">Surat Keluar</option>
+                                                                <option value="3">Keduanya</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -90,6 +99,7 @@
                                                 <tr>
                                                     <th scope="col" style="text-align: center;width: 6%">No.</th>
                                                     <th scope="col">Nama Satuan Naskah</th>
+                                                    <th scope="col">Kategori</th>
                                                     <th scope="col">Tanggal Perubahan</th>
                                                     <th scope="col">Pengubah</th>
                                                     <th scope="col">Status</th>
@@ -100,6 +110,15 @@
                                             <tbody>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $data->unit_name }}</td>
+                                                <td>
+                                                    @if ($data->category == '1')
+                                                        Surat Masuk
+                                                    @elseif ($data->category == '2')
+                                                        Surat Keluar
+                                                    @else
+                                                        Keduanya
+                                                    @endif
+                                                </td>
                                                 <td>{{ $data->updated_at }}</td>
                                                 <td>{{ $data->created_by }}</td>
                                                 <td>
@@ -151,6 +170,15 @@
                                                                     <div class="form-group">
                                                                         <label>Keterangan</label>
                                                                         <textarea class="form-control" id="" rows="2" name="keterangan">{{ $data->unit_desc }}</textarea>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label>Kategori</label>
+                                                                        <select name="kategori" id="kategori" class="form-control">
+                                                                            <option value="">-- Pilih Kategori --</option>
+                                                                            <option value="1" @if ($data->category == '1') selected @endif>Surat Masuk</option>
+                                                                            <option value="2" @if ($data->category == '2') selected @endif>Surat Keluar</option>
+                                                                            <option value="3" @if ($data->category == '3') selected @endif>Keduanya</option>
+                                                                        </select>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">

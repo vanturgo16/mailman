@@ -12,6 +12,7 @@ class UnitLetter extends Model
     protected $fillable = [
         'unit_name',
         'unit_desc',
+        'category',
         'created_by'
     ];
 }
