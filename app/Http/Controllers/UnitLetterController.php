@@ -44,7 +44,8 @@ class UnitLetterController extends Controller
     {
         //dd('hai');
         $request->validate([
-            "nama_satuan_naskah" => "required"
+            "nama_satuan_naskah" => "required",
+            "kategori" => "required"
         ]);
 
         DB::beginTransaction();
@@ -53,6 +54,7 @@ class UnitLetterController extends Controller
             $store = UnitLetter::create([
                 'unit_name' => $request->nama_satuan_naskah,
                 'unit_desc' => $request->keterangan,
+                'category' => $request->kategori,
                 'created_by' => $user,
             ]);
 
@@ -98,7 +100,8 @@ class UnitLetterController extends Controller
     {
         //dd($id);
         $request->validate([
-            "nama_satuan_naskah" => "required"
+            "nama_satuan_naskah" => "required",
+            "kategori" => "required"
         ]);
 
         DB::beginTransaction();
@@ -108,6 +111,7 @@ class UnitLetterController extends Controller
             ->update([
                 'unit_name' => $request->nama_satuan_naskah,
                 'unit_desc' => $request->keterangan,
+                'category' => $request->kategori,
                 'created_by' => $user,
             ]);
 
