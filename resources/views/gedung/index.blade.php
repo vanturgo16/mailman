@@ -93,7 +93,7 @@
                                             </button>
                                         </div>
                                         @endif
-                                        <table id="example3" class="table table-bordered">
+                                        <table id="example1" class="table table-bordered">
                                             <thead>
                                                 <tr>
                                                     <th scope="col" style="text-align: center;width: 6%">No.</th>
@@ -104,82 +104,84 @@
                                                     <th scope="col" style="width: 15%;text-align: center">Aksi</th>
                                                 </tr>
                                             </thead>
-                                            @foreach ($gedungs as $data)    
                                             <tbody>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->kode_gedung }}</td>
-                                                <td>{{ $data->nama_gedung }}</td>
-                                                <td>{{ $data->kapasitas_gedung . " Lantai" }}</td>
-                                                <td>
-                                                    @if ($data->is_active == '1')
-                                                        <label class="text text-success"><i>AKTIF</i></label>
-                                                    @else
-                                                        <label class="text text-danger"><i>TIDAK AKTIF</i></label>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <!-- Button trigger modal -->
-                                                    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModalGedung{{ $data->id }}">
-                                                        Edit Data
-                                                    </button>
-                                                    
-                                                    @if ($data->is_active == '1')
-                                                        <form action="{{ route('gedung.destroy', $data->id) }}" method="POST" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Hapus Gedung?')">Hapus Data</button>
-                                                        </form>
-                                                    @else
-                                                        <form action="{{ url('/gedung/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <button type="submit" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</button>
-                                                        </form>
-                                                        {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
-                                                    @endif
+                                                @foreach ($gedungs as $data)    
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $data->kode_gedung }}</td>
+                                                    <td>{{ $data->nama_gedung }}</td>
+                                                    <td>{{ $data->kapasitas_gedung . " Lantai" }}</td>
+                                                    <td>
+                                                        @if ($data->is_active == '1')
+                                                            <label class="text text-success"><i>AKTIF</i></label>
+                                                        @else
+                                                            <label class="text text-danger"><i>TIDAK AKTIF</i></label>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <!-- Button trigger modal -->
+                                                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModalGedung{{ $data->id }}">
+                                                            Edit Data
+                                                        </button>
+                                                        
+                                                        @if ($data->is_active == '1')
+                                                            <form action="{{ route('gedung.destroy', $data->id) }}" method="POST" style="display:inline-block;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Hapus Gedung?')">Hapus Data</button>
+                                                            </form>
+                                                        @else
+                                                            <form action="{{ url('/gedung/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="submit" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</button>
+                                                            </form>
+                                                            {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
+                                                        @endif
 
-                                                    <!-- Modal -->
-                                                    <form action="{{ route('gedung.update', $data->id) }}" method="POST" enctype="multipart/form-data">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <div class="modal fade" id="editModalGedung{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalGedungLabel" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                <h5 class="modal-title" id="editModalGedungLabel">Edit Data Gedung</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
+                                                        <!-- Modal -->
+                                                        <form action="{{ route('gedung.update', $data->id) }}" method="POST" enctype="multipart/form-data">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <div class="modal fade" id="editModalGedung{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalGedungLabel" aria-hidden="true">
+                                                                <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                    <h5 class="modal-title" id="editModalGedungLabel">Edit Data Gedung</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Kode Gedung*</label>
+                                                                            <input type="text" class="form-control" value="{{ $data->kode_gedung }}" name="kode_gedung" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Nama Gedung*</label>
+                                                                            <input type="text" class="form-control" value="{{ $data->nama_gedung }}" name="nama_gedung" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Kapasitas (Lantai)*</label>
+                                                                            <input type="number" min="1" class="form-control w-25" value="{{ $data->kapasitas_gedung }}" name="kapasitas" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label>Keterangan</label>
+                                                                            <textarea class="form-control" rows="3" name="keterangan">{{ $data->keterangan_gedung }}</textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="modal-body">
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Kode Gedung*</label>
-                                                                        <input type="text" class="form-control" value="{{ $data->kode_gedung }}" name="kode_gedung" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Nama Gedung*</label>
-                                                                        <input type="text" class="form-control" value="{{ $data->nama_gedung }}" name="nama_gedung" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Kapasitas (Lantai)*</label>
-                                                                        <input type="number" min="1" class="form-control w-25" value="{{ $data->kapasitas_gedung }}" name="kapasitas" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Keterangan</label>
-                                                                        <textarea class="form-control" rows="3" name="keterangan">{{ $data->keterangan_gedung }}</textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                                                <button type="submit" class="btn btn-primary">Update</button>
                                                                 </div>
                                                             </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </td>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
                                             </tbody>
-                                            @endforeach
                                         </table>
                                     </div>
                                     <!-- /.card-body -->

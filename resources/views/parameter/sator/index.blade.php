@@ -102,80 +102,82 @@
                                                     <th scope="col" style="width: 15%;text-align: center">Aksi</th>
                                                 </tr>
                                             </thead>
-                                            @foreach ($datas as $data)    
                                             <tbody>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->sator_name }}</td>
-                                                <td>{{ $data->sator_desc }}</td>
-                                                <td>{{ $data->sator_address }}</td>
-                                                <td>{{ $data->updated_at }}</td>
-                                                <td>{{ $data->created_by }}</td>
-                                                <td>
-                                                    @if ($data->is_active == '1')
-                                                        <label class="text text-success"><i>AKTIF</i></label>
-                                                    @else
-                                                        <label class="text text-danger"><i>TIDAK AKTIF</i></label>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <!-- Button trigger modal -->
-                                                    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal{{ $data->id }}">
-                                                        Edit Data
-                                                    </button>
-                                                    
-                                                    @if ($data->is_active == '1')
-                                                        <form action="{{ route('sator.destroy', $data->id) }}" method="POST" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Hapus Satuan Organisasi?')">Hapus Data</button>
-                                                        </form>
-                                                    @else
-                                                        <form action="{{ url('/sator/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <button type="submit" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Satuan Organisasi?')">Aktif Data</button>
-                                                        </form>
-                                                        {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
-                                                    @endif
+                                                @foreach ($datas as $data)    
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $data->sator_name }}</td>
+                                                    <td>{{ $data->sator_desc }}</td>
+                                                    <td>{{ $data->sator_address }}</td>
+                                                    <td>{{ $data->updated_at }}</td>
+                                                    <td>{{ $data->created_by }}</td>
+                                                    <td>
+                                                        @if ($data->is_active == '1')
+                                                            <label class="text text-success"><i>AKTIF</i></label>
+                                                        @else
+                                                            <label class="text text-danger"><i>TIDAK AKTIF</i></label>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <!-- Button trigger modal -->
+                                                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal{{ $data->id }}">
+                                                            Edit Data
+                                                        </button>
+                                                        
+                                                        @if ($data->is_active == '1')
+                                                            <form action="{{ route('sator.destroy', $data->id) }}" method="POST" style="display:inline-block;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Hapus Satuan Organisasi?')">Hapus Data</button>
+                                                            </form>
+                                                        @else
+                                                            <form action="{{ url('/sator/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="submit" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Satuan Organisasi?')">Aktif Data</button>
+                                                            </form>
+                                                            {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
+                                                        @endif
 
-                                                    <!-- Modal -->
-                                                    <form action="{{ route('sator.update', $data->id) }}" method="POST" enctype="multipart/form-data">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <div class="modal fade" id="editModal{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                <h5 class="modal-title" id="editModalLabel">Ubah Data Satuan Organisasi</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
+                                                        <!-- Modal -->
+                                                        <form action="{{ route('sator.update', $data->id) }}" method="POST" enctype="multipart/form-data">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <div class="modal fade" id="editModal{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                    <h5 class="modal-title" id="editModalLabel">Ubah Data Satuan Organisasi</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Nama Satuan Organisasi*</label>
+                                                                            <input type="text" class="form-control" id="" name="nama_satuan" value="{{ $data->sator_name }}" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label>Alamat</label>
+                                                                            <textarea class="form-control" id="" rows="2" name="alamat">{{ $data->sator_address }}</textarea>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label>keterangan</label>
+                                                                            <textarea class="form-control" id="" rows="2" name="keterangan">{{ $data->sator_desc }}</textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="modal-body">
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Nama Satuan Organisasi*</label>
-                                                                        <input type="text" class="form-control" id="" name="nama_satuan" value="{{ $data->sator_name }}" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Alamat</label>
-                                                                        <textarea class="form-control" id="" rows="2" name="alamat">{{ $data->sator_address }}</textarea>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>keterangan</label>
-                                                                        <textarea class="form-control" id="" rows="2" name="keterangan">{{ $data->sator_desc }}</textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                                                <button type="submit" class="btn btn-primary">Update</button>
                                                                 </div>
                                                             </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </td>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
                                             </tbody>
-                                            @endforeach
                                         </table>
                                     </div>
                                     <!-- /.card-body -->

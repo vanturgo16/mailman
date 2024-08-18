@@ -111,113 +111,115 @@
                                                     <th scope="col" style="width: 15%;text-align: center">Aksi</th>
                                                 </tr>
                                             </thead>
-                                            @foreach ($datas as $data)    
                                             <tbody>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->kka_type }}</td>
-                                                <td>{{ $data->kka_primary_code }}</td>
-                                                <td>
-                                                    @if ($data->is_active == '1')
-                                                        <label class="text text-success"><i>AKTIF</i></label>
-                                                    @else
-                                                        <label class="text text-danger"><i>TIDAK AKTIF</i></label>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $data->updated_at }}</td>
-                                                <td>{{ $data->created_by }}</td>
-                                                <td>
-                                                    <!-- Button trigger modal -->
-                                                    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#addCodeModal{{ $data->id }}">
-                                                        Tambah Kode
-                                                    </button>
+                                                @foreach ($datas as $data)    
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $data->kka_type }}</td>
+                                                    <td>{{ $data->kka_primary_code }}</td>
+                                                    <td>
+                                                        @if ($data->is_active == '1')
+                                                            <label class="text text-success"><i>AKTIF</i></label>
+                                                        @else
+                                                            <label class="text text-danger"><i>TIDAK AKTIF</i></label>
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ $data->updated_at }}</td>
+                                                    <td>{{ $data->created_by }}</td>
+                                                    <td>
+                                                        <!-- Button trigger modal -->
+                                                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#addCodeModal{{ $data->id }}">
+                                                            Tambah Kode
+                                                        </button>
 
-                                                    <a href="{{ url('/kka', encrypt($data->id)) }}" class="btn btn-primary btn-xs" target="_BLANK">Daftar Kode</a>
+                                                        <a href="{{ url('/kka', encrypt($data->id)) }}" class="btn btn-primary btn-xs" target="_BLANK">Daftar Kode</a>
 
-                                                    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal{{ $data->id }}">
-                                                        Edit Data
-                                                    </button>
-                                                    
-                                                    @if ($data->is_active == '1')
-                                                        <form action="{{ route('tipe-kka.destroy', $data->id) }}" method="POST" style="display:inline-block;">
+                                                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal{{ $data->id }}">
+                                                            Edit Data
+                                                        </button>
+                                                        
+                                                        @if ($data->is_active == '1')
+                                                            <form action="{{ route('tipe-kka.destroy', $data->id) }}" method="POST" style="display:inline-block;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Hapus Tipe KKA?')">Hapus Data</button>
+                                                            </form>
+                                                        @else
+                                                            <form action="{{ url('/tipe-kka/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="submit" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Tipe KKA?')">Aktif Data</button>
+                                                            </form>
+                                                            {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
+                                                        @endif
+
+                                                        <!-- Modal Add Code-->
+                                                        <form action="{{ url('kka/store', $data->id) }}" method="POST" enctype="multipart/form-data">
                                                             @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Hapus Tipe KKA?')">Hapus Data</button>
+                                                            @method('PUT')
+                                                            <div class="modal fade" id="addCodeModal{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                    <h5 class="modal-title" id="editModalLabel">Tambah Kode Klasifikasi Arsip (<i><b>{{ $data->kka_type ." - ". $data->kka_primary_code }}</b></i>)</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Kode Klasifikasi Arsip</label>
+                                                                            <input type="text" class="form-control" id="" name="kka_code" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">keterangan</label>
+                                                                            <textarea class="form-control" id="" rows="2" name="keterangan" required></textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                                                    </div>
+                                                                </div>
+                                                                </div>
+                                                            </div>
                                                         </form>
-                                                    @else
-                                                        <form action="{{ url('/tipe-kka/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
+
+                                                        <!-- Modal Edit-->
+                                                        <form action="{{ route('tipe-kka.update', $data->id) }}" method="POST" enctype="multipart/form-data">
                                                             @csrf
-                                                            @method('PATCH')
-                                                            <button type="submit" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Tipe KKA?')">Aktif Data</button>
+                                                            @method('PUT')
+                                                            <div class="modal fade" id="editModal{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                    <h5 class="modal-title" id="editModalLabel">Ubah Tipe Kode Klasifikasi Arsip</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Tipe Kode Klasifikasi Arsip</label>
+                                                                            <input type="text" class="form-control" id="" name="kka_type" value="{{ $data->kka_type }}" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Kode Utama Klasifikasi Arsip</label>
+                                                                            <input type="text" class="form-control" id="" name="kka_primary_code" value="{{ $data->kka_primary_code }}" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                                    </div>
+                                                                </div>
+                                                                </div>
+                                                            </div>
                                                         </form>
-                                                        {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
-                                                    @endif
-
-                                                    <!-- Modal Add Code-->
-                                                    <form action="{{ url('kka/store', $data->id) }}" method="POST" enctype="multipart/form-data">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <div class="modal fade" id="addCodeModal{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                <h5 class="modal-title" id="editModalLabel">Tambah Kode Klasifikasi Arsip (<i><b>{{ $data->kka_type ." - ". $data->kka_primary_code }}</b></i>)</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Kode Klasifikasi Arsip</label>
-                                                                        <input type="text" class="form-control" id="" name="kka_code" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">keterangan</label>
-                                                                        <textarea class="form-control" id="" rows="2" name="keterangan" required></textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                                                <button type="submit" class="btn btn-primary">Simpan</button>
-                                                                </div>
-                                                            </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-
-                                                    <!-- Modal Edit-->
-                                                    <form action="{{ route('tipe-kka.update', $data->id) }}" method="POST" enctype="multipart/form-data">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <div class="modal fade" id="editModal{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                <h5 class="modal-title" id="editModalLabel">Ubah Tipe Kode Klasifikasi Arsip</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Tipe Kode Klasifikasi Arsip</label>
-                                                                        <input type="text" class="form-control" id="" name="kka_type" value="{{ $data->kka_type }}" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Kode Utama Klasifikasi Arsip</label>
-                                                                        <input type="text" class="form-control" id="" name="kka_primary_code" value="{{ $data->kka_primary_code }}" required>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                                                <button type="submit" class="btn btn-primary">Update</button>
-                                                                </div>
-                                                            </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </td>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
                                             </tbody>
-                                            @endforeach
                                         </table>
                                     </div>
                                     <!-- /.card-body -->

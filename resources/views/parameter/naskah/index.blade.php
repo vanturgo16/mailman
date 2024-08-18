@@ -102,83 +102,85 @@
                                                     <th scope="col" style="width: 15%;text-align: center"></th>
                                                 </tr>
                                             </thead>
-                                            @foreach ($datas as $data)    
                                             <tbody>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->let_code }}</td>
-                                                <td>{{ $data->let_name }}</td>
-                                                <td>{{ $data->pat_type }}</td>
-                                                <td>{{ $data->updated_at }}</td>
-                                                <td>{{ $data->created_by }}</td>
-                                                <td>
-                                                    @if ($data->is_active == '1')
-                                                        <label class="text text-success"><i>AKTIF</i></label>
-                                                    @else
-                                                        <label class="text text-danger"><i>TIDAK AKTIF</i></label>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <div class="dropdown">
-                                                        <button class="btn btn-xs btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                                                            Pilih Aksi
-                                                        </button>
-                                                        <div class="dropdown-menu">
-                                                            <a class="text-primary dropdown-item" href="{{ url('/pattern/create/'.encrypt($data->id)) }}"><i class="far fa-file-alt"></i> Penomeran Surat Keluar</a>
-                                                            <a class="text-primary dropdown-item" data-toggle="modal" data-target="#editModal{{ $data->id }}"><i class="far fa-edit"></i> Edit Data</a>
-                                                            @if ($data->is_active == '1')
-                                                                <form action="{{ route('naskah.destroy', $data->id) }}" method="POST" style="display:inline-block;">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="text-danger dropdown-item" onclick="return confirm('Yakin Hapus Naskah Dinas?')"><i class="far fa-times-circle"></i> Hapus Data</button>
-                                                                </form>
-                                                            @else
-                                                                <form action="{{ url('/naskah/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
-                                                                    @csrf
-                                                                    @method('PATCH')
-                                                                    <button type="submit" class="text-success dropdown-item" onclick="return confirm('Yakin Aktifkan Naskah Dinas?')"><i class="far fa-check-circle"></i> Aktif Data</button>
-                                                                </form>
-                                                            @endif
+                                                @foreach ($datas as $data)    
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $data->let_code }}</td>
+                                                    <td>{{ $data->let_name }}</td>
+                                                    <td>{{ $data->pat_type }}</td>
+                                                    <td>{{ $data->updated_at }}</td>
+                                                    <td>{{ $data->created_by }}</td>
+                                                    <td>
+                                                        @if ($data->is_active == '1')
+                                                            <label class="text text-success"><i>AKTIF</i></label>
+                                                        @else
+                                                            <label class="text text-danger"><i>TIDAK AKTIF</i></label>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-xs btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                                                Pilih Aksi
+                                                            </button>
+                                                            <div class="dropdown-menu">
+                                                                <a class="text-primary dropdown-item" href="{{ url('/pattern/create/'.encrypt($data->id)) }}"><i class="far fa-file-alt"></i> Penomeran Surat Keluar</a>
+                                                                <a class="text-primary dropdown-item" data-toggle="modal" data-target="#editModal{{ $data->id }}"><i class="far fa-edit"></i> Edit Data</a>
+                                                                @if ($data->is_active == '1')
+                                                                    <form action="{{ route('naskah.destroy', $data->id) }}" method="POST" style="display:inline-block;">
+                                                                        @csrf
+                                                                        @method('DELETE')
+                                                                        <button type="submit" class="text-danger dropdown-item" onclick="return confirm('Yakin Hapus Naskah Dinas?')"><i class="far fa-times-circle"></i> Hapus Data</button>
+                                                                    </form>
+                                                                @else
+                                                                    <form action="{{ url('/naskah/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
+                                                                        @csrf
+                                                                        @method('PATCH')
+                                                                        <button type="submit" class="text-success dropdown-item" onclick="return confirm('Yakin Aktifkan Naskah Dinas?')"><i class="far fa-check-circle"></i> Aktif Data</button>
+                                                                    </form>
+                                                                @endif
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <!-- Modal -->
-                                                    <form action="{{ route('naskah.update', $data->id) }}" method="POST" enctype="multipart/form-data">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <div class="modal fade" id="editModal{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                <h5 class="modal-title" id="editModalLabel">Ubah Data Naskah Dinas</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
+                                                        <!-- Modal -->
+                                                        <form action="{{ route('naskah.update', $data->id) }}" method="POST" enctype="multipart/form-data">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <div class="modal fade" id="editModal{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                    <h5 class="modal-title" id="editModalLabel">Ubah Data Naskah Dinas</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Kode Naskah Dinas*</label>
+                                                                            <input type="text" class="form-control" id="" name="kode_naskah" value="{{ $data->let_code }}" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Nama Naskah Dinas*</label>
+                                                                            <input type="text" class="form-control" id="" name="nama_naskah" value="{{ $data->let_name }}" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label>Keterangan</label>
+                                                                            <textarea class="form-control" id="" rows="2" name="keterangan">{{ $data->let_desc }}</textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="modal-body">
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Kode Naskah Dinas*</label>
-                                                                        <input type="text" class="form-control" id="" name="kode_naskah" value="{{ $data->let_code }}" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Nama Naskah Dinas*</label>
-                                                                        <input type="text" class="form-control" id="" name="nama_naskah" value="{{ $data->let_name }}" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Keterangan</label>
-                                                                        <textarea class="form-control" id="" rows="2" name="keterangan">{{ $data->let_desc }}</textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                                                <button type="submit" class="btn btn-primary">Update</button>
                                                                 </div>
                                                             </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </td>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
                                             </tbody>
-                                            @endforeach
                                         </table>
                                     </div>
                                     <!-- /.card-body -->
