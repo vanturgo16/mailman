@@ -17,6 +17,7 @@
             width: 50px;
         }
     </style>
+    @include('mail.head')
 
     <div class="content-header">
         <div class="container-fluid">
@@ -45,14 +46,13 @@
                         <a href="{{ route('incommingmail.rekapitulasi') }}" type="button" class="btn btn-sm btn-primary ml-1"><i class="mdi mdi-printer-search"></i> Rekapitulasi</a>
                     </div>
                     <div class="d-flex justify-content-end align-items-center">
-                        <form action="{{ route('incommingmail.index') }}" method="POST" id="resetForm" enctype="multipart/form-data">
+                        <form action="{{ route('incommingmail.index.post') }}" method="POST" id="resetForm" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="entry_date" value="">
                             <input type="hidden" name="mail_date" value="">
                             <input type="hidden" name="mail_number" value="">
                             <input type="hidden" name="placeman" value="">
                             <input type="hidden" name="org_unit" value="">
-                            <input type="hidden" name="jmlHal" value="">
                             <button type="submit" class="btn btn-sm btn-secondary" id="resetbtn"><i class="mdi mdi-reload"></i> Reset Filter</button>
                         </form>
                         <a href="" type="button" class="btn btn-sm btn-info ml-1" data-toggle="modal" data-target="#search"><span class="mdi mdi-filter"></span> Filter & Cari </a>
@@ -93,10 +93,10 @@
                             <th rowspan="2" class="align-middle text-center">Tgl. Agenda</th>
                             <th rowspan="2" class="align-middle text-center">No. Agenda</th>
                             <th colspan="3" class="align-middle text-center">Naskah / Surat</th>
-                            <th rowspan="2" class="align-middle text-center">Jumlah<br>Lampiran</th>
                             <th rowspan="2" class="align-middle text-center">Kepada</th>
+                            <th rowspan="2" class="align-middle text-center">Jumlah</th>
+                            <th rowspan="2" class="align-middle text-center">Lampiran</th>
                             <th rowspan="2" class="align-middle text-center">Keterangan</th>
-                            <th rowspan="2" class="align-middle text-center">Jumlah<br>Halaman</th>
                             <th rowspan="2" class="align-middle text-center">Tgl. Dibuat</th>
                             <th rowspan="2" class="align-middle text-center">Ubah</th>
                             <th rowspan="2" class="align-middle text-center">Aksi</th>
@@ -122,7 +122,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
-                <form action="{{ route('incommingmail.index') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
+                <form action="{{ route('incommingmail.index.post') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
                     @csrf
                     <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
                         <div class="row">
@@ -150,7 +150,7 @@
                                 <select class="form-control js-example-basic-single" name="placeman" style="width: 100%;">
                                     <option value="">- Pilih -</option>
                                     @foreach($placemans as $item)
-                                      <option value="{{ $item->name_value }}" @if($placeman == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
+                                        <option value="{{ $item->name_value }}" @if($placeman == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
                                     @endforeach
                                 </select>
                                 </div>
@@ -162,17 +162,6 @@
                                     <option value="">- Pilih -</option>
                                     @foreach($sators as $sator)
                                         <option value="{{ $sator->id }}" @if($org_unit == $sator->id) selected="selected" @endif>{{ $sator->sator_name }}</option>
-                                    @endforeach
-                                </select>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                <label>Jumlah Halaman</label>
-                                <select class="form-control js-example-basic-single" name="jmlHal" style="width: 100%;">
-                                    <option value="">- Pilih -</option>
-                                    @foreach($jmlHals as $item)
-                                        <option value="{{ $item->name_value }}" @if($jmlHal == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
                                     @endforeach
                                 </select>
                                 </div>
@@ -264,8 +253,7 @@
                         mail_date: '{{ $mail_date }}',
                         mail_number: '{{ $mail_number }}',
                         placeman: '{{ $placeman }}',
-                        org_unit: '{{ $org_unit }}',
-                        jmlHal: '{{ $jmlHal }}'
+                        org_unit: '{{ $org_unit }}'
                     }
                 },
                 "columns": [
@@ -328,17 +316,17 @@
                         },
                     },
                     {
-                        data: 'sender',
-                        name: 'sender',
+                        data: 'sub_sator_name',
+                        name: 'sub_sator_name',
                         orderable: true,
                         searchable: true,
                         className: 'text-center',
                         render: function(data, type, row) {
                             var html
-                            if(row.sender == null){
+                            if(row.sub_sator_name == null){
                                 html = '<span class="badge bg-secondary">Null</span>';
                             } else {
-                                html = row.sender;
+                                html = row.sub_sator_name;
                             }
                             return html;
                         },
@@ -354,23 +342,6 @@
                                 html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
                             } else {
                                 var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
-                                html = truncatedData;
-                            }
-                            return html;
-                        },
-                    },
-                    {
-                        data: 'attachment_text',
-                        name: 'attachment_text',
-                        orderable: true,
-                        searchable: true,
-                        className: 'text-center',
-                        render: function(data, type, row) {
-                            var html;
-                            if (row.attachment_text == null) {
-                                html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
-                            } else {
-                                var truncatedData = row.attachment_text.length > 150 ? row.attachment_text.substr(0, 150) + '...' : row.attachment_text;
                                 html = truncatedData;
                             }
                             return html;
@@ -393,6 +364,37 @@
                         },
                     },
                     {
+                        data: 'mail_quantity',
+                        name: 'mail_quantity',
+                        orderable: true,
+                        searchable: true,
+                        render: function(data, type, row) {
+                        var html;
+                        if(row.mail_quantity == null){
+                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                        } else {
+                            html = '<b>'+row.mail_quantity+'</b> '+row.unit_name;
+                        }
+                        return html;
+                        },
+                    },
+                    {
+                        data: 'attachment_text',
+                        name: 'attachment_text',
+                        orderable: true,
+                        searchable: true,
+                        render: function(data, type, row) {
+                            var html;
+                            if (row.attachment_text == null) {
+                                html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                            } else {
+                                var truncatedData = row.attachment_text.length > 150 ? row.attachment_text.substr(0, 150) + '...' : row.attachment_text;
+                                html = truncatedData;
+                            }
+                            return html;
+                        },
+                    },
+                    {
                         data: 'information',
                         name: 'information',
                         orderable: true,
@@ -406,22 +408,6 @@
                                 html = truncatedData;
                             }
                             return html;
-                        },
-                    },
-                    {
-                        data: 'jml_hal',
-                        name: 'jml_hal',
-                        orderable: true,
-                        searchable: true,
-                        className: 'text-center',
-                        render: function(data, type, row) {
-                        var html;
-                        if(row.jml_hal == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
-                        } else {
-                            html = row.jml_hal;
-                        }
-                        return html;
                         },
                     },
                     {
@@ -468,6 +454,7 @@
                 ]
             });
 
+            //Check Table Update
             setTimeout(checkForChanges, 10);
             setTimeout(checkForChanges, 20);
 
@@ -484,7 +471,7 @@
                 }).get();
 
                 $row.find('td').each(function(index) {
-                    if (index >= 1 && index <= 8) {
+                    if (index >= 1 && index <= 9) {
                         var $this = $(this);
                         var currentValue = $this.text().trim();
                         currentValue = (currentValue === "Null") ? "" : currentValue;
@@ -503,30 +490,27 @@
                         else if(index === 3) {
                             $this.html('<input type="text" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
                         }
-                        else if(index === 4) {
-                            var placemanVal = table.row($row).data().placeman;
-                            if(placemanVal === "LITNADIN"){
-                                var selectValue = $this.text();
-                                var options = '<select class="form-control js-example-basic-single">';
-                                options += '<option value="">- Pilih -</option>';
-                                @foreach($workunits as $workunit)
-                                    var work_name = '{{ $workunit->work_name }}';
-                                    options += '<option value="{{ $workunit->work_name }}" ' + (work_name === selectValue ? 'selected' : '') + '>{{ $workunit->work_name }}</option>';
-                                @endforeach
-                                options += '</select>';
-                                $this.html(options);
-                                $this.find('.js-example-basic-single').select2();
-                            } else {
-                                $this.html('<input type="text" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
-                            }
-                        }
+                        // else if(index === 4) {
+                        //     var placemanVal = table.row($row).data().placeman;
+                        //     if(placemanVal === "LITNADIN"){
+                        //         var selectValue = $this.text();
+                        //         var options = '<select class="form-control js-example-basic-single">';
+                        //         options += '<option value="">- Pilih -</option>';
+                        //         @foreach($workunits as $workunit)
+                        //             var work_name = '{{ $workunit->work_name }}';
+                        //             options += '<option value="{{ $workunit->work_name }}" ' + (work_name === selectValue ? 'selected' : '') + '>{{ $workunit->work_name }}</option>';
+                        //         @endforeach
+                        //         options += '</select>';
+                        //         $this.html(options);
+                        //         $this.find('.js-example-basic-single').select2();
+                        //     } else {
+                        //         $this.html('<input type="text" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
+                        //     }
+                        // }
                         else if(index === 5) {
                             $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
                         }
                         else if(index === 6) {
-                            $this.html('<input type="number" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
-                        } 
-                        else if(index === 7) {
                             var selectValue = $this.text();
                             var options = '<select class="form-control js-example-basic-single">';
                             options += '<option value="">- Pilih -</option>';
@@ -538,7 +522,18 @@
                             $this.html(options);
                             $this.find('.js-example-basic-single').select2();
                         }
+                        else if(index === 7) {
+                            let number = null;
+                            if (currentValue) {
+                                let parts = currentValue.split(' ', 2);
+                                number = parts[0];
+                            }
+                            $this.html('<input type="number" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + number + '">');
+                        } 
                         else if(index === 8) {
+                            $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
+                        }
+                        else if(index === 9) {
                             $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
                         }
                     }
@@ -553,7 +548,7 @@
             function saveRowData($row) {
                 var rowData = {};
                 $row.find('td').each(function(index) {
-                    if (index >= 1 && index <= 8) {
+                    if (index >= 1 && index <= 9) {
                         var $this = $(this);
                         var newValue;
                         if(index == 1) {
@@ -577,12 +572,15 @@
                             newValue = $this.find('textarea').val();
                         }
                         else if(index == 6) {
-                            newValue = $this.find('input').val();
-                        } 
-                        else if(index == 7) {
                             newValue = $this.find('select').val();
                         }
+                        else if(index == 7) {
+                            newValue = $this.find('input').val();
+                        } 
                         else if(index == 8) {
+                            newValue = $this.find('textarea').val();
+                        }
+                        else if(index == 9) {
                             newValue = $this.find('textarea').val();
                         }
                         $this.html(newValue);
@@ -634,7 +632,7 @@
 
             function cancelRowEditing($row) {
                 $row.find('td').each(function(index) {
-                if (index >= 1 && index <= 8) {
+                if (index >= 1 && index <= 9) {
                     $(this).html(originalData[$row.index()][index]);
                 }
                 });
@@ -666,6 +664,7 @@
             // });
         });
 
+        // Function Table Update
         function checkForChanges() {
             $.ajax({
                 url: '{{ route("incommingmail.checkChanges") }}',

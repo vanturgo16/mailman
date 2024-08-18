@@ -7,62 +7,26 @@
   <div class="container-fluid">
       <div class="row mb-2">
           <div class="col-sm-6">
-              <h1 class="m-0"><i class="mdi mdi-file-edit"></i> Ubah Surat Keluar</h1>
+              <h1 class="m-0"><i class="mdi mdi-file-edit"></i> Formulir Ubah Surat Keluar</h1>
           </div>
           <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Beranda</a></li>
                   <li class="breadcrumb-item"><a href="{{ route('outgoingmail.index') }}"> Daftar Surat Keluar</a></li>
-                    <li class="breadcrumb-item active">Ubah</li>
+                  <li class="breadcrumb-item active">Ubah</li>
               </ol>
           </div>
       </div>
   </div>
 </div>
-
-<!-- Notifikasi menggunakan flash session data -->
-@if (session('success'))
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    {{ session('success') }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-@endif
-@if (session('fail'))
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    {{ session('fail') }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-</div>
-@endif
-
-<!--validasi form with $validate-->
-@if (count($errors)>0)
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-  <i class="mdi mdi-block-helper label-icon"></i><strong>&nbsp; Data Gagal Disimpan!</strong>
-  <ul class="mb-0">
-    @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-    @endforeach
-  </ul>
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-@endif
+@include('mail.alert')
 
 <div class="container-fluid">
   <div class="card card-primary card-outline">
-      <div class="card-header">
-          <h3 class="card-title">
-              Formulir Ubah Surat Keluar
-          </h3>
-      </div>
+      <div class="card-header"><h3 class="card-title"></h3></div>
       <form action="{{ route('outgoingmail.update', encrypt($data->id)) }}" method="POST" enctype="multipart/form-data" id="formOutgoingMail">
         @csrf
-        <div class="card-body" style="max-height: 65vh; overflow-y: auto;">
+        <div class="card-body" style="max-height: 58vh; overflow-y: auto;">
           <div class="card p-3" style="background-color:rgb(240, 240, 240);">
             {{-- Jenis Naskah --}}
             <div class="row row-separator">
@@ -75,7 +39,7 @@
               </div>
             </div>
             {{-- Konseptor --}}
-            <div class="row row-separator">
+            {{-- <div class="row row-separator">
               <div class="col-3">
                 <label class="text-danger">Konseptor *</label>
               </div>
@@ -89,18 +53,18 @@
                   @endforeach
                 </select>
               </div>
-            </div>
+            </div> --}}
             {{-- Kode Satuan Organisasi --}}
             <div class="row row-separator">
               <div class="col-3">
-                <label id="labelkso">Kode Satuan Organisasi</label>
+                <label id="labelkso" class="text-danger">Kode Satuan Organisasi *</label>
                 <br>
                 <small>* (Harus diisi khusus untuk Jenis Naskah Surat, Nota Dinas, Surat Pengantar dan Telaahan Staf jika bukan ditandatangani oleh Kapolri/Wakapolri)</small>
               </div>
               <div class="col-9">
                 <div class="row">
                   <div class="col-12">
-                    <label>Induk Satuan Organisasi</label>
+                    <label class="text-danger">Induk Satuan Organisasi *</label>
                   </div>
                   <div class="col-9">
                     <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
@@ -116,7 +80,7 @@
                     <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#satuanOrg"><i class="fa fa-plus"></i> Tambah Baru</button>
                   </div>
                   <div class="col-12 mt-3">
-                    <label id="labelSubSator">Sub Satuan Organisasi</label>
+                    <label class="text-danger">Konseptor *</label>
                   </div>
                   <div class="col-9">
                     <select class="form-control js-example-basic-single" name="sub_org_unit" id="sub_org_unit" style="width: 100%;">
@@ -129,8 +93,6 @@
                     var satorBefore = "{{ $data->org_unit }}";
                     var subSatorBefore = "{{ $data->sub_org_unit }}";
                     if(satorBefore != null){
-                      $('#labelSubSator').addClass("text-danger");
-                      $('#labelSubSator').html("Sub Satuan Organisasi *");
                       var url = '{{ route("sator.mapSator", ":id") }}';
                       url = url.replace(':id', satorBefore);
                       if (satorBefore) {
@@ -155,15 +117,6 @@
                     // Map Sator 
                     $('select[name="org_unit"]').on('change', function() {
                       const sator = $(this).val();
-                      if(sator == null || sator == ""){
-                        $('#labelSubSator').removeClass("text-danger");
-                        $('#labelSubSator').html("Sub Satuan Organisasi");
-                        $('select[name="sub_org_unit"]').removeAttr('required');
-                      } else {
-                        $('#labelSubSator').addClass("text-danger");
-                        $('#labelSubSator').html("Sub Satuan Organisasi *");
-                        $('select[name="sub_org_unit"]').attr('required', 'required');
-                      }
                       var url = '{{ route("sator.mapSator", ":id") }}';
                       url = url.replace(':id', sator);
                       if (sator) {
@@ -195,9 +148,9 @@
                 <tbody>
                   {{-- Perihal --}}
                   <tr>
-                    <td><label class="text-danger">Perihal / Tentang *</label></td>
+                    <td><label class="text-danger">Hal / Tentang *</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perihal / Tentang Surat..">{{ $data->mail_regarding }}</textarea>
+                      <textarea class="form-control" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Hal / Tentang Surat..">{{ $data->mail_regarding }}</textarea>
                     </td>
                   </tr>
                   {{-- Tanggal --}}
@@ -307,7 +260,7 @@
                     </td>
                   </tr>
                   {{-- Klasifikasi Arsip --}}
-                  <tr>
+                  {{-- <tr>
                     <td><label>Klasifikasi Arsip</label></td>
                     <td>
                       <div class="row">
@@ -328,7 +281,7 @@
                         </div>
                       </div>
                     </td>
-                  </tr>
+                  </tr> --}}
                   {{-- Retensi Surat --}}
                   <tr>
                     <td><label>Retensi Surat</label></td>
@@ -374,12 +327,12 @@
                     </td>
                   </tr>
                   {{-- Nomor Referensi --}}
-                  <tr>
+                  {{-- <tr>
                     <td><label>Nomor Referensi</label></td>
                     <td>
                       <input type="text" name="ref_number" value="{{ $data->ref_number }}" class="form-control" placeholder="Masukan Nomor Referensi..">
                     </td>
-                  </tr>
+                  </tr> --}}
                   {{-- Referensi Surat --}}
                   {{-- <tr>
                     <td><label>Referensi Surat</label></td>
@@ -389,10 +342,10 @@
                   </tr> --}}
                   {{-- Lampiran --}}
                   <tr>
-                    <td><label>Jumlah Lampiran</label></td>
+                    <td><label>Lampiran</label></td>
                     <td>
-                      <input type="number" class="form-control" name="attachment_text" value="{{ $data->attachment_text }}" placeholder="Masukkan Jumlah Lampiran..">
-                      {{-- <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran..">{{ $data->attachment_text }}</textarea> --}}
+                      {{-- <input type="number" class="form-control" name="attachment_text" value="{{ $data->attachment_text }}" placeholder="Masukkan Jumlah Lampiran.."> --}}
+                      <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran..">{{ $data->attachment_text }}</textarea>
                     </td>
                   </tr>
                   {{-- Keterangan --}}

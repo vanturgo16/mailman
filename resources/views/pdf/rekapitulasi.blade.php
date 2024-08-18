@@ -147,9 +147,9 @@
             <th class="align-middle text-center px-1" style="font-weight: normal; width:5%;"><b>No.</b></th>
             <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Tgl. Surat</b></th>
             <th class="align-middle text-center px-1" style="font-weight: normal;"><b>No. Verbal</b></th>
-            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Penerima</b></th>
-            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Perihal / Tentang</b></th>
-            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Jumlah<br>Lampiran</b></th>
+            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Kepada</b></th>
+            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Isi / Perihal</b></th>
+            <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Lampiran</b></th>
             <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Dari / Konseptor</b></th>
             <th class="align-middle text-center px-1" style="font-weight: normal;"><b>Keterangan</b></th>
           </tr>
@@ -165,13 +165,57 @@
               <?php $no++; ?>
               <tr>
                 <td class="align-top text-center">{{ $no }}</td>
-                <td class="align-top text-center">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
-                <td class="align-top text-center"><b>{{ $item->mail_number }}</b></td>
-                <td class="align-top text-left px-1">{{ $item->receiver }}</td>
-                <td class="align-top text-left px-1">{{ $item->mail_regarding }}</td>
-                <td class="align-top text-center">{{ $item->attachment_text }}</td>
-                <td class="align-top text-left px-1">{{ $item->drafter_name }}</td>
-                <td class="align-top text-left px-1">{{ $item->information }}</td>
+                <td class="align-top px-2">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
+                <td class="align-top px-2">
+                  @if($item->mail_number == null)
+                    -
+                  @else
+                    <b>{{ $item->mail_number }}</b>
+                  @endif
+                </td>
+                <td class="align-top text-left px-2">
+                  @if($item->receiver == null)
+                    -
+                  @else
+                    {{ $item->receiver }}
+                  @endif
+                </td>
+                <td class="align-top text-left px-2">
+                  @if($item->mail_regarding == null)
+                    -
+                  @else
+                    {{ $item->mail_regarding }}
+                  @endif
+                  @if($item->mail_quantity == null)
+                  @else
+                    <br><br><b>{{ $item->mail_quantity }} {{ $item->unit_name }}</b>
+                  @endif
+                </td>
+                <td class="align-top px-2">
+                  @if($item->attachment_text == null)
+                    -
+                  @else
+                    {{ $item->attachment_text }}
+                  @endif
+                </td>
+                <td class="align-top text-left px-2">
+                  {{ $item->sub_sator_name }}
+                  <br><br><b>Tanda Tangan:</b><br>
+                  {{ $item->signer }}
+                </td>
+                <td class="align-top text-left px-2">
+                  @if($item->archive_remains == null)
+                    (Tanpa Arsip)<br>
+                  @else
+                    {{ $item->archive_remains }}<br>
+                  @endif
+
+                  @if($item->information == null)
+                    -
+                  @else
+                    {{ $item->information }}
+                  @endif
+                </td>
               </tr>
             @endforeach
           @endif

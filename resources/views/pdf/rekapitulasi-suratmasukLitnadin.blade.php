@@ -160,10 +160,10 @@
                   @endif
                 </td>
                 <td class="align-top text-left px-1">
-                  @if($item->sender == null)
+                  @if($item->sub_sator_name == null)
                     -
                   @else
-                    {{ $item->sender }}
+                    {{ $item->sub_sator_name }}
                   @endif
                 </td>
                 <td class="align-top text-left px-1">
@@ -171,6 +171,10 @@
                     -
                   @else
                     {{ $item->mail_regarding }}
+                  @endif
+                  @if($item->mail_quantity == null)
+                  @else
+                    <br><br><b>{{ $item->mail_quantity }} {{ $item->unit_name }}</b>
                   @endif
                 </td>
                 <td class="align-top text-center">
@@ -201,6 +205,12 @@
                     -
                   @else
                     {{ $item->information }}
+                  @endif
+                  <br><br>Dikirim Via: 
+                  @if($item->received_via == null)
+                  -
+                  @else
+                  {{ $item->received_via }}
                   @endif
                 </td>
               </tr>

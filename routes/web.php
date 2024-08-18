@@ -56,9 +56,9 @@ use PgSql\Lob;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::controller(FrondandController::class)->group(function () {
-    Route::get('/', 'login')->name('login');
-});
+// Route::controller(FrondandController::class)->group(function () {
+//     Route::get('/', 'login')->name('login');
+// });
 
 Route::group(['middleware' => 'cekadmin'], function () {
     Route::controller(DashboardController::class)->group(function () {
@@ -178,7 +178,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
     Route::controller(IncommingMailController::class)->group(function () {
         Route::prefix('surat-masuk')->group(function () {
             Route::get('/', 'index')->name('incommingmail.index');
-            Route::post('/', 'index')->name('incommingmail.index');
+            Route::post('/', 'index')->name('incommingmail.index.post');
             Route::post('/directupdate/{id}', 'directupdate')->name('incommingmail.directupdate');
             Route::get('/check-table-changes', 'checkChanges')->name('incommingmail.checkChanges');
             Route::get('/check-table-changes-update', 'checkChangeUpdate')->name('incommingmail.checkChangeUpdate');
@@ -190,7 +190,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
             Route::get('/ubah/{id}', 'edit')->name('incommingmail.edit');
             Route::post('/update/{id}', 'update')->name('incommingmail.update');
             Route::get('/rekapitulasi', 'rekapitulasi')->name('incommingmail.rekapitulasi');
-            Route::post('/rekapitulasi', 'rekapitulasi')->name('incommingmail.rekapitulasi');
+            Route::post('/rekapitulasi', 'rekapitulasi')->name('incommingmail.rekapitulasi.post');
             Route::post('/rekapitulasi/Cetak', 'rekapitulasiPrint')->name('incommingmail.rekapitulasiPrint');
         });
     });
@@ -198,7 +198,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
     Route::controller(IncommingMailController::class)->group(function () {
         Route::prefix('surat-masuk-litnadin')->group(function () {
             Route::get('/', 'indexLitnadin')->name('incommingmail.indexLitnadin');
-            Route::post('/', 'indexLitnadin')->name('incommingmail.indexLitnadin');
+            Route::post('/', 'indexLitnadin')->name('incommingmail.indexLitnadin.post');
             Route::post('/directupdate/{id}', 'directupdateLitnadin')->name('incommingmail.directupdateLitnadin');
             Route::get('/tambah', 'createLitnadin')->name('incommingmail.createLitnadin');
             Route::post('/store', 'storeLitnadin')->name('incommingmail.storeLitnadin');
@@ -208,7 +208,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
             Route::get('/ubah/{id}', 'editLitnadin')->name('incommingmail.editLitnadin');
             Route::post('/update/{id}', 'updateLitnadin')->name('incommingmail.updateLitnadin');
             Route::get('/rekapitulasi', 'rekapitulasiLitnadin')->name('incommingmail.rekapitulasiLitnadin');
-            Route::post('/rekapitulasi', 'rekapitulasiLitnadin')->name('incommingmail.rekapitulasiLitnadin');
+            Route::post('/rekapitulasi', 'rekapitulasiLitnadin')->name('incommingmail.rekapitulasiLitnadin.post');
             Route::post('/rekapitulasi/Cetak', 'rekapitulasiPrintLitnadin')->name('incommingmail.rekapitulasiPrintLitnadin');
             Route::post('/progress/store/{id}', 'createProgressLitnadin')->name('incommingmail.createProgressLitnadin');
         });
@@ -217,7 +217,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
     Route::controller(OutgoingMailController::class)->group(function () {
         Route::prefix('surat-keluar')->group(function () {
             Route::get('/', 'index')->name('outgoingmail.index');
-            Route::post('/', 'index')->name('outgoingmail.index');
+            Route::post('/', 'index')->name('outgoingmail.index.post');
             Route::post('/directupdate/{id}', 'directupdate')->name('outgoingmail.directupdate');
             Route::get('/checkNumberingKka/{id}', 'checkNumberingKka')->name('outgoingmail.checkNumberingKka');
             Route::get('/mapKka/{id}', 'mapKka')->name('outgoingmail.mapKka');
@@ -232,7 +232,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
             Route::post('/update/{id}', 'update')->name('outgoingmail.update');
             Route::get('/checkpattern/{id}', 'checkpattern')->name('outgoingmail.checkpattern');
             Route::get('/rekapitulasi', 'rekapitulasi')->name('outgoingmail.rekapitulasi');
-            Route::post('/rekapitulasi', 'rekapitulasi')->name('outgoingmail.rekapitulasi');
+            Route::post('/rekapitulasi', 'rekapitulasi')->name('outgoingmail.rekapitulasi.post');
             Route::post('/rekapitulasi/Cetak', 'rekapitulasiPrint')->name('outgoingmail.rekapitulasiPrint');
 
             // Route::post('/generate', 'generatenumber')->name('outgoingmail.generate');

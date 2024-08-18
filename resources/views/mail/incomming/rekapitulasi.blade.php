@@ -37,7 +37,7 @@
                     </form>
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
-                    <form action="{{ route('incommingmail.rekapitulasi') }}" method="POST" id="resetForm" enctype="multipart/form-data">
+                    <form action="{{ route('incommingmail.rekapitulasi.post') }}" method="POST" id="resetForm" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="startdate" value="">
                         <input type="hidden" name="enddate" value="">
@@ -85,7 +85,7 @@
                         <th rowspan="2" class="align-middle text-center">Tgl. Agenda</th>
                         <th rowspan="2" class="align-middle text-center">No. Agenda</th>
                         <th colspan="3" class="align-middle text-center">Naskah / Surat</th>
-                        <th rowspan="2" class="align-middle text-center">Jumlah<br>Lampiran</th>
+                        <th rowspan="2" class="align-middle text-center">Lampiran</th>
                         <th rowspan="2" class="align-middle text-center">Kepada</th>
                         <th rowspan="2" class="align-middle text-center">Keterangan</th>
                     </tr>
@@ -111,7 +111,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
-            <form action="{{ route('incommingmail.rekapitulasi') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
+            <form action="{{ route('incommingmail.rekapitulasi.post') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
                 @csrf
                 <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
                     <div class="row">
@@ -136,7 +136,7 @@
                             <select class="form-control js-example-basic-single" id="placeman" name="placeman" style="width: 100%;">
                                 <option value="">- Pilih -</option>
                                 @foreach($placemans as $item)
-                                  <option value="{{ $item->name_value }}" @if($placeman == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
+                                    <option value="{{ $item->name_value }}" @if($placeman == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
                                 @endforeach
                             </select>
                             </div>
@@ -276,7 +276,6 @@
                     name: 'mail_date',
                     orderable: true,
                     searchable: true,
-                    className: 'text-center',
                     render: function(data, type, row) {
                         var html
                         if(row.mail_date == null){
@@ -293,7 +292,6 @@
                     name: 'agenda_number',
                     orderable: true,
                     searchable: true,
-                    className: 'text-center',
                     render: function(data, type, row) {
                         var html
                         if(row.agenda_number == null){
@@ -309,7 +307,6 @@
                     name: 'mail_number',
                     orderable: true,
                     searchable: true,
-                    className: 'text-center',
                     render: function(data, type, row) {
                         var html
                         if(row.mail_number == null){
@@ -321,17 +318,16 @@
                     },
                 },
                 {
-                    data: 'sender',
-                    name: 'sender',
+                    data: 'sub_sator_name',
+                    name: 'sub_sator_name',
                     orderable: true,
                     searchable: true,
-                    className: 'text-center',
                     render: function(data, type, row) {
                         var html
-                        if(row.sender == null){
+                        if(row.sub_sator_name == null){
                             html = '<span class="badge bg-secondary">Null</span>';
                         } else {
-                            html = row.sender;
+                            html = row.sub_sator_name;
                         }
                         return html;
                     },
@@ -344,12 +340,18 @@
                     render: function(data, type, row) {
                         var html;
                         if (row.mail_regarding == null) {
-                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                            html = '<span class="badge bg-secondary">Null</span>';
                         } else {
                             var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
                             html = truncatedData;
                         }
-                        return html;
+                        var quantity;
+                        if (row.mail_quantity == null) {
+                            quantity = '';
+                        } else {
+                            quantity = '<br><br><b>'+row.mail_quantity+' '+row.unit_name+'</b>';
+                        }
+                        return html+quantity;
                     },
                 },
                 {
@@ -357,11 +359,10 @@
                     name: 'attachment_text',
                     orderable: true,
                     searchable: true,
-                    className: 'text-center',
                     render: function(data, type, row) {
                         var html;
                         if (row.attachment_text == null) {
-                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                            html = '<span class="badge bg-secondary">Null</span>';
                         } else {
                             var truncatedData = row.attachment_text.length > 150 ? row.attachment_text.substr(0, 150) + '...' : row.attachment_text;
                             html = truncatedData;
@@ -374,7 +375,6 @@
                     name: 'receiver',
                     orderable: true,
                     searchable: true,
-                    className: 'text-center',
                     render: function(data, type, row) {
                         var html
                         if(row.receiver == null){
@@ -393,12 +393,18 @@
                     render: function(data, type, row) {
                         var html;
                         if (row.information == null) {
-                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                            html = '<span class="badge bg-secondary">Null</span>';
                         } else {
                             var truncatedData = row.information.length > 150 ? row.information.substr(0, 150) + '...' : row.information;
                             html = truncatedData;
                         }
-                        return html;
+                        var sendVia;
+                        if (row.received_via == null) {
+                            sendVia = '-';
+                        } else {
+                            sendVia = row.received_via;
+                        }
+                        return html+'<br><br>Dikirim Via: '+sendVia;
                     },
                 },
             ],
