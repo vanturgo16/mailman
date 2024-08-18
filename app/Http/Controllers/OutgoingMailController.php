@@ -66,8 +66,9 @@ class OutgoingMailController extends Controller
         $jmlHals = Dropdown::where('category', 'Jumlah Halaman')->get();
         
         $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'outgoing_mails.created_at as created',
-                'draft.work_name as drafter_name', 'master_letter.let_name')
-            ->leftjoin('master_workunit as draft', 'draft.id', 'outgoing_mails.drafter')
+                'master_letter.let_name', 'master_unit_letter.unit_name', 'master_sub_sator.sub_sator_name')
+            ->leftjoin('master_sub_sator', 'outgoing_mails.sub_org_unit', 'master_sub_sator.id')
+            ->leftjoin('master_unit_letter', 'outgoing_mails.mail_unit', 'master_unit_letter.id')
             ->leftjoin('master_letter', 'master_letter.id', 'outgoing_mails.id_mst_letter')
             ->orderBy('created_at', 'desc');
 
@@ -132,29 +133,32 @@ class OutgoingMailController extends Controller
         // $databefore->mail_number = $request[2];
         $databefore->receiver = $request[3];
         $databefore->mail_regarding = $request[4];
-        $databefore->attachment_text = $request[5];
-        $databefore->drafter = $request[6];
-        $databefore->information = $request[7];
+        // $databefore->drafter = $request[5];
+        $databefore->mail_quantity = $request[6];
+        $databefore->attachment_text = $request[7];
+        $databefore->information = $request[8];
 
         if($databefore->isDirty()){
             DB::beginTransaction();
 
-            if($request[5] != null){
-                $jmlHal = $databefore->mail_quantity + $request[5];
-            } else {
-                $jmlHal = $databefore->mail_quantity;
-            }
+            // if($request[5] != null){
+            //     $jmlHal = $databefore->mail_quantity + $request[5];
+            // } else {
+            //     $jmlHal = $databefore->mail_quantity;
+            // }
 
             try {
                 // Update Outgoing Mail
                 OutgoingMail::where('id', $id)->update([
                     // 'mail_number' => $request[2],
-                    'drafter' => $request[6],
-                    'mail_regarding' => $request[4],
+                    // 'drafter' => $request[6],
                     'receiver' => $request[3],
-                    'attachment_text' => $request[5],
-                    'jml_hal' => $jmlHal,
-                    'information' => $request[7],
+                    'mail_regarding' => $request[4],
+                    // 'attachment_text' => $request[5],
+                    // 'jml_hal' => $jmlHal,
+                    'mail_quantity' => $request[6],
+                    'attachment_text' => $request[7],
+                    'information' => $request[8],
                     'updated_by' => auth()->user()->name,
                 ]);
     
@@ -219,8 +223,10 @@ class OutgoingMailController extends Controller
         
         if (isset($startdate) || isset($enddate) || isset($drafter) || isset($mail_number) || isset($id_mst_letter) || isset($workunit) || isset($archive_remain)) 
         {
-            $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'draft.work_name as drafter_name')
-            ->leftjoin('master_workunit as draft', 'draft.id', 'outgoing_mails.drafter')
+            $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'master_unit_letter.unit_name', 'signer.work_name as signer', 'master_sub_sator.sub_sator_name')
+            ->leftjoin('master_sub_sator', 'outgoing_mails.sub_org_unit', 'master_sub_sator.id')
+            ->leftjoin('master_workunit as signer', 'signer.id', 'outgoing_mails.signing')
+            ->leftjoin('master_unit_letter', 'master_unit_letter.id', 'outgoing_mails.mail_unit')
             ->orderBy('created_at', 'desc');
 
             // FIlter
@@ -231,7 +237,7 @@ class OutgoingMailController extends Controller
                 $datas->where('outgoing_mails.mail_date', '<=', $enddate);
             }
             if ($drafter != null) {
-                $datas->where('outgoing_mails.drafter', $drafter);
+                $datas->where('outgoing_mails.org_unit', $drafter);
             }
             if ($mail_number != null) {
                 $datas->where('outgoing_mails.mail_number', 'like', '%' . $mail_number . '%')
@@ -290,8 +296,10 @@ class OutgoingMailController extends Controller
 
         if (isset($startdate) || isset($enddate) || isset($drafter) || isset($mail_number) || isset($id_mst_letter) || isset($workunit) || isset($archive_remain)) 
         {
-            $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'draft.work_name as drafter_name')
-            ->leftjoin('master_workunit as draft', 'draft.id', 'outgoing_mails.drafter')
+            $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'master_unit_letter.unit_name', 'signer.work_name as signer', 'master_sub_sator.sub_sator_name')
+            ->leftjoin('master_sub_sator', 'outgoing_mails.sub_org_unit', 'master_sub_sator.id')
+            ->leftjoin('master_workunit as signer', 'signer.id', 'outgoing_mails.signing')  
+            ->leftjoin('master_unit_letter', 'master_unit_letter.id', 'outgoing_mails.mail_unit')
             ->orderBy('created_at', 'desc');
 
             // FIlter
@@ -302,7 +310,7 @@ class OutgoingMailController extends Controller
                 $datas->where('outgoing_mails.mail_date', '<=', $enddate);
             }
             if ($drafter != null) {
-                $datas->where('outgoing_mails.drafter', $drafter);
+                $datas->where('outgoing_mails.org_unit', $drafter);
             }
             if ($mail_number != null) {
                 $datas->where('outgoing_mails.mail_number', 'like', '%' . $mail_number . '%')
@@ -365,7 +373,8 @@ class OutgoingMailController extends Controller
         $letters = Letter::get();
         $workunits = WorkUnit::get();
         $sators = Sator::get();
-        $unitletters = UnitLetter::get();
+        // Surat Keluar Kategori 2 & 3
+        $unitletters = UnitLetter::whereIn('category', ['2', '3'])->get();
         $classifications = Classification::get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
         $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
@@ -392,7 +401,7 @@ class OutgoingMailController extends Controller
         // dd($request->all());
         $request->validate([
             "id_mst_letter" => "required",
-            "drafter" => "required",
+            // "drafter" => "required",
             "mail_regarding" => "required",
             "out_date" => "required",
             "signing" => "required",
@@ -401,7 +410,7 @@ class OutgoingMailController extends Controller
             "archive_remain" => "required",
         ], [
             'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
-            'drafter.required' => 'Konseptor Wajib Untuk Diisi.',
+            // 'drafter.required' => 'Konseptor Wajib Untuk Diisi.',
             'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
             'out_date.required' => 'Tanggal Keluar Wajib Untuk Diisi.',
             'signing.required' => 'Penandatanganan Wajib Untuk Diisi.',
@@ -434,18 +443,18 @@ class OutgoingMailController extends Controller
                 ]);
             }
 
-            if($request->attachment_text != null){
-                $jmlHal = $request->mail_quantity + $request->attachment_text;
-            } else {
-                $jmlHal = $request->mail_quantity;
-            }
+            // if($request->attachment_text != null){
+            //     $jmlHal = $request->mail_quantity + $request->attachment_text;
+            // } else {
+            //     $jmlHal = $request->mail_quantity;
+            // }
 
             // Store Outgoing Mail
             $store = OutgoingMail::create([
                 'id_mst_letter' => $request->id_mst_letter,
                 'kka_type' => $request->kka_type,
                 'kka_code' => $request->kka_code,
-                'drafter' => $request->drafter,
+                // 'drafter' => $request->drafter,
                 'org_unit' => $request->org_unit,
                 'sub_org_unit' => $request->sub_org_unit,
                 'mail_regarding' => $request->mail_regarding,
@@ -457,17 +466,17 @@ class OutgoingMailController extends Controller
                 'mail_quantity' => $request->mail_quantity,
                 'mail_unit' => $request->mail_unit,
                 'archive_remains' => $request->archive_remain,
-                'archive_classification' => $request->archive_classification,
+                // 'archive_classification' => $request->archive_classification,
                 'mail_retention_from' => $request->mail_retention_from,
                 'mail_retention_to' => $request->mail_retention_to,
                 'location_save' => $request->save_location,
                 'location_save_route' => $location_save_route,
                 'received_via' => $request->received_via,
                 'attachment_text' => $request->attachment_text,
-                'ref_number' => $request->ref_number,
-                'ref_mail' => $request->mail_ref,
+                // 'ref_number' => $request->ref_number,
+                // 'ref_mail' => $request->mail_ref,
                 'information' => $request->information,
-                'jml_hal' => $jmlHal,
+                // 'jml_hal' => $jmlHal,
                 'status' => null,
                 'created_by' => auth()->user()->name,
             ]);
@@ -491,7 +500,8 @@ class OutgoingMailController extends Controller
         $letters = Letter::get();
         $workunits = WorkUnit::get();
         $sators = Sator::get();
-        $unitletters = UnitLetter::get();
+        // Surat Keluar Kategori 2 & 3
+        $unitletters = UnitLetter::whereIn('category', ['2', '3'])->get();
         $classifications = Classification::get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
         $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
@@ -517,7 +527,7 @@ class OutgoingMailController extends Controller
         // dd($request->all());
         $request->validate([
             "id_mst_letter" => "required",
-            "drafter" => "required",
+            // "drafter" => "required",
             "mail_regarding" => "required",
             "out_date" => "required",
             "signing" => "required",
@@ -526,7 +536,7 @@ class OutgoingMailController extends Controller
             "archive_remain" => "required",
         ], [
             'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
-            'drafter.required' => 'Konseptor Wajib Untuk Diisi.',
+            // 'drafter.required' => 'Konseptor Wajib Untuk Diisi.',
             'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
             'out_date.required' => 'Tanggal Keluar Wajib Untuk Diisi.',
             'signing.required' => 'Penandatanganan Wajib Untuk Diisi.',
@@ -561,11 +571,11 @@ class OutgoingMailController extends Controller
                 ]);
             }
 
-            if($request->attachment_text != null){
-                $jmlHal = $request->mail_quantity + $request->attachment_text;
-            } else {
-                $jmlHal = $request->mail_quantity;
-            }
+            // if($request->attachment_text != null){
+            //     $jmlHal = $request->mail_quantity + $request->attachment_text;
+            // } else {
+            //     $jmlHal = $request->mail_quantity;
+            // }
 
             for ($i = 0; $i < $amountLetter; $i++) {
 
@@ -574,7 +584,7 @@ class OutgoingMailController extends Controller
                     'id_mst_letter' => $request->id_mst_letter,
                     'kka_type' => $request->kka_type,
                     'kka_code' => $request->kka_code,
-                    'drafter' => $request->drafter,
+                    // 'drafter' => $request->drafter,
                     'org_unit' => $request->org_unit,
                     'sub_org_unit' => $request->sub_org_unit,
                     'mail_regarding' => $request->mail_regarding,
@@ -586,17 +596,17 @@ class OutgoingMailController extends Controller
                     'mail_quantity' => $request->mail_quantity,
                     'mail_unit' => $request->mail_unit,
                     'archive_remains' => $request->archive_remain,
-                    'archive_classification' => $request->archive_classification,
+                    // 'archive_classification' => $request->archive_classification,
                     'mail_retention_from' => $request->mail_retention_from,
                     'mail_retention_to' => $request->mail_retention_to,
                     'location_save' => $request->save_location,
                     'location_save_route' => $location_save_route,
                     'received_via' => $request->received_via,
                     'attachment_text' => $request->attachment_text,
-                    'ref_number' => $request->ref_number,
-                    'ref_mail' => $request->mail_ref,
+                    // 'ref_number' => $request->ref_number,
+                    // 'ref_mail' => $request->mail_ref,
                     'information' => $request->information,
-                    'jml_hal' => $jmlHal,
+                    // 'jml_hal' => $jmlHal,
                     'status' => null,
                     'created_by' => auth()->user()->name,
                 ]);
@@ -763,7 +773,7 @@ class OutgoingMailController extends Controller
 
         $request->validate([
             "id_mst_letter" => "required",
-            "drafter" => "required",
+            // "drafter" => "required",
             "mail_regarding" => "required",
             "out_date" => "required",
             "signing" => "required",
@@ -772,7 +782,7 @@ class OutgoingMailController extends Controller
             "archive_remain" => "required",
         ], [
             'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
-            'drafter.required' => 'Konseptor Wajib Untuk Diisi.',
+            // 'drafter.required' => 'Konseptor Wajib Untuk Diisi.',
             'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
             'out_date.required' => 'Tanggal Keluar Wajib Untuk Diisi.',
             'signing.required' => 'Penandatanganan Wajib Untuk Diisi.',
@@ -800,7 +810,7 @@ class OutgoingMailController extends Controller
         $databefore = OutgoingMail::where('id', $id)->first();
 
         $databefore->id_mst_letter = $request->id_mst_letter;
-        $databefore->drafter = $request->drafter;
+        // $databefore->drafter = $request->drafter;
         $databefore->org_unit = $request->org_unit;
         $databefore->sub_org_unit = $request->sub_org_unit;
         $databefore->mail_regarding = $request->mail_regarding;
@@ -812,7 +822,7 @@ class OutgoingMailController extends Controller
         $databefore->mail_quantity = $request->mail_quantity;
         $databefore->mail_unit = $request->mail_unit;
         $databefore->archive_remains = $request->archive_remain;
-        $databefore->archive_classification = $request->archive_classification;
+        // $databefore->archive_classification = $request->archive_classification;
         $databefore->mail_retention_from = $mail_retention_from;
         $databefore->mail_retention_to = $mail_retention_to;
         $databefore->location_save = $request->save_location;
@@ -823,16 +833,16 @@ class OutgoingMailController extends Controller
             $newroute = $databefore->location_save_route;
         }
         $databefore->received_via = $request->received_via;
-        $databefore->ref_number = $request->ref_number;
-        $databefore->ref_mail = $request->mail_ref;
+        // $databefore->ref_number = $request->ref_number;
+        // $databefore->ref_mail = $request->mail_ref;
         $databefore->attachment_text = $request->attachment_text;
         $databefore->information = $request->information;
 
-        if($request->attachment_text != null){
-            $jmlHal = $request->mail_quantity + $request->attachment_text;
-        } else {
-            $jmlHal = $request->mail_quantity;
-        }
+        // if($request->attachment_text != null){
+        //     $jmlHal = $request->mail_quantity + $request->attachment_text;
+        // } else {
+        //     $jmlHal = $request->mail_quantity;
+        // }
 
         if($databefore->isDirty()){
             DB::beginTransaction();
@@ -840,7 +850,7 @@ class OutgoingMailController extends Controller
                 // Update Outgoing Mail
                 OutgoingMail::where('id', $id)->update([
                     'id_mst_letter' => $request->id_mst_letter,
-                    'drafter' => $request->drafter,
+                    // 'drafter' => $request->drafter,
                     'org_unit' => $request->org_unit,
                     'sub_org_unit' => $request->sub_org_unit,
                     'mail_regarding' => $request->mail_regarding,
@@ -852,17 +862,17 @@ class OutgoingMailController extends Controller
                     'mail_quantity' => $request->mail_quantity,
                     'mail_unit' => $request->mail_unit,
                     'archive_remains' => $request->archive_remain,
-                    'archive_classification' => $request->archive_classification,
+                    // 'archive_classification' => $request->archive_classification,
                     'mail_retention_from' => $request->mail_retention_from,
                     'mail_retention_to' => $request->mail_retention_to,
                     'location_save' => $request->save_location,
                     'location_save_route' => $location_save_route,
                     'received_via' => $request->received_via,
                     'attachment_text' => $request->attachment_text,
-                    'ref_number' => $request->ref_number,
-                    'ref_mail' => $request->mail_ref,
+                    // 'ref_number' => $request->ref_number,
+                    // 'ref_mail' => $request->mail_ref,
                     'information' => $request->information,
-                    'jml_hal' => $jmlHal,
+                    // 'jml_hal' => $jmlHal,
                     'status' => null,
                     'updated_by' => auth()->user()->name,
                 ]);

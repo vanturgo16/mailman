@@ -17,6 +17,7 @@
             width: 50px;
         }
     </style>
+    @include('mail.head')
 
     <div class="content-header">
         <div class="container-fluid">
@@ -45,7 +46,7 @@
                         <a href="{{ route('incommingmail.rekapitulasiLitnadin') }}" type="button" class="btn btn-sm btn-primary ml-1"><i class="mdi mdi-printer-search"></i> Rekapitulasi</a>
                     </div>
                     <div class="d-flex justify-content-end align-items-center">
-                        <form action="{{ route('incommingmail.indexLitnadin') }}" method="POST" id="resetForm" enctype="multipart/form-data">
+                        <form action="{{ route('incommingmail.indexLitnadin.post') }}" method="POST" id="resetForm" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="entry_date" value="">
                             <input type="hidden" name="mail_date" value="">
@@ -92,11 +93,11 @@
                             <th rowspan="2" class="align-middle text-center">No.</th>
                             <th rowspan="2" class="align-middle text-center">Tgl. Agenda</th>
                             <th colspan="3" class="align-middle text-center">Naskah / Surat</th>
-                            <th rowspan="2" class="align-middle text-center">Jumlah<br>Lampiran</th>
                             <th rowspan="2" class="align-middle text-center">Kepada</th>
+                            <th rowspan="2" class="align-middle text-center">Jumlah<br>Lampiran</th>
+                            <th rowspan="2" class="align-middle text-center">Jumlah<br>Halaman</th>
                             <th rowspan="2" class="align-middle text-center">Keterangan</th>
                             <th rowspan="2" class="align-middle text-center">Status</th>
-                            <th rowspan="2" class="align-middle text-center">Jumlah<br>Halaman</th>
                             <th rowspan="2" class="align-middle text-center">Tgl. Dibuat</th>
                             <th rowspan="2" class="align-middle text-center">Ubah</th>
                             <th rowspan="2" class="align-middle text-center">Aksi</th>
@@ -122,7 +123,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
-                <form action="{{ route('incommingmail.indexLitnadin') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
+                <form action="{{ route('incommingmail.indexLitnadin.post') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
                     @csrf
                     <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
                         <div class="row">
@@ -311,17 +312,17 @@
                         },
                     },
                     {
-                        data: 'sender',
-                        name: 'sender',
+                        data: 'sub_sator_name',
+                        name: 'sub_sator_name',
                         orderable: true,
                         searchable: true,
                         className: 'text-center',
                         render: function(data, type, row) {
                             var html
-                            if(row.sender == null){
+                            if(row.sub_sator_name == null){
                                 html = '<span class="badge bg-secondary">Null</span>';
                             } else {
-                                html = row.sender;
+                                html = row.sub_sator_name;
                             }
                             return html;
                         },
@@ -338,6 +339,22 @@
                             } else {
                                 var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
                                 html = truncatedData;
+                            }
+                            return html;
+                        },
+                    },
+                    {
+                        data: 'receiver',
+                        name: 'receiver',
+                        orderable: true,
+                        searchable: true,
+                        className: 'text-center',
+                        render: function(data, type, row) {
+                            var html
+                            if(row.receiver == null){
+                                html = '<span class="badge bg-secondary">Null</span>';
+                            } else {
+                                html = row.receiver;
                             }
                             return html;
                         },
@@ -360,19 +377,19 @@
                         },
                     },
                     {
-                        data: 'receiver',
-                        name: 'receiver',
+                        data: 'jml_hal',
+                        name: 'jml_hal',
                         orderable: true,
                         searchable: true,
                         className: 'text-center',
                         render: function(data, type, row) {
-                            var html
-                            if(row.receiver == null){
-                                html = '<span class="badge bg-secondary">Null</span>';
-                            } else {
-                                html = row.receiver;
-                            }
-                            return html;
+                        var html;
+                        if(row.jml_hal == null){
+                            html = '<span class="badge bg-secondary">Null</span>';
+                        } else {
+                            html = row.jml_hal;
+                        }
+                        return html;
                         },
                     },
                     {
@@ -406,22 +423,6 @@
                                 html = '<div class="text-center"><span class="badge bg-secondary text-white">Null</span></div>';
                             }
                             return html;
-                        },
-                    },
-                    {
-                        data: 'jml_hal',
-                        name: 'jml_hal',
-                        orderable: true,
-                        searchable: true,
-                        className: 'text-center',
-                        render: function(data, type, row) {
-                        var html;
-                        if(row.jml_hal == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
-                        } else {
-                            html = row.jml_hal;
-                        }
-                        return html;
                         },
                     },
                     {
@@ -500,30 +501,27 @@
                         else if(index === 2) {
                             $this.html('<input type="text" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
                         }
-                        else if(index === 3) {
-                            var placemanVal = table.row($row).data().placeman;
-                            if(placemanVal === "LITNADIN"){
-                                var selectValue = $this.text();
-                                var options = '<select class="form-control js-example-basic-single">';
-                                options += '<option value="">- Pilih -</option>';
-                                @foreach($workunits as $workunit)
-                                    var work_name = '{{ $workunit->work_name }}';
-                                    options += '<option value="{{ $workunit->work_name }}" ' + (work_name === selectValue ? 'selected' : '') + '>{{ $workunit->work_name }}</option>';
-                                @endforeach
-                                options += '</select>';
-                                $this.html(options);
-                                $this.find('.js-example-basic-single').select2();
-                            } else {
-                                $this.html('<input type="text" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
-                            }
-                        }
+                        // else if(index === 3) {
+                        //     var placemanVal = table.row($row).data().placeman;
+                        //     if(placemanVal === "LITNADIN"){
+                        //         var selectValue = $this.text();
+                        //         var options = '<select class="form-control js-example-basic-single">';
+                        //         options += '<option value="">- Pilih -</option>';
+                        //         @foreach($workunits as $workunit)
+                        //             var work_name = '{{ $workunit->work_name }}';
+                        //             options += '<option value="{{ $workunit->work_name }}" ' + (work_name === selectValue ? 'selected' : '') + '>{{ $workunit->work_name }}</option>';
+                        //         @endforeach
+                        //         options += '</select>';
+                        //         $this.html(options);
+                        //         $this.find('.js-example-basic-single').select2();
+                        //     } else {
+                        //         $this.html('<input type="text" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
+                        //     }
+                        // }
                         else if(index === 4) {
                             $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
                         }
                         else if(index === 5) {
-                            $this.html('<input type="number" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
-                        } 
-                        else if(index === 6) {
                             var selectValue = $this.text();
                             var options = '<select class="form-control js-example-basic-single">';
                             options += '<option value="">- Pilih -</option>';
@@ -535,6 +533,9 @@
                             $this.html(options);
                             $this.find('.js-example-basic-single').select2();
                         }
+                        else if(index === 6) {
+                            $this.html('<input type="number" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
+                        } 
                         // else if(index === 7) {
                         //     $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
                         // }
@@ -581,11 +582,11 @@
                             newValue = $this.find('textarea').val();
                         }
                         else if(index == 5) {
-                            newValue = $this.find('input').val();
-                        } 
-                        else if(index == 6) {
                             newValue = $this.find('select').val();
                         }
+                        else if(index == 6) {
+                            newValue = $this.find('input').val();
+                        } 
                         // else if(index == 7) {
                         //     newValue = $this.find('textarea').val();
                         // }

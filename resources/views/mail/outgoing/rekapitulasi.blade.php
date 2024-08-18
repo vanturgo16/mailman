@@ -38,7 +38,7 @@
                     </form>
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
-                    <form action="{{ route('outgoingmail.rekapitulasi') }}" method="POST" id="resetForm" enctype="multipart/form-data">
+                    <form action="{{ route('outgoingmail.rekapitulasi.post') }}" method="POST" id="resetForm" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="startdate" value="">
                         <input type="hidden" name="enddate" value="">
@@ -85,10 +85,10 @@
                     <tr>
                         <th class="align-middle text-center">No.</th>
                         <th class="align-middle text-center">Tgl. Surat</th>
-                        <th class="align-middle text-center">No. Surat</th>
-                        <th class="align-middle text-center">Penerima</th>
-                        <th class="align-middle text-center">Perihal / Tentang</th>
-                        <th class="align-middle text-center">Jumlah<br>Lampiran</th>
+                        <th class="align-middle text-center">No. Verbal</th>
+                        <th class="align-middle text-center">Kepada</th>
+                        <th class="align-middle text-center">Isi / Perihal</th>
+                        <th class="align-middle text-center">Lampiran</th>
                         <th class="align-middle text-center">Dari / Konseptor</th>
                         <th class="align-middle text-center">Keterangan</th>
                     </tr>
@@ -109,7 +109,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
-            <form action="{{ route('outgoingmail.rekapitulasi') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
+            <form action="{{ route('outgoingmail.rekapitulasi.post') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
                 @csrf
                 <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
                     <div class="row">
@@ -139,8 +139,11 @@
                             <label>Konseptor</label>
                             <select class="form-control js-example-basic-single" name="drafter" style="width: 100%;">
                                 <option value="">- Pilih -</option>
-                                @foreach($workunits as $item)
+                                {{-- @foreach($workunits as $item)
                                     <option value="{{ $item->id }}" @if($drafter == $item->id) selected="selected" @endif>{{ $item->work_name }}</option>
+                                @endforeach --}}
+                                @foreach($sators as $item)
+                                    <option value="{{ $item->id }}" @if($drafter == $item->id) selected="selected" @endif>{{ $item->sator_name }}</option>
                                 @endforeach
                             </select>
                             </div>
@@ -297,7 +300,13 @@
                             var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
                             html = truncatedData;
                         }
-                        return html;
+                        var quantity;
+                        if (row.mail_quantity == null) {
+                            quantity = '';
+                        } else {
+                            quantity = '<br><br><b>'+row.mail_quantity+' '+row.unit_name+'</b>';
+                        }
+                        return html+quantity;
                     },
                 },
                 {
@@ -305,7 +314,6 @@
                     name: 'attachment_text',
                     orderable: true,
                     searchable: true,
-                    className: 'text-center',
                     render: function(data, type, row) {
                         var html;
                         if (row.attachment_text == null) {
@@ -318,19 +326,18 @@
                     },
                 },
                 {
-                    data: 'drafter_name',
-                    name: 'drafter_name',
+                    data: 'sub_sator_name',
+                    name: 'sub_sator_name',
                     orderable: true,
                     searchable: true,
-                    className: 'text-center',
                     render: function(data, type, row) {
                         var html
-                        if(row.drafter_name == null){
+                        if(row.sub_sator_name == null){
                             html = '<span class="badge bg-secondary">Null</span>';
                         } else {
-                            html = row.drafter_name;
+                            html = row.sub_sator_name;
                         }
-                        return html;
+                        return html+'<br><br><b>Tanda Tangan:</b><br>'+row.signer;
                     },
                 },
                 {
@@ -340,13 +347,22 @@
                     searchable: true,
                     render: function(data, type, row) {
                         var html;
+                        var result;
+                        var archiveRemains;
                         if (row.information == null) {
                             html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
                         } else {
                             var truncatedData = row.information.length > 150 ? row.information.substr(0, 150) + '...' : row.information;
                             html = truncatedData;
                         }
-                        return html;
+                        if(row.archive_remains == null){
+                            archiveRemains = 'Tanpa Arsip';
+                        } else {
+                            archiveRemains = row.archive_remains;
+                        }
+                        result = '('+archiveRemains+')<br><br>'+html;
+
+                        return result;
                     },
                 },
             ],
