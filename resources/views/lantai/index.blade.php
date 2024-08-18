@@ -102,7 +102,7 @@
                                             </button>
                                         </div>
                                         @endif
-                                        <table id="example3" class="table table-bordered">
+                                        <table id="example1" class="table table-bordered">
                                             <thead>
                                                 <tr>
                                                     <th scope="col" style="text-align: center;width: 6%">No.</th>
@@ -114,92 +114,94 @@
                                                     <th scope="col" style="width: 15%;text-align: center">Aksi</th>
                                                 </tr>
                                             </thead>
-                                            @foreach ($lantais as $data)    
                                             <tbody>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->nama_gedung }}</td>
-                                                <td>{{ $data->kode_lantai }}</td>
-                                                <td>{{ $data->nama_lantai }}</td>
-                                                <td>{{ $data->kapasitas_lantai . " Ruang" }}</td>
-                                                <td>
-                                                    @if ($data->is_active == '1')
-                                                        <label class="text text-success"><i>AKTIF</i></label>
-                                                    @else
-                                                        <label class="text text-danger"><i>TIDAK AKTIF</i></label>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <!-- Button trigger modal -->
-                                                    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModalLantai{{ $data->id }}">
-                                                        Edit Data
-                                                    </button>
-                                                    
-                                                    @if ($data->is_active == '1')
-                                                        <form action="{{ route('lantai.destroy', $data->id) }}" method="POST" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Hapus lantai?')">Hapus Data</button>
-                                                        </form>
-                                                    @else
-                                                        <form action="{{ url('/lantai/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <button type="submit" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan lantai?')">Aktif Data</button>
-                                                        </form>
-                                                        {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
-                                                    @endif
+                                                @foreach ($lantais as $data)    
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $data->nama_gedung }}</td>
+                                                    <td>{{ $data->kode_lantai }}</td>
+                                                    <td>{{ $data->nama_lantai }}</td>
+                                                    <td>{{ $data->kapasitas_lantai . " Ruang" }}</td>
+                                                    <td>
+                                                        @if ($data->is_active == '1')
+                                                            <label class="text text-success"><i>AKTIF</i></label>
+                                                        @else
+                                                            <label class="text text-danger"><i>TIDAK AKTIF</i></label>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <!-- Button trigger modal -->
+                                                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModalLantai{{ $data->id }}">
+                                                            Edit Data
+                                                        </button>
+                                                        
+                                                        @if ($data->is_active == '1')
+                                                            <form action="{{ route('lantai.destroy', $data->id) }}" method="POST" style="display:inline-block;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Hapus lantai?')">Hapus Data</button>
+                                                            </form>
+                                                        @else
+                                                            <form action="{{ url('/lantai/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="submit" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan lantai?')">Aktif Data</button>
+                                                            </form>
+                                                            {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
+                                                        @endif
 
-                                                    <!-- Modal -->
-                                                    <form action="{{ route('lantai.update', $data->id) }}" method="POST" enctype="multipart/form-data">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <div class="modal fade" id="editModalLantai{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLantaiLabel" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                <h5 class="modal-title" id="editModalLantaiLabel">Edit Data Lantai</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
+                                                        <!-- Modal -->
+                                                        <form action="{{ route('lantai.update', $data->id) }}" method="POST" enctype="multipart/form-data">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <div class="modal fade" id="editModalLantai{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLantaiLabel" aria-hidden="true">
+                                                                <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                    <h5 class="modal-title" id="editModalLantaiLabel">Edit Data Lantai</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Nama Gedung*</label>
+                                                                            <select class="form-control" id="nama_gedung" name="nama_gedung" required>
+                                                                                    <option value="">Pilih Gedung</option>
+                                                                                @foreach ($gedungs as $gedung)
+                                                                                    <option value="{{ $gedung->id }}" @if ($gedung->id == $data->id_gedung) selected @endif>{{ $gedung->kode_gedung . "-" . $gedung->nama_gedung }}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Kode lantai*</label>
+                                                                            <input type="text" class="form-control" value="{{ $data->kode_lantai }}" name="kode_lantai" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Nama lantai*</label>
+                                                                            <input type="text" class="form-control" value="{{ $data->nama_lantai }}" name="nama_lantai" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Kapasitas (Ruang)*</label>
+                                                                            <input type="number" min="1" class="form-control w-25" value="{{ $data->kapasitas_lantai }}" name="kapasitas" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label>Keterangan</label>
+                                                                            <textarea class="form-control" rows="3" name="keterangan">{{ $data->keterangan_lantai }}</textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="modal-body">
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Nama Gedung*</label>
-                                                                        <select class="form-control" id="nama_gedung" name="nama_gedung" required>
-                                                                                <option value="">Pilih Gedung</option>
-                                                                            @foreach ($gedungs as $gedung)
-                                                                                <option value="{{ $gedung->id }}" @if ($gedung->id == $data->id_gedung) selected @endif>{{ $gedung->kode_gedung . "-" . $gedung->nama_gedung }}</option>
-                                                                            @endforeach
-                                                                        </select>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Kode lantai*</label>
-                                                                        <input type="text" class="form-control" value="{{ $data->kode_lantai }}" name="kode_lantai" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Nama lantai*</label>
-                                                                        <input type="text" class="form-control" value="{{ $data->nama_lantai }}" name="nama_lantai" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Kapasitas (Ruang)*</label>
-                                                                        <input type="number" min="1" class="form-control w-25" value="{{ $data->kapasitas_lantai }}" name="kapasitas" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Keterangan</label>
-                                                                        <textarea class="form-control" rows="3" name="keterangan">{{ $data->keterangan_lantai }}</textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                                                <button type="submit" class="btn btn-primary">Update</button>
                                                                 </div>
                                                             </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </td>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
                                             </tbody>
-                                            @endforeach
                                         </table>
                                     </div>
                                     <!-- /.card-body -->

@@ -130,110 +130,111 @@
                                                     <th scope="col" style="width: 15%;text-align: center">Aksi</th>
                                                 </tr>
                                             </thead>
-                                            @foreach ($datas as $data)    
                                             <tbody>
-                                                <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $data->template_name }}</td>
-                                                <td>{{ $data->updated_at }}</td>
-                                                <td>{{ $data->created_by }}</td>
-                                                <td>
-                                                    @if ($data->is_active == '1')
-                                                        <label class="text text-success"><i>AKTIF</i></label>
-                                                    @else
-                                                        <label class="text text-danger"><i>TIDAK AKTIF</i></label>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <!-- Button trigger modal -->
-                                                    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal{{ $data->id }}">
-                                                        Edit Data
-                                                    </button>
-                                                
-                                                    @if ($data->is_active == '1')
-                                                        <form action="{{ route('template.destroy', $data->id) }}" method="POST" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Hapus Template Surat keluar?')">Hapus Data</button>
-                                                        </form>
-                                                    @else
-                                                        <form action="{{ url('/template/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <button type="submit" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Template Surat keluar?')">Aktif Data</button>
-                                                        </form>
-                                                        {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
-                                                    @endif
+                                                @foreach ($datas as $data)    
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $data->template_name }}</td>
+                                                    <td>{{ $data->updated_at }}</td>
+                                                    <td>{{ $data->created_by }}</td>
+                                                    <td>
+                                                        @if ($data->is_active == '1')
+                                                            <label class="text text-success"><i>AKTIF</i></label>
+                                                        @else
+                                                            <label class="text text-danger"><i>TIDAK AKTIF</i></label>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <!-- Button trigger modal -->
+                                                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal{{ $data->id }}">
+                                                            Edit Data
+                                                        </button>
+                                                    
+                                                        @if ($data->is_active == '1')
+                                                            <form action="{{ route('template.destroy', $data->id) }}" method="POST" style="display:inline-block;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Hapus Template Surat keluar?')">Hapus Data</button>
+                                                            </form>
+                                                        @else
+                                                            <form action="{{ url('/template/aktif', encrypt($data->id)) }}" method="POST" style="display:inline-block;">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <button type="submit" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Template Surat keluar?')">Aktif Data</button>
+                                                            </form>
+                                                            {{-- <a href="{{ url('/gedung/aktif', encrypt($data->id)) }}" class="btn btn-success btn-xs" onclick="return confirm('Yakin Aktifkan Gedung?')">Aktif Data</a> --}}
+                                                        @endif
 
-                                                    <!-- Modal -->
-                                                    <form action="{{ route('template.update', $data->id) }}" method="POST" enctype="multipart/form-data">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <div class="modal fade" id="editModal{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                <h5 class="modal-title" id="editModalLabel">Ubah Data Satuan Naskah</h5>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Nama Template*</label>
-                                                                        <input type="text" class="form-control" id="" name="nama_template" value="{{ $data->template_name }}" required>
+                                                        <!-- Modal -->
+                                                        <form action="{{ route('template.update', $data->id) }}" method="POST" enctype="multipart/form-data">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <div class="modal fade" id="editModal{{ $data->id }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                    <h5 class="modal-title" id="editModalLabel">Ubah Data Satuan Naskah</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
                                                                     </div>
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Versi Template*</label>
-                                                                        <input type="text" class="form-control" id="" name="versi" value="{{ $data->template_version }}" required>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Tanggal Efektif</label>
-                                                                        <div class="row">
-                                                                            <div class="col-6">
-                                                                                <label>Awal</label>
-                                                                                <input type="date" class="form-control" id="" name="tanggal_efektif_awal" value="{{ \Carbon\Carbon::parse($data->template_b_date)->format('Y-m-d') }}" required>
-                                                                            </div>
-                                                                            <div class="col-6">
-                                                                                <label>Akhir</label>
-                                                                                <input type="date" class="form-control" id="" name="tanggal_efektif_akhir"  value="{{ \Carbon\Carbon::parse($data->template_e_date)->format('Y-m-d') }}" required>
+                                                                    <div class="modal-body">
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Nama Template*</label>
+                                                                            <input type="text" class="form-control" id="" name="nama_template" value="{{ $data->template_name }}" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Versi Template*</label>
+                                                                            <input type="text" class="form-control" id="" name="versi" value="{{ $data->template_version }}" required>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label>Tanggal Efektif</label>
+                                                                            <div class="row">
+                                                                                <div class="col-6">
+                                                                                    <label>Awal</label>
+                                                                                    <input type="date" class="form-control" id="" name="tanggal_efektif_awal" value="{{ \Carbon\Carbon::parse($data->template_b_date)->format('Y-m-d') }}" required>
+                                                                                </div>
+                                                                                <div class="col-6">
+                                                                                    <label>Akhir</label>
+                                                                                    <input type="date" class="form-control" id="" name="tanggal_efektif_akhir"  value="{{ \Carbon\Carbon::parse($data->template_e_date)->format('Y-m-d') }}" required>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">Kategori/Kelompok*</label>
-                                                                        <div class="row">
-                                                                            <div class="col-6">
-                                                                                <select class="form-control" id="kategori" name="kategori" required>
-                                                                                    <option value="">-- Pilih --</option>
-                                                                                    @foreach ($classifications as $classification)
-                                                                                        <option value="{{ $classification->id }}" @if ($data->classification_id == $classification->id) selected @endif>{{ $classification->classification_name }}</option>
-                                                                                    @endforeach
-                                                                                </select>
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">Kategori/Kelompok*</label>
+                                                                            <div class="row">
+                                                                                <div class="col-6">
+                                                                                    <select class="form-control" id="kategori" name="kategori" required>
+                                                                                        <option value="">-- Pilih --</option>
+                                                                                        @foreach ($classifications as $classification)
+                                                                                            <option value="{{ $classification->id }}" @if ($data->classification_id == $classification->id) selected @endif>{{ $classification->classification_name }}</option>
+                                                                                        @endforeach
+                                                                                    </select>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
+                                                                        <div class="form-group">
+                                                                            <label class="text-danger">File*</label>
+                                                                            <input type="file" class="form-control" id="" name="file_template">
+                                                                            <label><a href="{{ asset('storage/template/'. $data->template_filename) }}">Download File</a></label>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <label>Keterangan</label>
+                                                                            <textarea class="form-control" id="" rows="2" name="keterangan">{{ $data->template_desc }}</textarea>
+                                                                        </div>
                                                                     </div>
-                                                                    <div class="form-group">
-                                                                        <label class="text-danger">File*</label>
-                                                                        <input type="file" class="form-control" id="" name="file_template">
-                                                                        <label><a href="{{ asset('storage/template/'. $data->template_filename) }}">Download File</a></label>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label>Keterangan</label>
-                                                                        <textarea class="form-control" id="" rows="2" name="keterangan">{{ $data->template_desc }}</textarea>
+                                                                    <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                                                                    <button type="submit" class="btn btn-primary">Update</button>
                                                                     </div>
                                                                 </div>
-                                                                <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-                                                                <button type="submit" class="btn btn-primary">Update</button>
                                                                 </div>
                                                             </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </td>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
                                             </tbody>
-                                            
-                                            @endforeach
                                         </table>
                                     </div>
                                     <!-- /.card-body -->
