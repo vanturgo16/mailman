@@ -36,7 +36,7 @@
                     </form>
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
-                    <form action="{{ route('incommingmail.rekapitulasiLitnadin') }}" method="POST" id="resetForm" enctype="multipart/form-data">
+                    <form action="{{ route('incommingmail.rekapitulasiLitnadin.post') }}" method="POST" id="resetForm" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="startdate" value="">
                         <input type="hidden" name="enddate" value="">
@@ -109,7 +109,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
-            <form action="{{ route('incommingmail.rekapitulasiLitnadin') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
+            <form action="{{ route('incommingmail.rekapitulasiLitnadin.post') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
                 @csrf
                 <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
                     <div class="row">
@@ -245,17 +245,17 @@
                     },
                 },
                 {
-                    data: 'sender',
-                    name: 'sender',
+                    data: 'sub_sator_name',
+                    name: 'sub_sator_name',
                     orderable: true,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
                         var html
-                        if(row.sender == null){
+                        if(row.sub_sator_name == null){
                             html = '<span class="badge bg-secondary">Null</span>';
                         } else {
-                            html = row.sender;
+                            html = row.sub_sator_name;
                         }
                         return html;
                     },
@@ -273,7 +273,13 @@
                             var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
                             html = truncatedData;
                         }
-                        return html;
+                        var quantity;
+                        if (row.mail_quantity == null) {
+                            quantity = '';
+                        } else {
+                            quantity = '<br><br><b>'+row.mail_quantity+' '+row.unit_name+'</b>';
+                        }
+                        return html+quantity;
                     },
                 },
                 {
@@ -339,7 +345,13 @@
                             var truncatedData = row.information.length > 150 ? row.information.substr(0, 150) + '...' : row.information;
                             html = truncatedData;
                         }
-                        return html;
+                        var sendVia;
+                        if (row.received_via == null) {
+                            sendVia = '-';
+                        } else {
+                            sendVia = row.received_via;
+                        }
+                        return html+'<br><br>Dikirim Via: '+sendVia;
                     },
                 },
             ],

@@ -14,6 +14,7 @@
         color: #495057;
     }
 </style>
+@include('mail.head')
 
     <div class="content-header">
         <div class="container-fluid">
@@ -42,7 +43,7 @@
                         <a href="{{ route('outgoingmail.rekapitulasi') }}" type="button" class="btn btn-sm btn-primary ml-1"><i class="mdi mdi-printer-search"></i> Rekapitulasi</a>
                     </div>
                     <div class="d-flex justify-content-end align-items-center">
-                        <form action="{{ route('outgoingmail.index') }}" method="POST" id="resetForm" enctype="multipart/form-data">
+                        <form action="{{ route('outgoingmail.index.post') }}" method="POST" id="resetForm" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="out_date" value="">
                             <input type="hidden" name="mail_date" value="">
@@ -92,11 +93,11 @@
                             <th class="align-middle text-center">Tgl. Surat</th>
                             <th class="align-middle text-center">No. Surat</th>
                             <th class="align-middle text-center">Penerima</th>
-                            <th class="align-middle text-center">Perihal / Tentang</th>
-                            <th class="align-middle text-center">Jumlah<br>Lampiran</th>
+                            <th class="align-middle text-center">Hal / Tentang</th>
                             <th class="align-middle text-center">Dari / Konseptor</th>
+                            <th class="align-middle text-center">Jumlah</th>
+                            <th class="align-middle text-center">Lampiran</th>
                             <th class="align-middle text-center">Keterangan</th>
-                            <th class="align-middle text-center">Jumlah<br>Halaman</th>
                             <th class="align-middle text-center">Tgl. Dibuat</th>
                             <th class="align-middle text-center">Ubah</th>
                             <th class="align-middle text-center">Aksi</th>
@@ -118,7 +119,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>
-                <form action="{{ route('outgoingmail.index') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
+                <form action="{{ route('outgoingmail.index.post') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
                     @csrf
                     <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
                         <div class="row">
@@ -169,17 +170,6 @@
                                     <option value="">- Pilih -</option>
                                     @foreach($sators as $sator)
                                         <option value="{{ $sator->id }}" @if($org_unit == $sator->id) selected="selected" @endif>{{ $sator->sator_name }}</option>
-                                    @endforeach
-                                </select>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                <label>Jumlah Halaman</label>
-                                <select class="form-control js-example-basic-single" name="jmlHal" style="width: 100%;">
-                                    <option value="">- Pilih -</option>
-                                    @foreach($jmlHals as $item)
-                                        <option value="{{ $item->name_value }}" @if($jmlHal == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
                                     @endforeach
                                 </select>
                                 </div>
@@ -351,6 +341,37 @@
                         },
                     },
                     {
+                        data: 'sub_sator_name',
+                        name: 'sub_sator_name',
+                        orderable: true,
+                        searchable: true,
+                        className: 'text-center',
+                        render: function(data, type, row) {
+                        var html;
+                        if(row.sub_sator_name == null){
+                            html = '<span class="badge bg-secondary">Null</span>';
+                        } else {
+                            html = row.sub_sator_name;
+                        }
+                        return html;
+                        },
+                    },
+                    {
+                        data: 'mail_quantity',
+                        name: 'mail_quantity',
+                        orderable: true,
+                        searchable: true,
+                        render: function(data, type, row) {
+                        var html;
+                        if(row.mail_quantity == null){
+                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                        } else {
+                            html = '<b>'+row.mail_quantity+'</b> '+row.unit_name;
+                        }
+                        return html;
+                        },
+                    },
+                    {
                         data: 'attachment_text',
                         name: 'attachment_text',
                         orderable: true,
@@ -368,22 +389,6 @@
                         },
                     },
                     {
-                        data: 'drafter_name',
-                        name: 'drafter_name',
-                        orderable: true,
-                        searchable: true,
-                        className: 'text-center',
-                        render: function(data, type, row) {
-                        var html;
-                        if(row.drafter_name == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
-                        } else {
-                            html = row.drafter_name;
-                        }
-                        return html;
-                        },
-                    },
-                    {
                         data: 'information',
                         name: 'information',
                         orderable: true,
@@ -395,22 +400,6 @@
                         } else {
                             var truncatedData = row.information.length > 150 ? row.information.substr(0, 150) + '...' : row.information;
                             html = truncatedData;
-                        }
-                        return html;
-                        },
-                    },
-                    {
-                        data: 'jml_hal',
-                        name: 'jml_hal',
-                        orderable: true,
-                        searchable: true,
-                        className: 'text-center',
-                        render: function(data, type, row) {
-                        var html;
-                        if(row.jml_hal == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
-                        } else {
-                            html = row.jml_hal;
                         }
                         return html;
                         },
@@ -469,7 +458,7 @@
                 }).get();
 
                 $row.find('td').each(function(index) {
-                    if (index >= 3 && index <= 7) {
+                    if (index >= 3 && index <= 8) {
                         var $this = $(this);
                         var currentValue = $this.text().trim();
                         currentValue = (currentValue === "Null") ? "" : currentValue;
@@ -482,22 +471,30 @@
                         else if(index === 4) {
                             $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
                         }
-                        else if(index === 5) {
-                            $this.html('<input type="number" name="attachment_text" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
-                        }
+                        // else if(index === 5) {
+                        //     var selectValue = $this.text();
+                        //     var options = '<select class="form-control js-example-basic-single" name="drafter">';
+                        //     options += '<option value="">- Pilih -</option>';
+                        //     @foreach($workunits as $workunit)
+                        //         var work_name = '{{ $workunit->work_name }}';
+                        //         options += '<option value="{{ $workunit->id }}" ' + (work_name === selectValue ? 'selected' : '') + '>{{ $workunit->work_name }}</option>';
+                        //     @endforeach
+                        //     options += '</select>';
+                        //     $this.html(options);
+                        //     $this.find('.js-example-basic-single').select2();
+                        // } 
                         else if(index === 6) {
-                            var selectValue = $this.text();
-                            var options = '<select class="form-control js-example-basic-single" name="drafter">';
-                            options += '<option value="">- Pilih -</option>';
-                            @foreach($workunits as $workunit)
-                                var work_name = '{{ $workunit->work_name }}';
-                                options += '<option value="{{ $workunit->id }}" ' + (work_name === selectValue ? 'selected' : '') + '>{{ $workunit->work_name }}</option>';
-                            @endforeach
-                            options += '</select>';
-                            $this.html(options);
-                            $this.find('.js-example-basic-single').select2();
-                        } 
+                            let number = null;
+                            if (currentValue) {
+                                let parts = currentValue.split(' ', 2);
+                                number = parts[0];
+                            }
+                            $this.html('<input type="number" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + number + '">');
+                        }
                         else if(index === 7) {
+                            $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" name="attachment_text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
+                        }
+                        else if(index === 8) {
                             $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" name="information" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
                         }
                     }
@@ -512,23 +509,26 @@
             function saveRowData($row) {
                 var rowData = {};
                 $row.find('td').each(function(index) {
-                    if (index >= 3 && index <= 7) {
+                    if (index >= 3 && index <= 8) {
                         var $this = $(this);
                         var newValue;
-                        if(index == 4) {
-                            newValue = $this.find('textarea').val();
-                        }
-                        else if(index == 5) {
+                        if(index == 3) {
                             newValue = $this.find('input').val();
                         }
+                        else if(index == 4) {
+                            newValue = $this.find('textarea').val();
+                        }
+                        // else if(index == 5) {
+                        //     newValue = $this.find('select').val();
+                        // }
                         else if(index == 6) {
-                            newValue = $this.find('select').val();
+                            newValue = $this.find('input').val();
                         } 
                         else if(index == 7) {
                             newValue = $this.find('textarea').val();
                         }
-                        else {
-                            newValue = $this.find('input').val();
+                        else if(index == 8) {
+                            newValue = $this.find('textarea').val();
                         }
                         $this.html(newValue);
                         rowData[index] = newValue;
@@ -579,7 +579,7 @@
 
             function cancelRowEditing($row) {
                 $row.find('td').each(function(index) {
-                if (index >= 3 && index <= 7) {
+                if (index >= 3 && index <= 8) {
                     $(this).html(originalData[$row.index()][index]);
                 }
                 });

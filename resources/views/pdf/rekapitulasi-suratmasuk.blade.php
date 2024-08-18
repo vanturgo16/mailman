@@ -130,7 +130,7 @@
               <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Tgl. Agenda</th>
               <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">No. Agenda</th>
               <th colspan="3" class="align-middle text-center px-1" style="font-weight: normal;">Naskah / Surat</th>
-              <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Jumlah<br>Lampiran</th>
+              <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Lampiran</th>
               <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Kepada</th>
               <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Keterangan</th>
           </tr>
@@ -151,54 +151,64 @@
               <?php $no++; ?>
               <tr>
                 <td class="align-top text-center">{{ $no }}</td>
-                <td class="align-top text-center text-left px-1">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
-                <td class="align-top text-center text-left px-1">
+                <td class="align-top text-left px-2">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
+                <td class="align-top text-left px-2">
                   @if($item->agenda_number == null)
                     -
                   @else
                     <b>{{ $item->agenda_number }}</b>
                   @endif
                 </td>
-                <td class="align-middle text-center text-left px-1">
+                <td class="align-top text-left px-2">
                   @if($item->mail_number == null)
                     -
                   @else
                     {{ $item->mail_number }}
                   @endif
                 </td>
-                <td class="align-top text-left px-1">
-                  @if($item->sender == null)
+                <td class="align-top text-left px-2">
+                  @if($item->sub_sator_name == null)
                     -
                   @else
-                    {{ $item->sender }}
+                    {{ $item->sub_sator_name }}
                   @endif
                 </td>
-                <td class="align-top text-left px-1">
+                <td class="align-top text-left px-2">
                   @if($item->mail_regarding == null)
                     -
                   @else
                     {{ $item->mail_regarding }}
                   @endif
+                  @if($item->mail_quantity == null)
+                  @else
+                    <br><br><b>{{ $item->mail_quantity }} {{ $item->unit_name }}</b>
+                  @endif
                 </td>
-                <td class="align-top text-center">
+                <td class="align-top text-left px-2">
                   @if($item->attachment_text == null)
                     -
                   @else
                     {{ $item->attachment_text }}
                   @endif
                 </td>
-                <td class="align-top text-left px-1">
+                <td class="align-top text-left px-2">
                   @if($item->receiver == null)
                     -
                   @else
                     {{ $item->receiver }}
                   @endif
                 </td>
-                <td class="align-top text-left px-1">
+                <td class="align-top text-left px-2">
                   @if($item->information == null)
                     -
                   @else
                     {{ $item->information }}
+                  @endif
+                  <br><br>Dikirim Via: 
+                  @if($item->received_via == null)
+                  -
+                  @else
+                  {{ $item->received_via }}
                   @endif
                 </td>
               </tr>
