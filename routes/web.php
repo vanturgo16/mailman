@@ -56,9 +56,9 @@ use PgSql\Lob;
 | contains the "web" middleware group. Now create something great!
 |
 */
-// Route::controller(FrondandController::class)->group(function () {
-//     Route::get('/', 'login')->name('login');
-// });
+Route::controller(FrondandController::class)->group(function () {
+    Route::get('/', 'login')->name('login');
+});
 
 Route::group(['middleware' => 'cekadmin'], function () {
     Route::controller(DashboardController::class)->group(function () {
