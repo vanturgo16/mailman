@@ -65,17 +65,21 @@
                                                 <input type="text" class="form-control" id="" name="nama_naskah" value="{{ $data->let_name }}" readonly required>
                                             </div>
                                             <div class="form-group mb-2">
-                                                <label class="text-danger">Tipe Penomoran*</label>
+                                                <label class="text-danger">Tipe Penomoran* {{ $data->pat_type }}</label>
                                                 <select class="form-control" id="kategori" name="kategori" required>
                                                     <option value="">-- Pilih Tipe --</option>
                                                     @foreach ($dropdowns as $dropdown)
-                                                        <option value="{{ $dropdown->name_value }}">{{ $dropdown->name_value }}</option>
+                                                        <option value="{{ $dropdown->name_value }}" 
+                                                            @if ($dropdown->name_value == $data->pat_type)
+                                                                selected
+                                                            @endif
+                                                        >{{ $dropdown->name_value }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                             <div class="form-group hidden" id="pat_simple">
                                                 <label class="text-danger">Struktur Nomor*</label>
-                                                <input type="text" class="form-control" id="pat_simple_input" name="pat_simple">
+                                                <input type="text" class="form-control" id="pat_simple_input" name="pat_simple" value="{!! $data->pat_simple !!}">
                                                 <label for="">
                                                     <span>
                                                         Tanda Kutip (') untuk string. Contoh : 'String'
@@ -93,15 +97,45 @@
                                             <div class="form-group hidden" id="pat_mix">
                                                 <label class="text-danger">Struktur Nomor*</label>
                                                 <table class="form-group form-inline table table-borderless" id="table">
-                                                    <td>
-                                                        <select class="form-control pat_mix_type" id="pat_mix_type" name="pat_mix[]" required>
-                                                            <option value="">-- Pilih Tipe --</option>
-                                                            @foreach ($strucNos as $strucNo)
-                                                                <option value="{{ $strucNo->name_value }}">{{ $strucNo->name_value }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <button type="button" id="addStructure" class="btn btn-success"><i class="fas fa-plus"></i></button>
-                                                    </td>
+                                                    @if (!empty($data->pat_mix))
+                                                        @foreach (json_decode($data->pat_mix) as $index => $item)
+                                                            @if($index % 4 == 0)
+                                                                @if($index > 0)
+                                                                    </tr> <!-- Close the previous row -->
+                                                                @endif
+                                                                <tr> <!-- Start a new row -->
+                                                            @endif
+                                                            <td>
+                                                                <select class="form-control pat_mix_type" id="pat_mix_type" name="pat_mix[]" required>
+                                                                    <option value="">-- Pilih Tipe --</option>
+                                                                    @foreach ($strucNos as $strucNo)
+                                                                        <option value="{{ $strucNo->name_value }}" {{ $strucNo->name_value == $item ? 'selected' : '' }}>
+                                                                            {{ $strucNo->name_value }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                </select>
+                                                                @if($index > 0)
+                                                                    <button type="button" class="btn btn-danger removeStructure"><i class="fas fa-minus"></i></button>
+                                                                @else
+                                                                    <button type="button" id="addStructure" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                                                                @endif
+                                                            </td>
+                                                        @endforeach
+                                                
+                                                        @if(count(json_decode($data->pat_mix)) % 4 != 0)
+                                                            </tr> <!-- Close the last row if it wasn't already closed -->
+                                                        @endif
+                                                    @else    
+                                                        <td>
+                                                            <select class="form-control pat_mix_type" id="pat_mix_type" name="pat_mix[]" required>
+                                                                <option value="">-- Pilih Tipe --</option>
+                                                                @foreach ($strucNos as $strucNo)
+                                                                    <option value="{{ $strucNo->name_value }}">{{ $strucNo->name_value }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                            <button type="button" id="addStructure" class="btn btn-success"><i class="fas fa-plus"></i></button>
+                                                        </td>
+                                                    @endif
                                                 </table>
                                             </div>
                                         </div>
@@ -126,51 +160,59 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-
             const dropdown = document.getElementById('kategori');
 
-            dropdown.addEventListener('change', function () {
-                const value = this.value;
+            // Function to show/hide elements based on selected value
+            function updateForm() {
+                const value = dropdown.value;
                 const pat_simple = document.getElementById('pat_simple');
                 const pat_simple_input = document.getElementById('pat_simple_input');
                 const pat_mix = document.getElementById('pat_mix');
-                const pat_mix_inputs = document.getElementById('pat_mix_inputs');
 
                 // Hide all divs and remove required attribute
                 pat_simple.classList.add('hidden');
                 pat_simple_input.required = false;
                 pat_mix.classList.add('hidden');
-
-                // Remove required attribute from all pat_mix_type
                 $('.pat_mix_type').removeAttr('required');
 
                 // Show the selected div and add required attribute to the appropriate input
                 if (value === 'Sederhana') {
                     pat_simple.classList.remove('hidden');
                     pat_simple_input.required = true;
-                    $('.pat_mix_type').removeAttr('required');
                 } else if (value === 'Perpaduan') {
                     pat_mix.classList.remove('hidden');
-                    $('.pat_mix_type').attr('required', 'required');
                 }
-            });
+            }
 
-            // Add Structure Nomor
-            $('#addStructure').click(function () {
+            // Function to add a new row to pat_mix
+            function addPatMixRow(value = "") {
                 const newStructure = `
-                        <td class="form-inline>
-                            <label for="" class="text-lg">/ </label>
+                    <tr>
+                        <td>
                             <select class="form-control pat_mix_type" name="pat_mix[]" required>
                                 <option value="">-- Pilih Tipe --</option>
                                 @foreach ($strucNos as $strucNo)
-                                    <option value="{{ $strucNo->name_value }}">{{ $strucNo->name_value }}</option>
+                                    <option value="{{ $strucNo->name_value }}" ${value === "{{ $strucNo->name_value }}" ? 'selected' : ''}>
+                                        {{ $strucNo->name_value }}
+                                    </option>
                                 @endforeach
                             </select>
                             <button type="button" class="btn btn-danger removeStructure"><i class="fas fa-minus"></i></button>
                         </td>
+                    </tr>
                 `;
-
                 $('#table').append(newStructure);
+            }
+
+            // Run the updateForm function when the dropdown value changes
+            dropdown.addEventListener('change', updateForm);
+
+            // Call updateForm on page load to show the correct elements
+            updateForm();
+
+            // Add Structure Nomor
+            $('#addStructure').click(function () {
+                addPatMixRow();
             });
 
             // Remove Structure Nomor

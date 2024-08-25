@@ -107,16 +107,16 @@
                                                 <td>{{ $data->name_value }}</td>
                                                 <td>{{ $data->code_format }}</td>
                                                 <td>{{ $data->updated_at }}</td>
-                                                <td>
+                                                <td class="text-center">
                                                     <!-- Button trigger modal -->
                                                     <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal{{ $data->id }}">
                                                         Edit Data
                                                     </button>
-                                                    <form action="{{ route('dropdown.destroy', $data->id) }}" method="POST" style="display:inline-block;">
+                                                    {{-- <form action="{{ route('dropdown.destroy', $data->id) }}" method="POST" style="display:inline-block;">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Yakin Hapus Dropdown?')">Hapus Data</button>
-                                                    </form>
+                                                    </form> --}}
 
                                                     <!-- Modal -->
                                                     <form action="{{ route('dropdown.update', $data->id) }}" method="POST" enctype="multipart/form-data">
