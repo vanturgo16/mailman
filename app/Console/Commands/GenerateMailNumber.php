@@ -15,6 +15,7 @@ use App\Models\QueNumbOutMail;
 use App\Models\Sator;
 use App\Models\LastNumberingOutgoing;
 use App\Models\QueNumbIncMail;
+use App\Models\WorkUnit;
 use App\Traits\GenerateNumber;
 
 use Illuminate\Console\Command;
@@ -29,7 +30,7 @@ class GenerateMailNumber extends Command
     {
         $today = Carbon::today();
 
-        $que = QueNumbOutMail::select('que_numb_outgoing_mail.*', 'outgoing_mails.org_unit', 'outgoing_mails.kka_code', 'outgoing_mails.created_at as created_mail', 'master_pattern.pat_simple', 'master_pattern.pat_mix', 'master_pattern.pat_type')
+        $que = QueNumbOutMail::select('que_numb_outgoing_mail.*', 'outgoing_mails.org_unit', 'outgoing_mails.signing', 'outgoing_mails.kka_code', 'outgoing_mails.created_at as created_mail', 'master_pattern.pat_simple', 'master_pattern.pat_mix', 'master_pattern.pat_type')
             ->leftjoin('outgoing_mails', 'que_numb_outgoing_mail.id_mail', 'outgoing_mails.id')
             ->leftjoin('master_pattern', 'que_numb_outgoing_mail.id_mst_letter', 'master_pattern.let_id')
             ->get();
@@ -82,8 +83,30 @@ class GenerateMailNumber extends Command
                             $value = $q->kka_code;
                             $mail_number[] = $value;
                         }  elseif($pat == "Unit Kerja") {
-                            $value = Sator::where('id', $q->org_unit)->first()->sator_name;
-                            $mail_number[] = $value;
+                            // Exclude Add Unit Kerja IF Penandatanganan Kapolri/Wakapolri With This Jenis Surat List
+                            $exclude = false;
+                            // Mail Type
+                            $listMail = ['Surat Biasa', 'Surat Rahasia', 
+                                        'Surat Pengantar Biasa',
+                                        'Surat Pengantar Rahasia', 'Surat Pengantar Biasa (BARU)',
+                                        'Surat Undangan', 'Telaahan Staf'
+                                    ];
+                            $mailType = Letter::where('id', $q->id_mst_letter)->first();
+                            $mailType = $mailType ? $mailType->let_name : null;
+                            if(in_array($mailType, $listMail)){ 
+                                // Signer
+                                $listSigner = ['Kapolri', 'Wakapolri'];
+                                $signer = WorkUnit::where('id', $q->signing)->first();
+                                $signer = $signer ? $signer->work_name : null;
+                                if(in_array($signer, $listSigner)){ $exclude = true; }
+                            }
+
+                            if($exclude){ 
+                                $mail_number[] = null; 
+                            } else {
+                                $value = Sator::where('id', $q->org_unit)->first()->sator_name;
+                                $mail_number[] = $value;
+                            }
                         } elseif($pat == "Sifat Surat") {
                             $value = "Null";
                             $mail_number[] = $value;
@@ -119,6 +142,10 @@ class GenerateMailNumber extends Command
                             $mail_number[] = $value;
                         }
                     }
+                    // Filter out null values
+                    $mail_number = array_filter($mail_number, function($value) {
+                        return $value !== null;
+                    });
                     $mail_number = implode('/', $mail_number);
     
                     //Update Mail Number

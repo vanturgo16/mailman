@@ -75,14 +75,21 @@ class LetterController extends Controller
     }
 
     public function createPattern($id){
-        $data = Letter::where('id',decrypt($id))->first();
+        $data = Letter::where('master_letter.id',decrypt($id))
+            ->select(
+                'master_letter.let_name',
+                'master_letter.let_code',
+                'master_pattern.*'
+            )
+            ->leftJoin('master_pattern','master_letter.id','master_pattern.let_id')
+            ->first();
         $dropdowns = Dropdown::where('category','Tipe Penomoran')->orderBy('name_value','asc')->get();
         $strucNos  = Dropdown::where('category','Struktur Nomor')->orderBy('name_value','asc')->get();
         return view('parameter.naskah.create_pattern',compact('data','dropdowns','strucNos','id'));
     }
 
     public function storePattern(Request $request){
-        //dd($request->all(),$id,$request->pat_mix,json_encode($request->pat_mix));
+        //dd($request->all(),$request->pat_mix,json_encode($request->pat_mix));
 
         $request->validate([
             "kode_naskah" => "required",
