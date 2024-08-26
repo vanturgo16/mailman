@@ -67,14 +67,14 @@ Route::group(['middleware' => 'cekadmin'], function () {
     });
 
     //opd
-    Route::controller(OpdController::class)->group(function () {
-        Route::get('/opd', 'index');
-        Route::get('/create-opd', 'create');
-        Route::post('/opd', 'store');
-        Route::get('/opd/edit/{id}', 'edit');
-        Route::patch('/opd/update/{opd}', 'update');
-        Route::delete('/opd/{id}/destroy', 'destroy');   
-    });
+    // Route::controller(OpdController::class)->group(function () {
+    //     Route::get('/opd', 'index');
+    //     Route::get('/create-opd', 'create');
+    //     Route::post('/opd', 'store');
+    //     Route::get('/opd/edit/{id}', 'edit');
+    //     Route::patch('/opd/update/{opd}', 'update');
+    //     Route::delete('/opd/{id}/destroy', 'destroy');   
+    // });
         
     // Permission
     Route::controller(PermissionController::class)->group(function () {
