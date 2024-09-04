@@ -167,7 +167,7 @@
             </div>
             <div class="col-lg-4">
                 <div class="form-group">
-                    <div><span class="text-bold">Penandatanganan :</span></div>
+                    <div><span class="text-bold">Penandatangan :</span></div>
                     <span>
                         @if($data->sign_name == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
