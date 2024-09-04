@@ -226,9 +226,9 @@
                       </div>
                     </td>
                   </tr>
-                  {{-- Penandatanganan --}}
+                  {{-- Penandatangan --}}
                   <tr>
-                    <td><label class="text-danger">Penandatanganan *</label></td>
+                    <td><label class="text-danger">Penandatangan *</label></td>
                     <td>
                       <div class="row">
                         <div class="col-md-9">

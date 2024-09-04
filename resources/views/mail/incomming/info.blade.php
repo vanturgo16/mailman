@@ -206,7 +206,7 @@
                         </span>
                     </div>
                 </div>
-                <div class="col-lg-4">
+                {{-- <div class="col-lg-4">
                     <div class="form-group">
                         <div><span class="text-bold">Retensi Surat (Dari) :</span></div>
                         <span>
@@ -229,7 +229,7 @@
                             @endif
                         </span>
                     </div>
-                </div>
+                </div> --}}
                 @if($data->placeman == "LITNADIN")
                     <div class="col-lg-4">
                         <div class="form-group">

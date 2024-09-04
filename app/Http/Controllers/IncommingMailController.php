@@ -158,15 +158,21 @@ class IncommingMailController extends Controller
             ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
             ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
             ->orderBy('created_at', 'desc');
-
-            // FIlter
+            
+            // Filter
             if ($startdate != null) {
                 $startdatesearch = (new DateTime($startdate))->format('Y-m-d H:i:s');
-                $datas->where('incomming_mails.mail_date', '>=', $startdatesearch);
+                $datas->where(function ($query) use ($startdatesearch) {
+                    $query->where('incomming_mails.mail_date', '>=', $startdatesearch)
+                        ->orWhere('incomming_mails.entry_date', '>=', $startdatesearch);
+                });
             }
             if ($enddate != null) {
                 $enddatesearch = (new DateTime($enddate))->format('Y-m-d H:i:s');
-                $datas->where('incomming_mails.mail_date', '<=', $enddatesearch);
+                $datas->where(function ($query) use ($enddatesearch) {
+                    $query->where('incomming_mails.mail_date', '<=', $enddatesearch)
+                        ->orWhere('incomming_mails.entry_date', '<=', $enddatesearch);
+                });
             }
             if ($mail_number != null) {
                 // $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
@@ -217,14 +223,20 @@ class IncommingMailController extends Controller
             ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
             ->orderBy('created_at', 'desc');
 
-            // FIlter
+            // Filter
             if ($startdate != null) {
                 $startdatesearch = (new DateTime($startdate))->format('Y-m-d H:i:s');
-                $datas->where('incomming_mails.mail_date', '>=', $startdatesearch);
+                $datas->where(function ($query) use ($startdatesearch) {
+                    $query->where('incomming_mails.mail_date', '>=', $startdatesearch)
+                        ->orWhere('incomming_mails.entry_date', '>=', $startdatesearch);
+                });
             }
             if ($enddate != null) {
                 $enddatesearch = (new DateTime($enddate))->format('Y-m-d H:i:s');
-                $datas->where('incomming_mails.mail_date', '<=', $enddatesearch);
+                $datas->where(function ($query) use ($enddatesearch) {
+                    $query->where('incomming_mails.mail_date', '<=', $enddatesearch)
+                        ->orWhere('incomming_mails.entry_date', '<=', $enddatesearch);
+                });
             }
             if ($mail_number != null) {
                 // $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
@@ -341,8 +353,8 @@ class IncommingMailController extends Controller
                 'mail_quantity' => $request->mail_quantity,
                 'mail_unit' => $request->mail_unit,
                 // 'archive_classification' => $request->archive_classification,
-                'mail_retention_from' => $request->mail_retention_from,
-                'mail_retention_to' => $request->mail_retention_to,
+                // 'mail_retention_from' => $request->mail_retention_from,
+                // 'mail_retention_to' => $request->mail_retention_to,
                 'mail_type' => $mail_type,
                 'result' => $result,
                 'approved_by' => $approved_by,
@@ -454,8 +466,8 @@ class IncommingMailController extends Controller
                     'mail_quantity' => $request->mail_quantity,
                     'mail_unit' => $request->mail_unit,
                     // 'archive_classification' => $request->archive_classification,
-                    'mail_retention_from' => $request->mail_retention_from,
-                    'mail_retention_to' => $request->mail_retention_to,
+                    // 'mail_retention_from' => $request->mail_retention_from,
+                    // 'mail_retention_to' => $request->mail_retention_to,
                     'mail_type' => $mail_type,
                     'result' => $result,
                     'approved_by' => $approved_by,
@@ -574,8 +586,8 @@ class IncommingMailController extends Controller
         else {
             $mail_date = null;
         }
-        $mail_retention_from = (new DateTime($request->mail_retention_from))->format('Y-m-d H:i:s');
-        $mail_retention_to = (new DateTime($request->mail_retention_to))->format('Y-m-d H:i:s');
+        // $mail_retention_from = (new DateTime($request->mail_retention_from))->format('Y-m-d H:i:s');
+        // $mail_retention_to = (new DateTime($request->mail_retention_to))->format('Y-m-d H:i:s');
 
         if($request->placeman == "LITNADIN"){
             // $sender = $request->senderSelect;
@@ -617,8 +629,8 @@ class IncommingMailController extends Controller
         $databefore->mail_quantity = $request->mail_quantity;
         $databefore->mail_unit = $request->mail_unit;
         // $databefore->archive_classification = $request->archive_classification;
-        $databefore->mail_retention_from = $mail_retention_from;
-        $databefore->mail_retention_to = $mail_retention_to;
+        // $databefore->mail_retention_from = $mail_retention_from;
+        // $databefore->mail_retention_to = $mail_retention_to;
         $databefore->received_via = $received_via;
         $databefore->attachment_text = $request->attachment_text;
         $databefore->information = $request->information;
@@ -641,8 +653,8 @@ class IncommingMailController extends Controller
                     'mail_quantity' => $request->mail_quantity,
                     'mail_unit' => $request->mail_unit,
                     // 'archive_classification' => $request->archive_classification,
-                    'mail_retention_from' => $request->mail_retention_from,
-                    'mail_retention_to' => $request->mail_retention_to,
+                    // 'mail_retention_from' => $request->mail_retention_from,
+                    // 'mail_retention_to' => $request->mail_retention_to,
                     'mail_type' => $mail_type,
                     'result' => $result,
                     'approved_by' => $approved_by,
@@ -830,14 +842,20 @@ class IncommingMailController extends Controller
             ->where('placeman', 'LITNADIN')
             ->orderBy('created_at', 'desc');
 
-            // FIlter
+            // Filter
             if ($startdate != null) {
                 $startdatesearch = (new DateTime($startdate))->format('Y-m-d H:i:s');
-                $datas->where('incomming_mails.mail_date', '>=', $startdatesearch);
+                $datas->where(function ($query) use ($startdatesearch) {
+                    $query->where('incomming_mails.mail_date', '>=', $startdatesearch)
+                        ->orWhere('incomming_mails.entry_date', '>=', $startdatesearch);
+                });
             }
             if ($enddate != null) {
                 $enddatesearch = (new DateTime($enddate))->format('Y-m-d H:i:s');
-                $datas->where('incomming_mails.mail_date', '<=', $enddatesearch);
+                $datas->where(function ($query) use ($enddatesearch) {
+                    $query->where('incomming_mails.mail_date', '<=', $enddatesearch)
+                        ->orWhere('incomming_mails.entry_date', '<=', $enddatesearch);
+                });
             }
             if ($mail_number != null) {
                 // $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
@@ -888,14 +906,20 @@ class IncommingMailController extends Controller
             ->where('placeman', 'LITNADIN')
             ->orderBy('created_at', 'desc');
 
-            // FIlter
+            // Filter
             if ($startdate != null) {
                 $startdatesearch = (new DateTime($startdate))->format('Y-m-d H:i:s');
-                $datas->where('incomming_mails.mail_date', '>=', $startdatesearch);
+                $datas->where(function ($query) use ($startdatesearch) {
+                    $query->where('incomming_mails.mail_date', '>=', $startdatesearch)
+                        ->orWhere('incomming_mails.entry_date', '>=', $startdatesearch);
+                });
             }
             if ($enddate != null) {
                 $enddatesearch = (new DateTime($enddate))->format('Y-m-d H:i:s');
-                $datas->where('incomming_mails.mail_date', '<=', $enddatesearch);
+                $datas->where(function ($query) use ($enddatesearch) {
+                    $query->where('incomming_mails.mail_date', '<=', $enddatesearch)
+                        ->orWhere('incomming_mails.entry_date', '<=', $enddatesearch);
+                });
             }
             if ($mail_number != null) {
                 // $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
@@ -1003,8 +1027,8 @@ class IncommingMailController extends Controller
                 'mail_quantity' => $request->mail_quantity,
                 'mail_unit' => $request->mail_unit,
                 // 'archive_classification' => $request->archive_classification,
-                'mail_retention_from' => $request->mail_retention_from,
-                'mail_retention_to' => $request->mail_retention_to,
+                // 'mail_retention_from' => $request->mail_retention_from,
+                // 'mail_retention_to' => $request->mail_retention_to,
                 'mail_type' => $mail_type,
                 'result' => $result,
                 'approved_by' => $approved_by,
@@ -1102,8 +1126,8 @@ class IncommingMailController extends Controller
                     'mail_quantity' => $request->mail_quantity,
                     'mail_unit' => $request->mail_unit,
                     // 'archive_classification' => $request->archive_classification,
-                    'mail_retention_from' => $request->mail_retention_from,
-                    'mail_retention_to' => $request->mail_retention_to,
+                    // 'mail_retention_from' => $request->mail_retention_from,
+                    // 'mail_retention_to' => $request->mail_retention_to,
                     'mail_type' => $mail_type,
                     'result' => $result,
                     'approved_by' => $approved_by,
@@ -1208,8 +1232,8 @@ class IncommingMailController extends Controller
         else {
             $mail_date = null;
         }
-        $mail_retention_from = (new DateTime($request->mail_retention_from))->format('Y-m-d H:i:s');
-        $mail_retention_to = (new DateTime($request->mail_retention_to))->format('Y-m-d H:i:s');
+        // $mail_retention_from = (new DateTime($request->mail_retention_from))->format('Y-m-d H:i:s');
+        // $mail_retention_to = (new DateTime($request->mail_retention_to))->format('Y-m-d H:i:s');
         
         // $sender = $request->senderSelect;
         $mail_type = null;
@@ -1234,8 +1258,8 @@ class IncommingMailController extends Controller
         $databefore->mail_quantity = $request->mail_quantity;
         $databefore->mail_unit = $request->mail_unit;
         // $databefore->archive_classification = $request->archive_classification;
-        $databefore->mail_retention_from = $mail_retention_from;
-        $databefore->mail_retention_to = $mail_retention_to;
+        // $databefore->mail_retention_from = $mail_retention_from;
+        // $databefore->mail_retention_to = $mail_retention_to;
         $databefore->received_via = $received_via;
         $databefore->attachment_text = $request->attachment_text;
         $databefore->information = $request->information;
@@ -1264,8 +1288,8 @@ class IncommingMailController extends Controller
                     'mail_quantity' => $request->mail_quantity,
                     'mail_unit' => $request->mail_unit,
                     // 'archive_classification' => $request->archive_classification,
-                    'mail_retention_from' => $request->mail_retention_from,
-                    'mail_retention_to' => $request->mail_retention_to,
+                    // 'mail_retention_from' => $request->mail_retention_from,
+                    // 'mail_retention_to' => $request->mail_retention_to,
                     'mail_type' => $mail_type,
                     'result' => $result,
                     'approved_by' => $approved_by,

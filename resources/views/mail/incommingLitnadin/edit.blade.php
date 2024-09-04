@@ -258,7 +258,7 @@
                     </td>
                   </tr> --}}
                   {{-- Retensi Surat --}}
-                  <tr>
+                  {{-- <tr>
                     <td><label>Retensi Surat</label></td>
                     <td>
                       <div class="row">
@@ -272,7 +272,7 @@
                         </div>
                       </div>
                     </td>
-                  </tr>
+                  </tr> --}}
                   {{-- Hasil Penelitian --}}
                   <tr id="hasilPenelitian">
                     <td><label>Hasil Penelitian</label></td>
