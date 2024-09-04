@@ -49,7 +49,7 @@
         <div class="card card-warning card-outline">
             <div class="card-header">
                 <h3 class="card-title">
-                    <a href="/data-pesan">
+                    <a href="">
                         @php
                         $tgl = date('Y-m-d');
                         @endphp
@@ -95,7 +95,7 @@
         <div class="card card-warning card-outline">
             <div class="card-header">
                 <h3 class="card-title">
-                    <a href="/data-pesan">
+                    <a href="">
                         @php
                         $tgl = date('Y-m-d');
                         @endphp

@@ -230,7 +230,7 @@
                     </td>
                   </tr>
                   {{-- Retensi Surat --}}
-                  <tr>
+                  {{-- <tr>
                     <td><label>Retensi Surat</label></td>
                     <td>
                       <div class="row">
@@ -244,7 +244,7 @@
                         </div>
                       </div>
                     </td>
-                  </tr>
+                  </tr> --}}
                   {{-- Jenis Surat --}}
                   <tr id="jenisSurat">
                     <td><label>Jenis Surat</label></td>

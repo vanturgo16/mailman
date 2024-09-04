@@ -114,7 +114,7 @@
                 <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
                     <div class="row">
                         <div class="col-12">
-                            <label>Tanggal Terima</label>
+                            <label>Tanggal Terima / Tanggal Keluar</label>
                         </div>
                         <div class="col-6">
                             <div class="form-group">
@@ -161,7 +161,7 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
-                            <label>Penandatanganan</label>
+                            <label>Penandatangan</label>
                             <select class="form-control js-example-basic-single" name="workunit" style="width: 100%;">
                                 <option value="">- Pilih -</option>
                                 @foreach($workunits as $item)

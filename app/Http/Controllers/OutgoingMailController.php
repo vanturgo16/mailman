@@ -229,12 +229,18 @@ class OutgoingMailController extends Controller
             ->leftjoin('master_unit_letter', 'master_unit_letter.id', 'outgoing_mails.mail_unit')
             ->orderBy('created_at', 'desc');
 
-            // FIlter
+            // Filter
             if ($startdate != null) {
-                $datas->where('outgoing_mails.mail_date', '>=', $startdate);
+                $datas->where(function ($query) use ($startdate) {
+                    $query->where('outgoing_mails.mail_date', '>=', $startdate)
+                        ->orWhere('outgoing_mails.out_date', '>=', $startdate);
+                });
             }
             if ($enddate != null) {
-                $datas->where('outgoing_mails.mail_date', '<=', $enddate);
+                $datas->where(function ($query) use ($enddate) {
+                    $query->where('outgoing_mails.mail_date', '<=', $enddate)
+                        ->orWhere('outgoing_mails.out_date', '<=', $enddate);
+                });
             }
             if ($drafter != null) {
                 $datas->where('outgoing_mails.org_unit', $drafter);
@@ -302,12 +308,18 @@ class OutgoingMailController extends Controller
             ->leftjoin('master_unit_letter', 'master_unit_letter.id', 'outgoing_mails.mail_unit')
             ->orderBy('created_at', 'desc');
 
-            // FIlter
+            // Filter
             if ($startdate != null) {
-                $datas->where('outgoing_mails.mail_date', '>=', $startdate);
+                $datas->where(function ($query) use ($startdate) {
+                    $query->where('outgoing_mails.mail_date', '>=', $startdate)
+                        ->orWhere('outgoing_mails.out_date', '>=', $startdate);
+                });
             }
             if ($enddate != null) {
-                $datas->where('outgoing_mails.mail_date', '<=', $enddate);
+                $datas->where(function ($query) use ($enddate) {
+                    $query->where('outgoing_mails.mail_date', '<=', $enddate)
+                        ->orWhere('outgoing_mails.out_date', '<=', $enddate);
+                });
             }
             if ($drafter != null) {
                 $datas->where('outgoing_mails.org_unit', $drafter);
