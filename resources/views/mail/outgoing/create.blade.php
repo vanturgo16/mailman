@@ -228,7 +228,7 @@
                   </tr>
                   {{-- Penandatangan --}}
                   <tr>
-                    <td><label class="text-danger">Penandatangan *</label></td>
+                    <td><label class="text-danger">Penanda Tangan *</label></td>
                     <td>
                       <div class="row">
                         <div class="col-md-9">
@@ -247,7 +247,7 @@
                   </tr>
                   {{-- Penandatanganan Pihak Instansi Lain --}}
                   <tr>
-                    <td><label>Penandatanganan Pihak Instansi Lain</label></td>
+                    <td><label>Penanda Tangan Pihak Instansi Lain</label></td>
                     <td>
                       <textarea class="form-control" rows="2" type="text" name="signing_other" placeholder="Masukkan Pihak Instansi Lain.." value="{{ old('signing_other') }}"></textarea>
                     </td>
@@ -334,7 +334,7 @@
                     </td>
                   </tr> --}}
                   {{-- Retensi Surat --}}
-                  <tr>
+                  {{-- <tr>
                     <td><label>Retensi Surat</label></td>
                     <td>
                       <div class="row">
@@ -348,9 +348,9 @@
                         </div>
                       </div>
                     </td>
-                  </tr>
+                  </tr> --}}
                   {{-- Lokasi Simpan --}}
-                  <tr>
+                  {{-- <tr>
                     <td><label>Lokasi Simpan</label></td>
                     <td>
                       <div class="row">
@@ -362,9 +362,9 @@
                         </div>
                       </div>
                     </td>
-                  </tr>
+                  </tr> --}}
                   {{-- Dikirim Via --}}
-                  <tr>
+                  {{-- <tr>
                     <td><label>Dikirim Via</label></td>
                     <td>
                       <select class="form-control js-example-basic-single" name="received_via" style="width: 100%;">
@@ -374,7 +374,7 @@
                         @endforeach
                       </select>
                     </td>
-                  </tr>
+                  </tr> --}}
                   {{-- Nomor Referensi --}}
                   {{-- <tr>
                     <td><label>Nomor Referensi</label></td>
@@ -410,7 +410,7 @@
           </div>
         </div>
         {{-- Lokasi Simpan --}}
-        <div class="modal fade" id="locSave" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
+        {{-- <div class="modal fade" id="locSave" data-backdrop="static" data-keyboard="false" aria-labelledby="modalAddLabel" aria-hidden="true">
           <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header" style="background-color: #0074F1; color: white;">
@@ -666,7 +666,7 @@
                 </script>
             </div>
           </div>
-        </div>
+        </div> --}}
 
         <div class="card-footer">
           <div class="row">

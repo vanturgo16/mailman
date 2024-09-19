@@ -433,27 +433,27 @@ class OutgoingMailController extends Controller
         
         DB::beginTransaction();
         try {
-            if($request->save_location != null){
-                $location_save_route = json_encode([
-                    'idGedung' => $request->input('namaGedung'),
-                    'idLantai' => $request->input('namaLantai'),
-                    'idRuang' => $request->input('namaRuang'),
-                    'idRak' => $request->input('namaRak'),
-                    'idBaris' => $request->input('namaBaris'),
-                    'idKolom' => $request->input('namaKolom'),
-                    'idBoks' => $request->input('namaBoks'),
-                ]);
-            } else {
-                $location_save_route = json_encode([
-                    'idGedung' => null,
-                    'idLantai' => null,
-                    'idRuang' => null,
-                    'idRak' => null,
-                    'idBaris' => null,
-                    'idKolom' => null,
-                    'idBoks' => null,
-                ]);
-            }
+            // if($request->save_location != null){
+            //     $location_save_route = json_encode([
+            //         'idGedung' => $request->input('namaGedung'),
+            //         'idLantai' => $request->input('namaLantai'),
+            //         'idRuang' => $request->input('namaRuang'),
+            //         'idRak' => $request->input('namaRak'),
+            //         'idBaris' => $request->input('namaBaris'),
+            //         'idKolom' => $request->input('namaKolom'),
+            //         'idBoks' => $request->input('namaBoks'),
+            //     ]);
+            // } else {
+            //     $location_save_route = json_encode([
+            //         'idGedung' => null,
+            //         'idLantai' => null,
+            //         'idRuang' => null,
+            //         'idRak' => null,
+            //         'idBaris' => null,
+            //         'idKolom' => null,
+            //         'idBoks' => null,
+            //     ]);
+            // }
 
             // if($request->attachment_text != null){
             //     $jmlHal = $request->mail_quantity + $request->attachment_text;
@@ -479,11 +479,11 @@ class OutgoingMailController extends Controller
                 'mail_unit' => $request->mail_unit,
                 'archive_remains' => $request->archive_remain,
                 // 'archive_classification' => $request->archive_classification,
-                'mail_retention_from' => $request->mail_retention_from,
-                'mail_retention_to' => $request->mail_retention_to,
-                'location_save' => $request->save_location,
-                'location_save_route' => $location_save_route,
-                'received_via' => $request->received_via,
+                // 'mail_retention_from' => $request->mail_retention_from,
+                // 'mail_retention_to' => $request->mail_retention_to,
+                // 'location_save' => $request->save_location,
+                // 'location_save_route' => $location_save_route,
+                // 'received_via' => $request->received_via,
                 'attachment_text' => $request->attachment_text,
                 // 'ref_number' => $request->ref_number,
                 // 'ref_mail' => $request->mail_ref,
@@ -561,27 +561,27 @@ class OutgoingMailController extends Controller
         
         DB::beginTransaction();
         try {
-            if($request->save_location != null){
-                $location_save_route = json_encode([
-                    'idGedung' => $request->input('namaGedung'),
-                    'idLantai' => $request->input('namaLantai'),
-                    'idRuang' => $request->input('namaRuang'),
-                    'idRak' => $request->input('namaRak'),
-                    'idBaris' => $request->input('namaBaris'),
-                    'idKolom' => $request->input('namaKolom'),
-                    'idBoks' => $request->input('namaBoks'),
-                ]);
-            } else {
-                $location_save_route = json_encode([
-                    'idGedung' => null,
-                    'idLantai' => null,
-                    'idRuang' => null,
-                    'idRak' => null,
-                    'idBaris' => null,
-                    'idKolom' => null,
-                    'idBoks' => null,
-                ]);
-            }
+            // if($request->save_location != null){
+            //     $location_save_route = json_encode([
+            //         'idGedung' => $request->input('namaGedung'),
+            //         'idLantai' => $request->input('namaLantai'),
+            //         'idRuang' => $request->input('namaRuang'),
+            //         'idRak' => $request->input('namaRak'),
+            //         'idBaris' => $request->input('namaBaris'),
+            //         'idKolom' => $request->input('namaKolom'),
+            //         'idBoks' => $request->input('namaBoks'),
+            //     ]);
+            // } else {
+            //     $location_save_route = json_encode([
+            //         'idGedung' => null,
+            //         'idLantai' => null,
+            //         'idRuang' => null,
+            //         'idRak' => null,
+            //         'idBaris' => null,
+            //         'idKolom' => null,
+            //         'idBoks' => null,
+            //     ]);
+            // }
 
             // if($request->attachment_text != null){
             //     $jmlHal = $request->mail_quantity + $request->attachment_text;
@@ -609,11 +609,11 @@ class OutgoingMailController extends Controller
                     'mail_unit' => $request->mail_unit,
                     'archive_remains' => $request->archive_remain,
                     // 'archive_classification' => $request->archive_classification,
-                    'mail_retention_from' => $request->mail_retention_from,
-                    'mail_retention_to' => $request->mail_retention_to,
-                    'location_save' => $request->save_location,
-                    'location_save_route' => $location_save_route,
-                    'received_via' => $request->received_via,
+                    // 'mail_retention_from' => $request->mail_retention_from,
+                    // 'mail_retention_to' => $request->mail_retention_to,
+                    // 'location_save' => $request->save_location,
+                    // 'location_save_route' => $location_save_route,
+                    // 'received_via' => $request->received_via,
                     'attachment_text' => $request->attachment_text,
                     // 'ref_number' => $request->ref_number,
                     // 'ref_mail' => $request->mail_ref,
@@ -805,18 +805,18 @@ class OutgoingMailController extends Controller
 
         $out_date = (new DateTime($request->out_date))->format('Y-m-d H:i:s');
         $mail_date = (new DateTime($request->mail_date))->format('Y-m-d H:i:s');
-        $mail_retention_from = (new DateTime($request->mail_retention_from))->format('Y-m-d H:i:s');
-        $mail_retention_to = (new DateTime($request->mail_retention_to))->format('Y-m-d H:i:s');
-        $location_save_route = [
-            'idGedung' => $request->input('namaGedung'),
-            'idLantai' => $request->input('namaLantai'),
-            'idRuang' => $request->input('namaRuang'),
-            'idRak' => $request->input('namaRak'),
-            'idBaris' => $request->input('namaBaris'),
-            'idKolom' => $request->input('namaKolom'),
-            'idBoks' => $request->input('namaBoks'),
-        ];
-        $location_save_route = json_encode($location_save_route);    
+        // $mail_retention_from = (new DateTime($request->mail_retention_from))->format('Y-m-d H:i:s');
+        // $mail_retention_to = (new DateTime($request->mail_retention_to))->format('Y-m-d H:i:s');
+        // $location_save_route = [
+        //     'idGedung' => $request->input('namaGedung'),
+        //     'idLantai' => $request->input('namaLantai'),
+        //     'idRuang' => $request->input('namaRuang'),
+        //     'idRak' => $request->input('namaRak'),
+        //     'idBaris' => $request->input('namaBaris'),
+        //     'idKolom' => $request->input('namaKolom'),
+        //     'idBoks' => $request->input('namaBoks'),
+        // ];
+        // $location_save_route = json_encode($location_save_route);    
 
         // Check With Data Before
         $databefore = OutgoingMail::where('id', $id)->first();
@@ -835,16 +835,16 @@ class OutgoingMailController extends Controller
         $databefore->mail_unit = $request->mail_unit;
         $databefore->archive_remains = $request->archive_remain;
         // $databefore->archive_classification = $request->archive_classification;
-        $databefore->mail_retention_from = $mail_retention_from;
-        $databefore->mail_retention_to = $mail_retention_to;
-        $databefore->location_save = $request->save_location;
-        if($databefore->location_save != $request->save_location){
-            $databefore->location_save_route = $location_save_route;
-            $newroute = $location_save_route;
-        } else {
-            $newroute = $databefore->location_save_route;
-        }
-        $databefore->received_via = $request->received_via;
+        // $databefore->mail_retention_from = $mail_retention_from;
+        // $databefore->mail_retention_to = $mail_retention_to;
+        // $databefore->location_save = $request->save_location;
+        // if($databefore->location_save != $request->save_location){
+        //     $databefore->location_save_route = $location_save_route;
+        //     $newroute = $location_save_route;
+        // } else {
+        //     $newroute = $databefore->location_save_route;
+        // }
+        // $databefore->received_via = $request->received_via;
         // $databefore->ref_number = $request->ref_number;
         // $databefore->ref_mail = $request->mail_ref;
         $databefore->attachment_text = $request->attachment_text;
@@ -875,11 +875,11 @@ class OutgoingMailController extends Controller
                     'mail_unit' => $request->mail_unit,
                     'archive_remains' => $request->archive_remain,
                     // 'archive_classification' => $request->archive_classification,
-                    'mail_retention_from' => $request->mail_retention_from,
-                    'mail_retention_to' => $request->mail_retention_to,
-                    'location_save' => $request->save_location,
-                    'location_save_route' => $location_save_route,
-                    'received_via' => $request->received_via,
+                    // 'mail_retention_from' => $request->mail_retention_from,
+                    // 'mail_retention_to' => $request->mail_retention_to,
+                    // 'location_save' => $request->save_location,
+                    // 'location_save_route' => $location_save_route,
+                    // 'received_via' => $request->received_via,
                     'attachment_text' => $request->attachment_text,
                     // 'ref_number' => $request->ref_number,
                     // 'ref_mail' => $request->mail_ref,
