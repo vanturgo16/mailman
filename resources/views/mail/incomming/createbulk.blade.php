@@ -375,10 +375,10 @@
 </script>
 
 <script>
-  const labelpengirim = document.getElementById('labelpengirim');
-  const pengirim1 = document.getElementById('pengirim1');
-  const pengirim2 = document.getElementById('pengirim2');
-  const pengirimselect = document.getElementById('pengirimselect');
+  // const labelpengirim = document.getElementById('labelpengirim');
+  // const pengirim1 = document.getElementById('pengirim1');
+  // const pengirim2 = document.getElementById('pengirim2');
+  // const pengirimselect = document.getElementById('pengirimselect');
   const labeljenisNaskah = document.getElementById('labeljenisNaskah');
   const jenisNaskah = document.getElementById('jenisNaskah');
   const jenisPengaduan = document.getElementById('jenisPengaduan');
@@ -399,11 +399,11 @@
   $('select[id="placeman"]').on('change', function() {
       const placeman = $(this).val();
       if (placeman == 'LITNADIN') {
-        labelpengirim.textContent = "Pengirim / Konseptor *";
-        pengirim1.hidden = true;
-        pengirim2.hidden = false;
-        pengirim1.required = false;
-        pengirimselect.required = true;
+        // labelpengirim.textContent = "Pengirim / Konseptor *";
+        // pengirim1.hidden = true;
+        // pengirim2.hidden = false;
+        // pengirim1.required = false;
+        // pengirimselect.required = true;
         labeljenisNaskah.textContent = "Jenis Naskah *";
         jenisNaskah.hidden = false;
         jenisPengaduan.hidden = true;
@@ -422,11 +422,11 @@
       } 
       else if (placeman == 'PENGADUAN') 
       {
-        labelpengirim.textContent = "Pengirim *";
-        pengirim1.hidden = false;
-        pengirim2.hidden = true;
-        pengirim1.required = true;
-        pengirimselect.required = false;
+        // labelpengirim.textContent = "Pengirim *";
+        // pengirim1.hidden = false;
+        // pengirim2.hidden = true;
+        // pengirim1.required = true;
+        // pengirimselect.required = false;
         labeljenisNaskah.textContent = "Jenis Pengaduan *";
         jenisNaskah.hidden = true;
         jenisPengaduan.hidden = false;
@@ -445,11 +445,11 @@
       } 
       else 
       {
-        labelpengirim.textContent = "Pengirim *";
-        pengirim1.hidden = false;
-        pengirim2.hidden = true;
-        pengirim1.required = true;
-        pengirimselect.required = false;
+        // labelpengirim.textContent = "Pengirim *";
+        // pengirim1.hidden = false;
+        // pengirim2.hidden = true;
+        // pengirim1.required = true;
+        // pengirimselect.required = false;
         labeljenisNaskah.textContent = "Jenis Naskah *";
         jenisNaskah.hidden = false;
         jenisPengaduan.hidden = true;
