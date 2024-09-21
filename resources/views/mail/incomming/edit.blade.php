@@ -24,23 +24,23 @@
       <div class="card-header"><h3 class="card-title"></h3></div>
       <form action="{{ route('incommingmail.update', encrypt($data->id)) }}" method="POST" enctype="multipart/form-data" id="formIncommingMail">
         @csrf
-        <div class="card-body" style="max-height: 58vh; overflow-y: auto;">
+        <div class="card-body" style="max-height: 55vh; overflow-y: auto;">
 
           <div class="card p-3" style="background-color:rgb(240, 240, 240);">
             {{-- Kode Satuan Organisasi --}}
             <div class="row row-separator">
               <div class="col-3">
-                <label id="labelkso" class="text-danger">Kode Satuan Organisasi *</label>
+                <label id="labelkso">Kode Satuan Organisasi</label>
                 <br>
                 <small>* (Harus diisi khusus untuk Jenis Naskah Surat, Nota Dinas, Surat Pengantar dan Telaahan Staf jika bukan ditandatangani oleh Kapolri/Wakapolri)</small>
               </div>
               <div class="col-9">
                 <div class="row">
                   <div class="col-12">
-                    <label class="text-danger">Induk Satuan Organisasi *</label>
+                    <label>Induk Satuan Organisasi</label>
                   </div>
                   <div class="col-9">
-                    <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;" required>
+                    <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
                       <option value="">- Pilih -</option>
                       @foreach($sators as $sator)
                         <option value="{{ $sator->id }}" @if($data->org_unit == $sator->id) selected="selected" @endif>{{ $sator->sator_name }}</option>
@@ -51,10 +51,10 @@
                     <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#satuanOrg"><i class="fa fa-plus"></i> Tambah Baru</button>
                   </div>
                   <div class="col-12 mt-3">
-                    <label id="labelSubSator" class="text-danger">Konseptor *</label>
+                    <label id="labelSubSator">Konseptor</label>
                   </div>
                   <div class="col-9">
-                    <select class="form-control js-example-basic-single" name="sub_org_unit" id="sub_org_unit" style="width: 100%;" required>
+                    <select class="form-control js-example-basic-single" name="sub_org_unit" id="sub_org_unit" style="width: 100%;">
                       <option value="">- Pilih -</option>
                     </select>
                   </div>

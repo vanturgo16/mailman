@@ -181,7 +181,7 @@ class IncommingMailController extends Controller
                     ->orWhere('incomming_mails.agenda_number', 'like', '%' . $mail_number . '%')
                     ->orWhere('incomming_mails.mail_regarding', 'like', '%' . $mail_number . '%')
                     ->orWhere('incomming_mails.information', 'like', '%' . $mail_number . '%')
-                    ->orWhere('incomming_mails.sub_sator_name', 'like', '%' . $mail_number . '%');
+                    ->orWhere('sub_sator_name', 'like', '%' . $mail_number . '%');
             }
             if ($placeman != null) {
                 $datas->where('incomming_mails.placeman', $placeman);
@@ -245,7 +245,7 @@ class IncommingMailController extends Controller
                     ->orWhere('incomming_mails.agenda_number', 'like', '%' . $mail_number . '%')
                     ->orWhere('incomming_mails.mail_regarding', 'like', '%' . $mail_number . '%')
                     ->orWhere('incomming_mails.information', 'like', '%' . $mail_number . '%')
-                    ->orWhere('incomming_mails.sub_sator_name', 'like', '%' . $mail_number . '%');
+                    ->orWhere('sub_sator_name', 'like', '%' . $mail_number . '%');
             }
             if ($placeman != null) {
                 $datas->where('incomming_mails.placeman', $placeman);
@@ -864,7 +864,7 @@ class IncommingMailController extends Controller
                     ->orWhere('incomming_mails.agenda_number', 'like', '%' . $mail_number . '%')
                     ->orWhere('incomming_mails.mail_regarding', 'like', '%' . $mail_number . '%')
                     ->orWhere('incomming_mails.information', 'like', '%' . $mail_number . '%')
-                    ->orWhere('incomming_mails.sub_sator_name', 'like', '%' . $mail_number . '%');
+                    ->orWhere('sub_sator_name', 'like', '%' . $mail_number . '%');
             }
             if ($status != null) {
                 $datas->where('incomming_mails.status', $status);
@@ -928,7 +928,7 @@ class IncommingMailController extends Controller
                     ->orWhere('incomming_mails.agenda_number', 'like', '%' . $mail_number . '%')
                     ->orWhere('incomming_mails.mail_regarding', 'like', '%' . $mail_number . '%')
                     ->orWhere('incomming_mails.information', 'like', '%' . $mail_number . '%')
-                    ->orWhere('incomming_mails.sub_sator_name', 'like', '%' . $mail_number . '%');
+                    ->orWhere('sub_sator_name', 'like', '%' . $mail_number . '%');
             }
             if ($status != null) {
                 $datas->where('incomming_mails.status', $status);

@@ -33,7 +33,7 @@
               Detail Informasi
           </h3>
       </div>
-      <div class="card-body" style="max-height: 65vh; overflow-y: auto;">
+      <div class="card-body" style="max-height: 55vh; overflow-y: auto;">
         <div class="card p-3" style="background-color:rgb(240, 240, 240);">
             <div class="row">
                 <div class="col-lg-6">
@@ -167,7 +167,7 @@
             </div>
             <div class="col-lg-4">
                 <div class="form-group">
-                    <div><span class="text-bold">Penandatangan :</span></div>
+                    <div><span class="text-bold">Penanda Tangan :</span></div>
                     <span>
                         @if($data->sign_name == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
@@ -179,7 +179,7 @@
             </div>
             <div class="col-lg-6">
                 <div class="form-group">
-                    <div><span class="text-bold">Penandatanganan Pihak Instansi Lain :</span></div>
+                    <div><span class="text-bold">Penanda Tangan Pihak Instansi Lain :</span></div>
                     <div class="card p-2 mt-1" style="background-color:rgb(253, 253, 253);">
                         @if($data->signing_other == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
@@ -249,7 +249,7 @@
                     </span>
                 </div>
             </div>
-            <div class="col-lg-4">
+            {{-- <div class="col-lg-4">
                 <div class="form-group">
                     <div><span class="text-bold">Retensi Surat (Dari) :</span></div>
                     <span>
@@ -272,8 +272,8 @@
                         @endif
                     </span>
                 </div>
-            </div>
-            <div class="col-lg-12">
+            </div> --}}
+            {{-- <div class="col-lg-12">
                 <div class="form-group">
                     <div><span class="text-bold">Lokasi Simpan :</span></div>
                     <span>
@@ -296,7 +296,7 @@
                         @endif
                     </span>
                 </div>
-            </div>
+            </div> --}}
             <div class="col-lg-4">
                 <div class="form-group">
                     <div><span class="text-bold">Nomor Referensi :</span></div>
