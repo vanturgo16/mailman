@@ -245,6 +245,8 @@
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
+                "scrollY": "25vh",
+                "scroller": true,
                 "ajax": {
                     "url": '{!! route('incommingmail.index') !!}', // Replace with your server URL
                     "type": "GET",
@@ -275,7 +277,7 @@
                         render: function(data, type, row) {
                             var html
                             if(row.mail_date == null){
-                                html = '<span class="badge bg-secondary">Null</span>';
+                                html = '';
                             } else {
                                 const formattedDate = formatDateToDMY(row.mail_date);
                                 html = formattedDate;
@@ -308,7 +310,7 @@
                         render: function(data, type, row) {
                             var html
                             if(row.mail_number == null){
-                                html = '<span class="badge bg-secondary">Null</span>';
+                                html = '';
                             } else {
                                 html = '<span class="text-bold">'+row.mail_number+'</span>';
                             }
@@ -324,7 +326,7 @@
                         render: function(data, type, row) {
                             var html
                             if(row.sub_sator_name == null){
-                                html = '<span class="badge bg-secondary">Null</span>';
+                                html = '';
                             } else {
                                 html = row.sub_sator_name;
                             }
@@ -339,7 +341,7 @@
                         render: function(data, type, row) {
                             var html;
                             if (row.mail_regarding == null) {
-                                html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                                html = '';
                             } else {
                                 var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
                                 html = truncatedData;
@@ -356,7 +358,7 @@
                         render: function(data, type, row) {
                             var html
                             if(row.receiver == null){
-                                html = '<span class="badge bg-secondary">Null</span>';
+                                html = '';
                             } else {
                                 html = row.receiver;
                             }
@@ -371,7 +373,7 @@
                         render: function(data, type, row) {
                         var html;
                         if(row.mail_quantity == null){
-                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                            html = '';
                         } else {
                             html = '<b>'+row.mail_quantity+'</b> '+row.unit_name;
                         }
@@ -386,7 +388,7 @@
                         render: function(data, type, row) {
                             var html;
                             if (row.attachment_text == null) {
-                                html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                                html = '';
                             } else {
                                 var truncatedData = row.attachment_text.length > 150 ? row.attachment_text.substr(0, 150) + '...' : row.attachment_text;
                                 html = truncatedData;
@@ -402,7 +404,7 @@
                         render: function(data, type, row) {
                             var html;
                             if (row.information == null) {
-                                html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
+                                html = '';
                             } else {
                                 var truncatedData = row.information.length > 150 ? row.information.substr(0, 150) + '...' : row.information;
                                 html = truncatedData;
@@ -418,7 +420,7 @@
                         render: function(data, type, row) {
                             var html
                             if(row.created == null){
-                                html = '<div class="text-center"><span class="badge bg-secondary text-white">Null</span></div>';
+                                html = '';
                             } else {
                                 var date = row.created.replace('T', ' ').split('.')[0];
                                 html = date+'<br><b>'+row.created_by;
