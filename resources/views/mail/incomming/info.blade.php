@@ -29,7 +29,7 @@
 <div class="container-fluid">
     <div class="card card-primary card-outline">
         <div class="card-header"><h3 class="card-title"></h3></div>
-        <div class="card-body" style="max-height: 58vh; overflow-y: auto;">
+        <div class="card-body" style="max-height: 55vh; overflow-y: auto;">
             <div class="row px-2">
                 <div class="col-lg-4">
                     <div class="form-group">

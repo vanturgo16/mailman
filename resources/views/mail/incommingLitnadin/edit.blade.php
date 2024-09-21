@@ -25,7 +25,7 @@
       <div class="card-header"><h3 class="card-title"></h3></div>
       <form action="{{ route('incommingmail.updateLitnadin', encrypt($data->id)) }}" method="POST" enctype="multipart/form-data" id="formIncommingMail">
         @csrf
-        <div class="card-body" style="max-height: 58vh; overflow-y: auto;">
+        <div class="card-body" style="max-height: 55vh; overflow-y: auto;">
 
           <div class="card p-3" style="background-color:rgb(240, 240, 240);">
             {{-- Kode Satuan Organisasi --}}

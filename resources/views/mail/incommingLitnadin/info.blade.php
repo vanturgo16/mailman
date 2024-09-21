@@ -33,7 +33,7 @@
               Detail Informasi
           </h3>
       </div>
-      <div class="card-body" style="max-height: 65vh; overflow-y: auto;">
+      <div class="card-body" style="max-height: 55vh; overflow-y: auto;">
         <div class="row px-2">
             <div class="col-lg-4">
                 <div class="form-group">
