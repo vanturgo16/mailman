@@ -46,6 +46,9 @@
       right: 0px;
       font-size: 12px;
     }
+    .force-font-size, .force-font-size * {
+        font-size: 9px !important;
+    }
   </style>
 
   <body>
@@ -151,7 +154,7 @@
               <?php $no++; ?>
               <tr>
                 <td class="align-top text-center">{{ $no }}</td>
-                <td class="align-top text-left px-2">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
+                <td class="align-top text-left px-2">{{ date('d-m-Y', strtotime($item->entry_date)) }}</td>
                 <td class="align-top text-left px-2">
                   @if($item->agenda_number == null)
                     -
@@ -166,29 +169,40 @@
                     {{ $item->mail_number }}
                   @endif
                 </td>
-                <td class="align-top text-left px-2">
+                {{-- <td class="align-top text-left px-2">
                   @if($item->sub_sator_name == null)
                     -
                   @else
                     {{ $item->sub_sator_name }}
+                  @endif
+                </td> --}}
+                <td class="align-top text-left px-2">
+                  @if($item->sender == null)
+                    -
+                  @else
+                    {{ $item->sender }}
                   @endif
                 </td>
                 <td class="align-top text-left px-2">
                   @if($item->mail_regarding == null)
                     -
                   @else
-                    {{ $item->mail_regarding }}
+                    <div class="force-font-size">{!! $item->mail_regarding !!}</div>
                   @endif
                   @if($item->mail_quantity == null)
                   @else
                     <br><br><b>{{ $item->mail_quantity }} {{ $item->unit_name }}</b>
+                  @endif
+                  @if($item->mail_type == null)
+                  @else
+                    <br>{{ $item->mail_type }}
                   @endif
                 </td>
                 <td class="align-top text-left px-2">
                   @if($item->attachment_text == null)
                     -
                   @else
-                    {{ $item->attachment_text }}
+                    <div class="force-font-size">{!! $item->attachment_text !!}</div>
                   @endif
                 </td>
                 <td class="align-top text-left px-2">
@@ -202,7 +216,7 @@
                   @if($item->information == null)
                     -
                   @else
-                    {{ $item->information }}
+                    <div class="force-font-size">{!! $item->information !!}</div>
                   @endif
                   <br><br>Dikirim Via: 
                   @if($item->received_via == null)

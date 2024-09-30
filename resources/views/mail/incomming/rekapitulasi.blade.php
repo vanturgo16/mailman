@@ -272,16 +272,16 @@
                     className: 'text-center',
                 },
                 {
-                    data: 'mail_date',
-                    name: 'mail_date',
+                    data: 'entry_date',
+                    name: 'entry_date',
                     orderable: true,
                     searchable: true,
                     render: function(data, type, row) {
                         var html
-                        if(row.mail_date == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
+                        if(row.entry_date == null){
+                            html = '';
                         } else {
-                            const formattedDate = formatDateToDMY(row.mail_date);
+                            const formattedDate = formatDateToDMY(row.entry_date);
                             html = formattedDate;
                         }
                         return html;
@@ -310,24 +310,39 @@
                     render: function(data, type, row) {
                         var html
                         if(row.mail_number == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
+                            html = '';
                         } else {
                             html = '<span class="text-bold">'+row.mail_number+'</span>';
                         }
                         return html;
                     },
                 },
+                // {
+                //     data: 'sub_sator_name',
+                //     name: 'sub_sator_name',
+                //     orderable: true,
+                //     searchable: true,
+                //     render: function(data, type, row) {
+                //         var html
+                //         if(row.sub_sator_name == null){
+                //             html = '';
+                //         } else {
+                //             html = row.sub_sator_name;
+                //         }
+                //         return html;
+                //     },
+                // },
                 {
-                    data: 'sub_sator_name',
-                    name: 'sub_sator_name',
+                    data: 'sender',
+                    name: 'sender',
                     orderable: true,
                     searchable: true,
                     render: function(data, type, row) {
                         var html
-                        if(row.sub_sator_name == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
+                        if(row.sender == null){
+                            html = '';
                         } else {
-                            html = row.sub_sator_name;
+                            html = row.sender;
                         }
                         return html;
                     },
@@ -339,19 +354,20 @@
                     searchable: true,
                     render: function(data, type, row) {
                         var html;
-                        if (row.mail_regarding == null) {
-                            html = '<span class="badge bg-secondary">Null</span>';
-                        } else {
-                            var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
-                            html = truncatedData;
-                        }
+                        html = $('<div/>').html(data).text();
                         var quantity;
                         if (row.mail_quantity == null) {
                             quantity = '';
                         } else {
                             quantity = '<br><br><b>'+row.mail_quantity+' '+row.unit_name+'</b>';
                         }
-                        return html+quantity;
+                        var mailType;
+                        if (row.mail_type == null) {
+                            mailType = '';
+                        } else {
+                            mailType = '<br>'+row.mail_type;
+                        }
+                        return html+quantity+mailType;
                     },
                 },
                 {
@@ -360,15 +376,8 @@
                     orderable: true,
                     searchable: true,
                     render: function(data, type, row) {
-                        var html;
-                        if (row.attachment_text == null) {
-                            html = '<span class="badge bg-secondary">Null</span>';
-                        } else {
-                            var truncatedData = row.attachment_text.length > 150 ? row.attachment_text.substr(0, 150) + '...' : row.attachment_text;
-                            html = truncatedData;
-                        }
-                        return html;
-                    },
+                        return $('<div/>').html(data).text();
+                    }
                 },
                 {
                     data: 'receiver',
@@ -378,7 +387,7 @@
                     render: function(data, type, row) {
                         var html
                         if(row.receiver == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
+                            html = '';
                         } else {
                             html = row.receiver;
                         }
@@ -392,12 +401,7 @@
                     searchable: true,
                     render: function(data, type, row) {
                         var html;
-                        if (row.information == null) {
-                            html = '<span class="badge bg-secondary">Null</span>';
-                        } else {
-                            var truncatedData = row.information.length > 150 ? row.information.substr(0, 150) + '...' : row.information;
-                            html = truncatedData;
-                        }
+                        html = $('<div/>').html(data).text();
                         var sendVia;
                         if (row.received_via == null) {
                             sendVia = '-';

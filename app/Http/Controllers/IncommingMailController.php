@@ -39,6 +39,8 @@ class IncommingMailController extends Controller
         $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
         $workunits = WorkUnit::get();
         $org_unit = $request->get('org_unit');
+        $complain = $request->get('complain');
+        $letter = $request->get('letter');
 
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
         $complains = Complain::get();
@@ -67,6 +69,9 @@ class IncommingMailController extends Controller
         if ($org_unit != null) {
             $datas->where('org_unit', $org_unit);
         }
+        if ($letter != null) {
+            $datas->where('incomming_mails.id_mst_letter', $letter);
+        }
     
         // Get Query
         $datas = $datas->get();
@@ -82,7 +87,7 @@ class IncommingMailController extends Controller
         }
 
         return view('mail.incomming.index', compact('workunits', 'placemans', 'complains', 'letters',
-            'entry_date', 'mail_date', 'mail_number', 'placeman', 'receiverMails', 'org_unit', 'sators'));
+            'entry_date', 'mail_date', 'mail_number', 'placeman', 'receiverMails', 'org_unit', 'sators', 'complain', 'letter'));
     }
     
     public function directupdate(Request $request, $id)
@@ -98,10 +103,10 @@ class IncommingMailController extends Controller
 
         // Check With Data Before
         $databefore = IncommingMail::where('id', $id)->first();
-        $databefore->mail_date = $dateVal;
+        $databefore->entry_date = $dateVal;
         // $databefore->agenda_number = $request[2];
         $databefore->mail_number = $request[3];
-        // $databefore->sender = $request[4];
+        $databefore->sender = $request[4];
         $databefore->mail_regarding = $request[5];
         $databefore->receiver = $request[6];
         $databefore->mail_quantity = $request[7];
@@ -114,10 +119,10 @@ class IncommingMailController extends Controller
                 
                 // Update Incomming Mail
                 IncommingMail::where('id', $id)->update([
-                    'mail_date' => $request[1],
+                    'entry_date' => $request[1],
                     // 'agenda_number' => $request[2],
                     'mail_number' => $request[3],
-                    // 'sender' => $request[4],
+                    'sender' => $request[4],
                     'mail_regarding' => $request[5],
                     'receiver' => $request[6],
                     'mail_quantity' => $request[7],
@@ -331,7 +336,7 @@ class IncommingMailController extends Controller
                 $approved_by = $request->approved_by;
                 $received_via = $request->received_viaInput;
             } else {
-                // $sender = $request->senderInput;
+                $sender = $request->senderInput;
                 $mail_type = $request->mail_type;
                 $result = null;
                 $approved_by = null;
@@ -344,7 +349,7 @@ class IncommingMailController extends Controller
                 'id_mst_complain' => $request->id_mst_complain,
                 'org_unit' => $request->org_unit,
                 'sub_org_unit' => $request->sub_org_unit,
-                // 'sender' => $sender,
+                'sender' => $sender,
                 'mail_number' => $request->mail_number,
                 'mail_regarding' => $request->mail_regarding,
                 'entry_date' => $request->entry_date,
@@ -442,7 +447,7 @@ class IncommingMailController extends Controller
                 $approved_by = $request->approved_by;
                 $received_via = $request->received_viaInput;
             } else {
-                // $sender = $request->senderInput;
+                $sender = $request->senderInput;
                 $mail_type = $request->mail_type;
                 $result = null;
                 $approved_by = null;
@@ -457,7 +462,7 @@ class IncommingMailController extends Controller
                     'org_unit' => $request->org_unit,
                     'sub_org_unit' => $request->sub_org_unit,
                     'id_mst_complain' => $request->id_mst_complain,
-                    // 'sender' => $sender,
+                    'sender' => $sender,
                     'mail_number' => $request->mail_number,
                     'mail_regarding' => $request->mail_regarding,
                     'entry_date' => $request->entry_date,
@@ -596,7 +601,7 @@ class IncommingMailController extends Controller
             $approved_by = $request->approved_by;
             $received_via = $request->received_viaInput;
         } else {
-            // $sender = $request->senderInput;
+            $sender = $request->senderInput;
             $mail_type = $request->mail_type;
             $result = null;
             $approved_by = null;
@@ -618,7 +623,7 @@ class IncommingMailController extends Controller
         }
 
         $databefore->placeman = $request->placeman;
-        // $databefore->sender = $sender;
+        $databefore->sender = $sender;
         $databefore->org_unit = $request->org_unit;
         $databefore->sub_org_unit = $request->sub_org_unit;
         $databefore->mail_number = $request->mail_number;
@@ -642,7 +647,7 @@ class IncommingMailController extends Controller
                     'placeman' => $request->placeman,
                     'id_mst_letter' => $request->id_mst_letter,
                     'id_mst_complain' => $request->id_mst_complain,
-                    // 'sender' => $sender,
+                    'sender' => $sender,
                     'org_unit' => $request->org_unit,
                     'sub_org_unit' => $request->sub_org_unit,
                     'mail_number' => $request->mail_number,

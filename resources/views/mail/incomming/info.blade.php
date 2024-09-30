@@ -33,6 +33,18 @@
             <div class="row px-2">
                 <div class="col-lg-4">
                     <div class="form-group">
+                        <div><span class="text-bold">Pengirim :</span></div>
+                        <span>
+                            @if($data->sender == null)
+                                <span class="badge bg-secondary">Tidak Diisi..</span>
+                            @else
+                                {{ $data->sender }}
+                            @endif
+                        </span>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="form-group">
                         <div><span class="text-bold">Pejabat / Naskah :</span></div>
                         <span>
                             @if($data->placeman == null)
@@ -43,7 +55,7 @@
                         </span>
                     </div>
                 </div>
-                <div class="col-lg-4">
+                {{-- <div class="col-lg-4">
                     <div class="form-group">
                         <div><span class="text-bold">Kode Satuan Organisasi (Induk) :</span></div>
                         <span>
@@ -66,7 +78,7 @@
                             @endif
                         </span>
                     </div>
-                </div>
+                </div> --}}
                 <div class="col-lg-4">
                     <div class="form-group">
                         @if($data->placeman == "PENGADUAN")
@@ -88,18 +100,6 @@
                                 @endif
                             </span>
                         @endif
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="form-group">
-                        <div><span class="text-bold">Pengirim :</span></div>
-                        <span>
-                            @if($data->sender == null)
-                                <span class="badge bg-secondary">Tidak Diisi..</span>
-                            @else
-                                {{ $data->sender }}
-                            @endif
-                        </span>
                     </div>
                 </div>
                 <div class="col-lg-4">

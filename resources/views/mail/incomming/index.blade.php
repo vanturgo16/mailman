@@ -147,12 +147,34 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                 <label>Pejabat / Naskah</label>
-                                <select class="form-control js-example-basic-single" name="placeman" style="width: 100%;">
+                                <select class="form-control js-example-basic-single" id="placeman" name="placeman" style="width: 100%;">
                                     <option value="">- Pilih -</option>
                                     @foreach($placemans as $item)
                                         <option value="{{ $item->name_value }}" @if($placeman == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
                                     @endforeach
                                 </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label id="labeljenisNaskah">Jenis Naskah</label>
+                                    <div id="jenisNaskah">
+                                        <select class="form-control js-example-basic-single" id="mst_letter" name="letter" style="width: 100%;">
+                                            <option value="">- Pilih -</option>
+                                            @foreach($letters as $item)
+                                            <option value="{{ $item->id }}" @if($letter == $item->id) selected="selected" @endif>{{ $item->let_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+            
+                                    <div id="jenisPengaduan" hidden>
+                                        <select class="form-control js-example-basic-single" id="mst_complain" name="complain" style="width: 100%;">
+                                            <option value="">- Pilih -</option>
+                                            @foreach($complains as $item)
+                                            <option value="{{ $item->id }}" @if($complain == $item->id) selected="selected" @endif>{{ $item->com_code }} - {{ $item->com_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-12">
@@ -183,6 +205,53 @@
                         submitButton.disabled = true;
                         submitButton.innerHTML  = '<i class="mdi mdi-loading mdi-spin"></i> Mohon Tunggu...';
                         return true;
+                    });
+                </script>
+                <script>
+                    const labeljenisNaskah = document.getElementById('labeljenisNaskah');
+                    const jenisNaskah = document.getElementById('jenisNaskah');
+                    const jenisPengaduan = document.getElementById('jenisPengaduan');
+                    const idLetter = document.getElementById('mst_letter');
+                    const idComplain = document.getElementById('mst_complain');
+    
+                    var placemanBefore = "{{ $placeman }}";
+                    if (placemanBefore == 'LITNADIN') {
+                        labeljenisNaskah.textContent = "Jenis Naskah *";
+                        jenisNaskah.hidden = false;
+                        jenisPengaduan.hidden = true;
+                    } 
+                    else if (placemanBefore == 'PENGADUAN') 
+                    {
+                        labeljenisNaskah.textContent = "Jenis Pengaduan *";
+                        jenisNaskah.hidden = true;
+                        jenisPengaduan.hidden = false;
+                    } 
+                    else 
+                    {
+                        labeljenisNaskah.textContent = "Jenis Naskah *";
+                        jenisNaskah.hidden = false;
+                        jenisPengaduan.hidden = true;
+                    }
+    
+                    $('select[id="placeman"]').on('change', function() {
+                        const placeman = $(this).val();
+                        if (placeman == 'LITNADIN') {
+                            labeljenisNaskah.textContent = "Jenis Naskah *";
+                            jenisNaskah.hidden = false;
+                            jenisPengaduan.hidden = true;
+                        } 
+                        else if (placeman == 'PENGADUAN') 
+                        {
+                            labeljenisNaskah.textContent = "Jenis Pengaduan *";
+                            jenisNaskah.hidden = true;
+                            jenisPengaduan.hidden = false;
+                        } 
+                        else 
+                        {
+                            labeljenisNaskah.textContent = "Jenis Naskah *";
+                            jenisNaskah.hidden = false;
+                            jenisPengaduan.hidden = true;
+                        }
                     });
                 </script>
             </div>
@@ -245,8 +314,6 @@
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "scrollY": "25vh",
-                "scroller": true,
                 "ajax": {
                     "url": '{!! route('incommingmail.index') !!}', // Replace with your server URL
                     "type": "GET",
@@ -255,7 +322,8 @@
                         mail_date: '{{ $mail_date }}',
                         mail_number: '{{ $mail_number }}',
                         placeman: '{{ $placeman }}',
-                        org_unit: '{{ $org_unit }}'
+                        org_unit: '{{ $org_unit }}',
+                        letter: '{{ $letter }}',
                     }
                 },
                 "columns": [
@@ -269,17 +337,17 @@
                         className: 'text-center',
                     }, 
                     {
-                        data: 'mail_date',
-                        name: 'mail_date',
+                        data: 'entry_date',
+                        name: 'entry_date',
                         orderable: true,
                         searchable: true,
                         className: 'text-center',
                         render: function(data, type, row) {
                             var html
-                            if(row.mail_date == null){
+                            if(row.entry_date == null){
                                 html = '';
                             } else {
-                                const formattedDate = formatDateToDMY(row.mail_date);
+                                const formattedDate = formatDateToDMY(row.entry_date);
                                 html = formattedDate;
                             }
                             return html;
@@ -317,18 +385,34 @@
                             return html;
                         },
                     },
+                    // {
+                    //     data: 'sub_sator_name',
+                    //     name: 'sub_sator_name',
+                    //     orderable: true,
+                    //     searchable: true,
+                    //     className: 'text-center',
+                    //     render: function(data, type, row) {
+                    //         var html
+                    //         if(row.sub_sator_name == null){
+                    //             html = '';
+                    //         } else {
+                    //             html = row.sub_sator_name;
+                    //         }
+                    //         return html;
+                    //     },
+                    // },
                     {
-                        data: 'sub_sator_name',
-                        name: 'sub_sator_name',
+                        data: 'sender',
+                        name: 'sender',
                         orderable: true,
                         searchable: true,
                         className: 'text-center',
                         render: function(data, type, row) {
                             var html
-                            if(row.sub_sator_name == null){
+                            if(row.sender == null){
                                 html = '';
                             } else {
-                                html = row.sub_sator_name;
+                                html = row.sender;
                             }
                             return html;
                         },
@@ -339,15 +423,8 @@
                         orderable: true,
                         searchable: true,
                         render: function(data, type, row) {
-                            var html;
-                            if (row.mail_regarding == null) {
-                                html = '';
-                            } else {
-                                var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
-                                html = truncatedData;
-                            }
-                            return html;
-                        },
+                            return $('<div/>').html(data).text();
+                        }
                     },
                     {
                         data: 'receiver',
@@ -386,15 +463,8 @@
                         orderable: true,
                         searchable: true,
                         render: function(data, type, row) {
-                            var html;
-                            if (row.attachment_text == null) {
-                                html = '';
-                            } else {
-                                var truncatedData = row.attachment_text.length > 150 ? row.attachment_text.substr(0, 150) + '...' : row.attachment_text;
-                                html = truncatedData;
-                            }
-                            return html;
-                        },
+                            return $('<div/>').html(data).text();
+                        }
                     },
                     {
                         data: 'information',
@@ -402,15 +472,8 @@
                         orderable: true,
                         searchable: true,
                         render: function(data, type, row) {
-                            var html;
-                            if (row.information == null) {
-                                html = '';
-                            } else {
-                                var truncatedData = row.information.length > 150 ? row.information.substr(0, 150) + '...' : row.information;
-                                html = truncatedData;
-                            }
-                            return html;
-                        },
+                            return $('<div/>').html(data).text();
+                        }
                     },
                     {
                         data: 'created',
@@ -478,7 +541,7 @@
                         var currentValue = $this.text().trim();
                         currentValue = (currentValue === "Null") ? "" : currentValue;
                         if(index === 1) {
-                            var dateVal = table.row($row).data().mail_date;
+                            var dateVal = table.row($row).data().entry_date;
                             if(dateVal === null) {
                                 dateVal = "";
                             } else {
@@ -490,6 +553,9 @@
                         //     $this.html('<input type="text" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
                         // }
                         else if(index === 3) {
+                            $this.html('<input type="text" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
+                        }
+                        else if(index === 4) {
                             $this.html('<input type="text" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
                         }
                         // else if(index === 4) {
@@ -510,7 +576,9 @@
                         //     }
                         // }
                         else if(index === 5) {
-                            $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
+                            var mail_regarding = table.row($row).data().mail_regarding;
+                            $this.html('<textarea class="summernote-editor" type="text" value="' + mail_regarding + '" style="width: 100%">' + mail_regarding + '</textarea>');
+                            $this.find('.summernote-editor').summernote({ toolbar: [] });
                         }
                         else if(index === 6) {
                             var selectValue = $this.text();
@@ -533,10 +601,14 @@
                             $this.html('<input type="number" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + number + '">');
                         } 
                         else if(index === 8) {
-                            $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
+                            var attachment_text = table.row($row).data().attachment_text;
+                            $this.html('<textarea class="summernote-editor" type="text" value="' + attachment_text + '" style="width: 100%">' + attachment_text + '</textarea>');
+                            $this.find('.summernote-editor').summernote({ toolbar: [] });
                         }
                         else if(index === 9) {
-                            $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
+                            var information = table.row($row).data().information;
+                            $this.html('<textarea class="summernote-editor" type="text" value="' + information + '" style="width: 100%">' + information + '</textarea>');
+                            $this.find('.summernote-editor').summernote({ toolbar: [] });
                         }
                     }
                 });
@@ -563,13 +635,16 @@
                             newValue = $this.find('input').val();
                         }
                         else if(index == 4) {
-                            var placemanVal = table.row($row).data().placeman;
-                            if(placemanVal === "LITNADIN"){
-                                newValue = $this.find('select').val();
-                            } else {
-                                newValue = $this.find('input').val();
-                            }
+                            newValue = $this.find('input').val();
                         }
+                        // else if(index == 4) {
+                        //     var placemanVal = table.row($row).data().placeman;
+                        //     if(placemanVal === "LITNADIN"){
+                        //         newValue = $this.find('select').val();
+                        //     } else {
+                        //         newValue = $this.find('input').val();
+                        //     }
+                        // }
                         else if(index == 5) {
                             newValue = $this.find('textarea').val();
                         }

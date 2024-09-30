@@ -24,9 +24,9 @@
       <form action="{{ route('incommingmail.store') }}" method="POST" enctype="multipart/form-data" id="formIncommingMail">
         @csrf
         <div class="card-body" style="max-height: 55vh; overflow-y: auto;">
-          <div class="card p-3" style="background-color:rgb(240, 240, 240);">
+          {{-- <div class="card p-3" style="background-color:rgb(240, 240, 240);"> --}}
             {{-- Kode Satuan Organisasi --}}
-            <div class="row row-separator">
+            {{-- <div class="row row-separator">
               <div class="col-3">
                 <label id="labelkso">Kode Satuan Organisasi</label>
                 <br>
@@ -84,13 +84,20 @@
                   </script>
                 </div>
               </div>
-            </div>
-          </div>
+            </div> --}}
+          {{-- </div> --}}
 
           <div class="row px-1">
             <div class="col-md-12">
               <table class="table table-bordered">
                 <tbody>
+                  {{-- Pengirim --}}
+                  <tr>
+                    <td><label>Pengirim</label></td>
+                    <td>
+                      <input type="text" name="senderInput" value="{{ old('sender') }}" placeholder="Masukkan Pengirim.." class="form-control">
+                    </td>
+                  </tr>
                   {{-- Pejabat / Naskah --}}
                   <tr>
                     <td><label class="text-danger">Pejabat / Naskah *</label></td>
@@ -159,7 +166,7 @@
                   <tr>
                     <td><label class="text-danger">Hal / Tentang *</label></td>
                     <td>
-                      <textarea class="form-control editor" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Hal / Tentang Surat.." value="" required></textarea>
+                      <textarea class="summernote-editor" type="text" name="mail_regarding" placeholder="Masukkan Hal / Tentang Surat.." value="" required style="width: 100%"></textarea>
                     </td>
                   </tr>
                   {{-- Tanggal --}}
@@ -311,21 +318,23 @@
                           @endforeach
                         </select>
                       </div>
-                      <textarea id="inputDiterimaVia" class="form-control" rows="2" type="text" name="received_viaInput" placeholder="Diterima Via.." value="{{ old('received_via') }}" hidden></textarea>
+                      <div id="inputDiterimaVia" hidden>
+                        <textarea class="summernote-editor" type="text" name="received_viaInput" placeholder="Diterima Via.." value="{{ old('received_via') }}" style="width: 100%"></textarea>
+                      </div>
                     </td>
                   </tr>
                   {{-- Lampiran --}}
                   <tr>
                     <td><label>Lampiran</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." value="{{ old('attachment_text') }}"></textarea>
+                      <textarea class="summernote-editor" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." value="{{ old('attachment_text') }}" style="width: 100%"></textarea>
                     </td>
                   </tr>
                   {{-- Keterangan --}}
                   <tr>
                     <td><label>Keterangan</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}"></textarea>
+                      <textarea class="summernote-editor" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}" style="width: 100%"></textarea>
                     </td>
                   </tr>
                 </tbody>
@@ -409,7 +418,7 @@
         disetujuiOleh.hidden = false;
         selectDiterimaVia.hidden = true;
         inputDiterimaVia.hidden = false;
-        jenisSuratselect.required = false;
+        // jenisSuratselect.required = false;
         resultSelect.required = true;
         approvedSelect.required = true;
       } 
@@ -432,7 +441,7 @@
         disetujuiOleh.hidden = true;
         selectDiterimaVia.hidden = false;
         inputDiterimaVia.hidden = true;
-        jenisSuratselect.required = true;
+        // jenisSuratselect.required = true;
         resultSelect.required = false;
         approvedSelect.required = false;
       } 
@@ -455,7 +464,7 @@
         disetujuiOleh.hidden = true;
         selectDiterimaVia.hidden = false;
         inputDiterimaVia.hidden = true;
-        jenisSuratselect.required = true;
+        // jenisSuratselect.required = true;
         resultSelect.required = false;
         approvedSelect.required = false;
       }

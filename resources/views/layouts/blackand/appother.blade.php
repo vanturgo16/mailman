@@ -191,5 +191,13 @@
       $(".js-example-basic-single").select2();
   });
 </script> --}}
+
+  {{-- SummerNote --}}
+  <script>
+    $(document).ready(function() {
+        $('.summernote-editor').summernote();
+    });
+  </script>
+
 </body>
 </html>
