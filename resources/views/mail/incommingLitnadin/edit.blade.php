@@ -118,6 +118,13 @@
             <div class="col-md-12">
               <table class="table table-bordered">
                 <tbody>
+                  {{-- Pengirim --}}
+                  <tr>
+                    <td><label>Pengirim</label></td>
+                    <td>
+                      <input type="text" name="senderInput" value="{{ $data->sender }}" placeholder="Masukkan Pengirim.." class="form-control">
+                    </td>
+                  </tr>
                   {{-- Pejabat / Naskah --}}
                   <tr>
                     <td><label class="text-danger">Pejabat / Naskah *</label></td>
@@ -166,7 +173,7 @@
                   <tr>
                     <td><label class="text-danger">Hal / Tentang *</label></td>
                     <td>
-                      <textarea class="form-control editor" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Hal / Tentang Surat.." value="" required>{{ $data->mail_regarding }}</textarea>
+                      <textarea class="summernote-editor" type="text" name="mail_regarding" placeholder="Masukkan Hal / Tentang Surat.." required style="width: 100%">{!! $data->mail_regarding !!}</textarea>
                     </td>
                   </tr>
                   {{-- Tanggal --}}
@@ -187,7 +194,7 @@
                   </tr>
                   {{-- Penerima / Penandatanganan --}}
                   <tr>
-                    <td><label class="text-danger" id="labelPenerima">Penandatanganan *</label></td>
+                    <td><label class="text-danger" id="labelPenerima">Penandatangan *</label></td>
                     <td>
                       <div class="row">
                         <div class="col-md-9">
@@ -310,7 +317,7 @@
                   <tr>
                     <td><label>Diterima Via</label></td>
                     <td>
-                      <textarea id="inputDiterimaVia" class="form-control" rows="2" type="text" name="received_viaInput" placeholder="Diterima Via..">{{ $data->received_via }}</textarea>
+                      <input type="text" class="form-control" name="received_viaInput" value="{{ $data->received_via }}" placeholder="Diterima Via..">
                     </td>
                   </tr>
                   {{-- Lampiran --}}
@@ -331,8 +338,7 @@
                   <tr>
                     <td><label>Keterangan</label></td>
                     <td>
-                      <input type="hidden" name="information" value="{{ $data->information }}">
-                      <textarea class="form-control" rows="3" type="text" placeholder="Masukkan Keterangan.." readonly>{{ $data->information }}</textarea>
+                      <textarea class="summernote-editor" type="text" name="information" placeholder="Masukkan Keterangan.." style="width: 100%">{!! $data->information !!}</textarea>
                     </td>
                   </tr>
                 </tbody>

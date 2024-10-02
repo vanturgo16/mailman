@@ -7,13 +7,7 @@
   <div class="container-fluid">
       <div class="row mb-2">
           <div class="col-sm-6">
-              <h1 class="m-0"><span class="mdi mdi-information"></span> Informasi Surat Masuk | 
-                @if($data->mail_number == null)
-                  <span class="badge bg-secondary">Null</span>
-                @else
-                  <b>({{ $data->mail_number }})</b>
-                @endif
-              </h1>
+              <h1 class="m-0"><span class="mdi mdi-information"></span> Informasi Surat Masuk</h1>
           </div>
           <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -161,7 +155,7 @@
             <div class="col-lg-4">
                 <div class="form-group">
                     @if($data->placeman == "PENGADUAN")
-                        <div><span class="text-bold">Penandatanganan :</span></div>
+                        <div><span class="text-bold">Penandatangan :</span></div>
                     @else
                         <div><span class="text-bold">Penerima :</span></div>
                     @endif

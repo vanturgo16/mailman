@@ -151,7 +151,7 @@
               <?php $no++; ?>
               <tr>
                 <td class="align-top text-center">{{ $no }}</td>
-                <td class="align-top text-center text-left px-1">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
+                <td class="align-top text-center text-left px-1">{{ date('d-m-Y', strtotime($item->entry_date)) }}</td>
                 <td class="align-middle text-center text-left px-1">
                   @if($item->mail_number == null)
                     -
@@ -170,7 +170,7 @@
                   @if($item->mail_regarding == null)
                     -
                   @else
-                    {{ $item->mail_regarding }}
+                    <div class="force-font-size">{!! $item->mail_regarding !!}</div>
                   @endif
                   @if($item->mail_quantity == null)
                   @else
@@ -204,7 +204,7 @@
                   @if($item->information == null)
                     -
                   @else
-                    {{ $item->information }}
+                    <div class="force-font-size">{!! $item->information !!}</div>
                   @endif
                   <br><br>Dikirim Via: 
                   @if($item->received_via == null)

@@ -207,7 +207,7 @@
                   <tr>
                     <td><label class="text-danger">Hal / Tentang *</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Hal / Tentang Surat.." value=""></textarea>
+                      <textarea class="summernote-editor" type="text" name="mail_regarding" placeholder="Masukkan Hal / Tentang Surat.." value="" required style="width: 100%"></textarea>
                     </td>
                   </tr>
                   {{-- Tanggal --}}
@@ -249,14 +249,14 @@
                   <tr>
                     <td><label>Penanda Tangan Pihak Instansi Lain</label></td>
                     <td>
-                      <textarea class="form-control" rows="2" type="text" name="signing_other" placeholder="Masukkan Pihak Instansi Lain.." value="{{ old('signing_other') }}"></textarea>
+                      <textarea class="summernote-editor" type="text" name="signing_other" placeholder="Masukkan Pihak Instansi Lain.." value="{{ old('signing_other') }}" style="width: 100%"></textarea>
                     </td>
                   </tr>
                   {{-- Penerima --}}
                   <tr>
                     <td><label class="text-danger">Penerima *</label></td>
                     <td>
-                      <textarea class="form-control" rows="2" type="text" name="receiver" placeholder="Masukkan Penerima.." value="{{ old('receiver') }}"></textarea>
+                      <textarea class="summernote-editor" type="text" name="receiver" placeholder="Masukkan Penerima.." value="{{ old('receiver') }}" style="width: 100%" required></textarea>
                     </td>
                   </tr>
                   {{-- Jumlah --}}
@@ -277,7 +277,7 @@
                             <select class="form-control js-example-basic-single" name="mail_unit" style="width: 100%;" required>
                               <option value="">- Pilih -</option>
                               @foreach($unitletters as $unitletter)
-                                <option value="{{ $unitletter->id }}">{{ $unitletter->unit_name }}</option>
+                                <option value="{{ $unitletter->id }}" {{ $unitletter->unit_name == 'Lembar' ? 'selected' : '' }}>{{ $unitletter->unit_name }}</option>
                               @endforeach
                             </select>
                           </div>
@@ -393,15 +393,14 @@
                   <tr>
                     <td><label>Lampiran</label></td>
                     <td>
-                      {{-- <input type="number" class="form-control" name="attachment_text" value="{{ old('attachment_text') }}" placeholder="Masukkan Jumlah Lampiran.."> --}}
-                      <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." value="{{ old('attachment_text') }}"></textarea>
+                      <textarea class="summernote-editor" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." value="{{ old('attachment_text') }}" style="width: 100%"></textarea>
                     </td>
                   </tr>
                   {{-- Keterangan --}}
                   <tr>
                     <td><label>Keterangan</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}"></textarea>
+                      <textarea class="summernote-editor" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}" style="width: 100%"></textarea>
                     </td>
                   </tr>
                 </tbody>

@@ -196,6 +196,9 @@
   <script>
     $(document).ready(function() {
         $('.summernote-editor').summernote();
+        $(document).on('shown.bs.modal', function (e) {
+            $(e.target).find('.summernote-editor').summernote();
+        });
     });
   </script>
 

@@ -165,7 +165,7 @@
               <?php $no++; ?>
               <tr>
                 <td class="align-top text-center">{{ $no }}</td>
-                <td class="align-top px-2">{{ date('d-m-Y', strtotime($item->mail_date)) }}</td>
+                <td class="align-top px-2">{{ date('d-m-Y', strtotime($item->out_date)) }}</td>
                 <td class="align-top px-2">
                   @if($item->mail_number == null)
                     -
@@ -177,14 +177,14 @@
                   @if($item->receiver == null)
                     -
                   @else
-                    {{ $item->receiver }}
+                    {!! $item->receiver !!}
                   @endif
                 </td>
                 <td class="align-top text-left px-2">
                   @if($item->mail_regarding == null)
                     -
                   @else
-                    {{ $item->mail_regarding }}
+                    {!! $item->mail_regarding !!}
                   @endif
                   @if($item->mail_quantity == null)
                   @else
@@ -195,7 +195,7 @@
                   @if($item->attachment_text == null)
                     -
                   @else
-                    {{ $item->attachment_text }}
+                    {!! $item->attachment_text !!}
                   @endif
                 </td>
                 <td class="align-top text-left px-2">
@@ -213,7 +213,7 @@
                   @if($item->information == null)
                     -
                   @else
-                    {{ $item->information }}
+                    {!! $item->information !!}
                   @endif
                 </td>
               </tr>

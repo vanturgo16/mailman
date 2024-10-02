@@ -158,6 +158,19 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
+                                    <label id="labeljenisNaskah">Jenis Naskah</label>
+                                    <div id="jenisNaskah">
+                                        <select class="form-control js-example-basic-single" id="mst_letter" name="letter" style="width: 100%;">
+                                            <option value="">- Pilih -</option>
+                                            @foreach($letters as $item)
+                                            <option value="{{ $item->id }}" @if($letter == $item->id) selected="selected" @endif>{{ $item->let_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
                                 <label>Jumlah Halaman</label>
                                 <select class="form-control js-example-basic-single" name="jmlHal" style="width: 100%;">
                                     <option value="">- Pilih -</option>
@@ -256,8 +269,6 @@
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "scrollY": "25vh",
-                "scroller": true,
                 "ajax": {
                     "url": '{!! route('incommingmail.indexLitnadin') !!}',
                     "type": "GET",
@@ -266,6 +277,7 @@
                         mail_date: '{{ $mail_date }}',
                         mail_number: '{{ $mail_number }}',
                         org_unit: '{{ $org_unit }}',
+                        letter: '{{ $letter }}',
                         jmlHal: '{{ $jmlHal }}',
                         status: '{{ $status }}'
                     }
@@ -281,17 +293,17 @@
                         className: 'text-center',
                     }, 
                     {
-                        data: 'mail_date',
-                        name: 'mail_date',
+                        data: 'entry_date',
+                        name: 'entry_date',
                         orderable: true,
                         searchable: true,
                         className: 'text-center',
                         render: function(data, type, row) {
                             var html
-                            if(row.mail_date == null){
+                            if(row.entry_date == null){
                                 html = '';
                             } else {
-                                const formattedDate = formatDateToDMY(row.mail_date);
+                                const formattedDate = formatDateToDMY(row.entry_date);
                                 html = formattedDate;
                             }
                             return html;
@@ -335,15 +347,8 @@
                         orderable: true,
                         searchable: true,
                         render: function(data, type, row) {
-                            var html;
-                            if (row.mail_regarding == null) {
-                                html = '';
-                            } else {
-                                var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
-                                html = truncatedData;
-                            }
-                            return html;
-                        },
+                            return $('<div/>').html(data).text();
+                        }
                     },
                     {
                         data: 'receiver',
@@ -368,14 +373,13 @@
                         searchable: true,
                         className: 'text-center',
                         render: function(data, type, row) {
-                            var html;
-                            if (row.attachment_text == null) {
-                                html = '';
-                            } else {
-                                var truncatedData = row.attachment_text.length > 150 ? row.attachment_text.substr(0, 150) + '...' : row.attachment_text;
-                                html = truncatedData;
-                            }
-                            return html;
+                        var html;
+                        if(row.attachment_text == null){
+                            html = '';
+                        } else {
+                            html = row.attachment_text;
+                        }
+                        return html;
                         },
                     },
                     {
@@ -400,15 +404,8 @@
                         orderable: true,
                         searchable: true,
                         render: function(data, type, row) {
-                            var html;
-                            if (row.information == null) {
-                                html = '';
-                            } else {
-                                var truncatedData = row.information.length > 150 ? row.information.substr(0, 150) + '...' : row.information;
-                                html = truncatedData;
-                            }
-                            return html;
-                        },
+                            return $('<div/>').html(data).text();
+                        }
                     },
                     {
                         data: 'status',
@@ -435,7 +432,7 @@
                         render: function(data, type, row) {
                             var html
                             if(row.created == null){
-                                html = '<div class="text-center"><span class="badge bg-secondary text-white">Null</span></div>';
+                                html = '';
                             } else {
                                 var date = row.created.replace('T', ' ').split('.')[0];
                                 html = date+'<br><b>'+row.created_by;
@@ -492,7 +489,7 @@
                         var currentValue = $this.text().trim();
                         currentValue = (currentValue === "Null") ? "" : currentValue;
                         if(index === 1) {
-                            var dateVal = table.row($row).data().mail_date;
+                            var dateVal = table.row($row).data().entry_date;
                             if(dateVal === null) {
                                 dateVal = "";
                             } else {
@@ -521,7 +518,9 @@
                         //     }
                         // }
                         else if(index === 4) {
-                            $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
+                            var mail_regarding = table.row($row).data().mail_regarding;
+                            $this.html('<textarea class="summernote-editor" type="text" value="' + mail_regarding + '" style="width: 100%">' + mail_regarding + '</textarea>');
+                            $this.find('.summernote-editor').summernote({ toolbar: [] });
                         }
                         else if(index === 5) {
                             var selectValue = $this.text();

@@ -150,7 +150,7 @@
                   <tr>
                     <td><label class="text-danger">Hal / Tentang *</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Hal / Tentang Surat..">{{ $data->mail_regarding }}</textarea>
+                      <textarea class="summernote-editor" type="text" name="mail_regarding" placeholder="Masukkan Hal / Tentang Surat.." required style="width: 100%">{!! $data->mail_regarding !!}</textarea>
                     </td>
                   </tr>
                   {{-- Tanggal --}}
@@ -194,14 +194,14 @@
                   <tr>
                     <td><label>Penanda Tangan Pihak Instansi Lain</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="signing_other" placeholder="Masukkan Pihak Instansi Lain..">{{ $data->signing_other }}</textarea>
+                      <textarea class="summernote-editor" type="text" name="signing_other" placeholder="Masukkan Pihak Instansi Lain.." style="width: 100%">{!! $data->signing_other !!}</textarea>
                     </td>
                   </tr>
                   {{-- Penerima --}}
                   <tr>
                     <td><label class="text-danger">Penerima *</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="receiver" placeholder="Masukkan Penerima..">{{ $data->receiver }}</textarea>
+                      <textarea class="summernote-editor" type="text" name="receiver" placeholder="Masukkan Penerima.." style="width: 100%" required>{!! $data->receiver !!}</textarea>
                     </td>
                   </tr>
                   {{-- Jumlah --}}
@@ -344,15 +344,14 @@
                   <tr>
                     <td><label>Lampiran</label></td>
                     <td>
-                      {{-- <input type="number" class="form-control" name="attachment_text" value="{{ $data->attachment_text }}" placeholder="Masukkan Jumlah Lampiran.."> --}}
-                      <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran..">{{ $data->attachment_text }}</textarea>
+                      <textarea class="summernote-editor" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." style="width: 100%">{!! $data->attachment_text !!}</textarea>
                     </td>
                   </tr>
                   {{-- Keterangan --}}
                   <tr>
                     <td><label>Keterangan</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="information" placeholder="Masukkan Keterangan..">{{ $data->information }}</textarea>
+                      <textarea class="summernote-editor" type="text" name="information" placeholder="Masukkan Keterangan.." style="width: 100%">{!! $data->information !!}</textarea>
                     </td>
                   </tr>
                 </tbody>

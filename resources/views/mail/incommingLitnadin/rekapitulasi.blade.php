@@ -212,17 +212,17 @@
                     className: 'text-center',
                 },
                 {
-                    data: 'mail_date',
-                    name: 'mail_date',
+                    data: 'entry_date',
+                    name: 'entry_date',
                     orderable: true,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
                         var html
-                        if(row.mail_date == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
+                        if(row.entry_date == null){
+                            html = '';
                         } else {
-                            const formattedDate = formatDateToDMY(row.mail_date);
+                            const formattedDate = formatDateToDMY(row.entry_date);
                             html = formattedDate;
                         }
                         return html;
@@ -237,7 +237,7 @@
                     render: function(data, type, row) {
                         var html
                         if(row.mail_number == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
+                            html = '';
                         } else {
                             html = '<span class="text-bold">'+row.mail_number+'</span>';
                         }
@@ -253,7 +253,7 @@
                     render: function(data, type, row) {
                         var html
                         if(row.sub_sator_name == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
+                            html = '';
                         } else {
                             html = row.sub_sator_name;
                         }
@@ -267,12 +267,7 @@
                     searchable: true,
                     render: function(data, type, row) {
                         var html;
-                        if (row.mail_regarding == null) {
-                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
-                        } else {
-                            var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
-                            html = truncatedData;
-                        }
+                        html = $('<div/>').html(data).text();
                         var quantity;
                         if (row.mail_quantity == null) {
                             quantity = '';
@@ -287,17 +282,9 @@
                     name: 'attachment_text',
                     orderable: true,
                     searchable: true,
-                    className: 'text-center',
                     render: function(data, type, row) {
-                        var html;
-                        if (row.attachment_text == null) {
-                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
-                        } else {
-                            var truncatedData = row.attachment_text.length > 150 ? row.attachment_text.substr(0, 150) + '...' : row.attachment_text;
-                            html = truncatedData;
-                        }
-                        return html;
-                    },
+                        return $('<div/>').html(data).text();
+                    }
                 },
                 {
                     data: 'receiver',
@@ -308,7 +295,7 @@
                     render: function(data, type, row) {
                         var html
                         if(row.receiver == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
+                            html = '';
                         } else {
                             html = row.receiver;
                         }
@@ -327,7 +314,7 @@
                         } else if(row.status == 0) {
                             html = '<div class="text-center"><span class="badge bg-warning text-white">Revisi</span></div>';
                         } else {
-                            html = '<div class="text-center"><span class="badge bg-secondary text-white">Null</span></div>';
+                            html = '';
                         }
                         return html;
                     },
@@ -339,12 +326,7 @@
                     searchable: true,
                     render: function(data, type, row) {
                         var html;
-                        if (row.information == null) {
-                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
-                        } else {
-                            var truncatedData = row.information.length > 150 ? row.information.substr(0, 150) + '...' : row.information;
-                            html = truncatedData;
-                        }
+                        html = $('<div/>').html(data).text();
                         var sendVia;
                         if (row.received_via == null) {
                             sendVia = '-';

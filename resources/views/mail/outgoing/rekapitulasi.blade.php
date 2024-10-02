@@ -238,19 +238,18 @@
                     className: 'text-center',
                 },
                 {
-                    data: 'mail_date',
-                    name: 'mail_date',
+                    data: 'out_date',
+                    name: 'out_date',
                     orderable: true,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
                         var html
-                        if(row.mail_date == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
+                        if(row.out_date == null){
+                            html = '';
                         } else {
-                            const formattedDate = formatDateToDMY(row.mail_date);
+                            const formattedDate = formatDateToDMY(row.out_date);
                             html = formattedDate;
-                            // html = row.mail_date;
                         }
                         return html;
                     },
@@ -276,16 +275,9 @@
                     name: 'receiver',
                     orderable: true,
                     searchable: true,
-                    className: 'text-center',
                     render: function(data, type, row) {
-                        var html
-                        if(row.receiver == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
-                        } else {
-                            html = row.receiver;
-                        }
-                        return html;
-                    },
+                        return $('<div/>').html(data).text();
+                    }
                 },
                 {
                     data: 'mail_regarding',
@@ -294,12 +286,7 @@
                     searchable: true,
                     render: function(data, type, row) {
                         var html;
-                        if (row.mail_regarding == null) {
-                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
-                        } else {
-                            var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
-                            html = truncatedData;
-                        }
+                        html = $('<div/>').html(data).text();
                         var quantity;
                         if (row.mail_quantity == null) {
                             quantity = '';
@@ -315,15 +302,8 @@
                     orderable: true,
                     searchable: true,
                     render: function(data, type, row) {
-                        var html;
-                        if (row.attachment_text == null) {
-                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
-                        } else {
-                            var truncatedData = row.attachment_text.length > 150 ? row.attachment_text.substr(0, 150) + '...' : row.attachment_text;
-                            html = truncatedData;
-                        }
-                        return html;
-                    },
+                        return $('<div/>').html(data).text();
+                    }
                 },
                 {
                     data: 'sub_sator_name',
@@ -333,7 +313,7 @@
                     render: function(data, type, row) {
                         var html
                         if(row.sub_sator_name == null){
-                            html = '<span class="badge bg-secondary">Null</span>';
+                            html = '';
                         } else {
                             html = row.sub_sator_name;
                         }
@@ -347,19 +327,14 @@
                     searchable: true,
                     render: function(data, type, row) {
                         var html;
-                        var result;
+                        html = $('<div/>').html(data).text();
                         var archiveRemains;
-                        if (row.information == null) {
-                            html = '<div class="text-center"><span class="badge bg-secondary">Null</span></div>';
-                        } else {
-                            var truncatedData = row.information.length > 150 ? row.information.substr(0, 150) + '...' : row.information;
-                            html = truncatedData;
-                        }
                         if(row.archive_remains == null){
                             archiveRemains = 'Tanpa Arsip';
                         } else {
                             archiveRemains = row.archive_remains;
                         }
+                        var result;
                         result = '('+archiveRemains+')<br><br>'+html;
 
                         return result;

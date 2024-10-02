@@ -27,7 +27,7 @@
             @if($data->countProgress < 3)
             <div class="form-group">
               <label class="text-danger">Keterangan*</label>
-              <input type="text" class="form-control" name="information" placeholder="Masukkan Keterangan.." required>
+              <textarea class="summernote-editor" type="text" name="information" placeholder="Masukkan Keterangan.." value="" style="width: 100%" required></textarea>
             </div>
             <div class="form-group">
               <label class="text-danger">Status*</label>
@@ -62,7 +62,7 @@
                     @php $i++; @endphp
                     <tr>
                       <td class="align-middle text-center">{{ $i }}</td>
-                      <td class="align-middle">{{ $item['information'] }}</td>
+                      <td class="align-middle">{!! $item['information'] !!}</td>
                       <td class="align-middle text-center">
                         @if($item['status'] == 1)
                           <span class="badge bg-success text-white">Selesai</span>

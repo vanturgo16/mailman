@@ -93,6 +93,13 @@
             <div class="col-md-12">
               <table class="table table-bordered">
                 <tbody>
+                  {{-- Pengirim --}}
+                  <tr>
+                    <td><label>Pengirim</label></td>
+                    <td>
+                      <input type="text" name="senderInput" value="{{ old('sender') }}" placeholder="Masukkan Pengirim.." class="form-control">
+                    </td>
+                  </tr>
                   {{-- Pejabat / Naskah --}}
                   <tr>
                     <td><label class="text-danger">Pejabat / Naskah *</label></td>
@@ -145,7 +152,7 @@
                   <tr>
                     <td><label class="text-danger">Hal / Tentang *</label></td>
                     <td>
-                      <textarea class="form-control editor" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Hal / Tentang Surat.." value="" required></textarea>
+                      <textarea class="summernote-editor" type="text" name="mail_regarding" placeholder="Masukkan Hal / Tentang Surat.." value="" required style="width: 100%"></textarea>
                     </td>
                   </tr>
                   {{-- Tanggal --}}
@@ -166,7 +173,7 @@
                   </tr>
                   {{-- Penerima / Penandatanganan --}}
                   <tr>
-                    <td><label class="text-danger" id="labelPenerima">Penandatanganan *</label></td>
+                    <td><label class="text-danger" id="labelPenerima">Penandatangan *</label></td>
                     <td>
                       <div class="row">
                         <div class="col-md-9">
@@ -201,7 +208,7 @@
                             <select class="form-control js-example-basic-single" name="mail_unit" style="width: 100%;" required>
                               <option value="">- Pilih -</option>
                               @foreach($unitletters as $unitletter)
-                                <option value="{{ $unitletter->id }}">{{ $unitletter->unit_name }}</option>
+                                <option value="{{ $unitletter->id }}" {{ $unitletter->unit_name == 'Lembar' ? 'selected' : '' }}>{{ $unitletter->unit_name }}</option>
                               @endforeach
                             </select>
                           </div>
@@ -289,7 +296,7 @@
                   <tr>
                     <td><label>Diterima Via</label></td>
                     <td>
-                      <textarea id="inputDiterimaVia" class="form-control" rows="2" type="text" name="received_viaInput" placeholder="Diterima Via.." value="{{ old('received_via') }}"></textarea>
+                      <input type="text" class="form-control" name="received_viaInput" value="{{ old('received_viaInput') }}" placeholder="Diterima Via..">
                     </td>
                   </tr>
                   {{-- Lampiran --}}
@@ -315,7 +322,7 @@
                   <tr>
                     <td><label>Keterangan</label></td>
                     <td>
-                      <textarea class="form-control" rows="3" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}"></textarea>
+                      <textarea class="summernote-editor" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}" style="width: 100%"></textarea>
                     </td>
                   </tr>
 

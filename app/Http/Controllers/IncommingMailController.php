@@ -713,6 +713,7 @@ class IncommingMailController extends Controller
         $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
         $workunits = WorkUnit::get();
         $org_unit = $request->get('org_unit');
+        $letter = $request->get('letter');
         $jmlHal = $request->get('jmlHal');
 
         $complains = Complain::get();
@@ -741,6 +742,9 @@ class IncommingMailController extends Controller
         }
         if ($org_unit != null) {
             $datas->where('org_unit', $org_unit);
+        }
+        if ($letter != null) {
+            $datas->where('incomming_mails.id_mst_letter', $letter);
         }
         if ($jmlHal != null) {
             if ($jmlHal == '1-3') {
@@ -772,7 +776,7 @@ class IncommingMailController extends Controller
         }
 
         return view('mail.incommingLitnadin.index', compact('workunits', 'complains', 'letters',
-            'entry_date', 'mail_date', 'mail_number', 'status', 'receiverMails', 'org_unit', 'jmlHal', 'jmlHals', 'sators'));
+            'entry_date', 'mail_date', 'mail_number', 'status', 'receiverMails', 'org_unit', 'jmlHal', 'letter', 'jmlHals', 'sators'));
     }
     
     public function directupdateLitnadin(Request $request, $id)
@@ -788,7 +792,7 @@ class IncommingMailController extends Controller
 
         // Check With Data Before
         $databefore = IncommingMail::where('id', $id)->first();
-        $databefore->mail_date = $dateVal;
+        $databefore->entry_date = $dateVal;
         $databefore->mail_number = $request[2];
         // $databefore->sender = $request[3];
         $databefore->mail_regarding = $request[4];
@@ -806,7 +810,7 @@ class IncommingMailController extends Controller
                 
                 // Update Incomming Mail
                 IncommingMail::where('id', $id)->update([
-                    'mail_date' => $request[1],
+                    'entry_date' => $request[1],
                     'mail_number' => $request[2],
                     // 'sender' => $request[3],
                     'mail_regarding' => $request[4],
@@ -1023,7 +1027,7 @@ class IncommingMailController extends Controller
                 'id_mst_complain' => $request->id_mst_complain,
                 'org_unit' => $request->org_unit,
                 'sub_org_unit' => $request->sub_org_unit,
-                // 'sender' => $sender,
+                'sender' => $request->senderInput,
                 'mail_number' => $request->mail_number,
                 'mail_regarding' => $request->mail_regarding,
                 'entry_date' => $request->entry_date,
@@ -1122,7 +1126,7 @@ class IncommingMailController extends Controller
                     'org_unit' => $request->org_unit,
                     'sub_org_unit' => $request->sub_org_unit,
                     'id_mst_complain' => $request->id_mst_complain,
-                    // 'sender' => $sender,
+                    'sender' => $request->senderInput,
                     'mail_number' => $request->mail_number,
                     'mail_regarding' => $request->mail_regarding,
                     'entry_date' => $request->entry_date,
@@ -1252,7 +1256,7 @@ class IncommingMailController extends Controller
         $databefore->result = $result;
         $databefore->approved_by = $approved_by;
 
-        // $databefore->sender = $sender;
+        $databefore->sender = $request->senderInput;
         $databefore->org_unit = $request->org_unit;
         $databefore->sub_org_unit = $request->sub_org_unit;
         $databefore->mail_number = $request->mail_number;
@@ -1282,7 +1286,7 @@ class IncommingMailController extends Controller
                 IncommingMail::where('id', $id)->update([
                     'id_mst_letter' => $request->id_mst_letter,
                     'id_mst_complain' => $request->id_mst_complain,
-                    // 'sender' => $sender,
+                    'sender' => $request->senderInput,
                     'org_unit' => $request->org_unit,
                     'sub_org_unit' => $request->sub_org_unit,
                     'mail_number' => $request->mail_number,

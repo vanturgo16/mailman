@@ -252,8 +252,6 @@
                 "processing": true,
                 "serverSide": true,
                 "scrollX": true,
-                "scrollY": "25vh",
-                "scroller": true,
                 "ajax": {
                     "url": '{!! route('outgoingmail.index') !!}',
                     "type": "GET",
@@ -278,17 +276,17 @@
                         className: 'text-center',
                     },
                     {
-                        data: 'mail_date',
-                        name: 'mail_date',
+                        data: 'out_date',
+                        name: 'out_date',
                         orderable: true,
                         searchable: true,
                         className: 'text-center',
                         render: function(data, type, row) {
                         var html;
-                        if(row.mail_date == null){
+                        if(row.out_date == null){
                             html = '';
                         } else {
-                            const formattedDate = formatDateToDMY(row.mail_date);
+                            const formattedDate = formatDateToDMY(row.out_date);
                             html = formattedDate;
                         }
                         return html;
@@ -315,16 +313,9 @@
                         name: 'receiver',
                         orderable: true,
                         searchable: true,
-                        className: 'text-center',
                         render: function(data, type, row) {
-                        var html;
-                        if(row.receiver == null){
-                            html = '';
-                        } else {
-                            html = row.receiver;
+                            return $('<div/>').html(data).text();
                         }
-                        return html;
-                        },
                     },
                     {
                         data: 'mail_regarding',
@@ -332,15 +323,8 @@
                         orderable: true,
                         searchable: true,
                         render: function(data, type, row) {
-                        var html;
-                        if (row.mail_regarding == null) {
-                            html = '';
-                        } else {
-                            var truncatedData = row.mail_regarding.length > 150 ? row.mail_regarding.substr(0, 150) + '...' : row.mail_regarding;
-                            html = truncatedData;
+                            return $('<div/>').html(data).text();
                         }
-                        return html;
-                        },
                     },
                     {
                         data: 'sub_sator_name',
@@ -378,17 +362,9 @@
                         name: 'attachment_text',
                         orderable: true,
                         searchable: true,
-                        className: 'text-center',
                         render: function(data, type, row) {
-                        var html;
-                        if (row.attachment_text == null) {
-                            html = '';
-                        } else {
-                            var truncatedData = row.attachment_text.length > 150 ? row.attachment_text.substr(0, 150) + '...' : row.attachment_text;
-                            html = truncatedData;
+                            return $('<div/>').html(data).text();
                         }
-                        return html;
-                        },
                     },
                     {
                         data: 'information',
@@ -396,15 +372,8 @@
                         orderable: true,
                         searchable: true,
                         render: function(data, type, row) {
-                        var html;
-                        if (row.information == null) {
-                            html = '';
-                        } else {
-                            var truncatedData = row.information.length > 150 ? row.information.substr(0, 150) + '...' : row.information;
-                            html = truncatedData;
+                            return $('<div/>').html(data).text();
                         }
-                        return html;
-                        },
                     },
                     {
                         data: 'created',
@@ -468,10 +437,14 @@
                         //     $this.html('<input type="text" name="mail_number" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
                         // }
                         if(index === 3) {
-                            $this.html('<input type="text" name="receiver" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + currentValue + '">');
+                            var receiver = table.row($row).data().receiver;
+                            $this.html('<textarea class="summernote-editor" type="text" value="' + receiver + '" style="width: 100%">' + receiver + '</textarea>');
+                            $this.find('.summernote-editor').summernote({ toolbar: [] });
                         }
                         else if(index === 4) {
-                            $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" name="mail_regarding" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
+                            var mail_regarding = table.row($row).data().mail_regarding;
+                            $this.html('<textarea class="summernote-editor" type="text" value="' + mail_regarding + '" style="width: 100%">' + mail_regarding + '</textarea>');
+                            $this.find('.summernote-editor').summernote({ toolbar: [] });
                         }
                         // else if(index === 5) {
                         //     var selectValue = $this.text();
@@ -494,10 +467,14 @@
                             $this.html('<input type="number" placeholder="Masukkan Perubahan.."  class="form-control form-control-sm" value="' + number + '">');
                         }
                         else if(index === 7) {
-                            $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" name="attachment_text" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
+                            var attachment_text = table.row($row).data().attachment_text;
+                            $this.html('<textarea class="summernote-editor" type="text" value="' + attachment_text + '" style="width: 100%">' + attachment_text + '</textarea>');
+                            $this.find('.summernote-editor').summernote({ toolbar: [] });
                         }
                         else if(index === 8) {
-                            $this.html('<textarea class="form-control form-control-sm" rows="3" type="text" name="information" placeholder="Masukkan Perubahan.." value="' + currentValue + '">' + currentValue + '</textarea>');
+                            var information = table.row($row).data().information;
+                            $this.html('<textarea class="summernote-editor" type="text" value="' + information + '" style="width: 100%">' + information + '</textarea>');
+                            $this.find('.summernote-editor').summernote({ toolbar: [] });
                         }
                     }
                 });
@@ -515,7 +492,7 @@
                         var $this = $(this);
                         var newValue;
                         if(index == 3) {
-                            newValue = $this.find('input').val();
+                            newValue = $this.find('textarea').val();
                         }
                         else if(index == 4) {
                             newValue = $this.find('textarea').val();

@@ -136,7 +136,7 @@
                         @if($data->mail_regarding == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
-                            {{ $data->mail_regarding }}
+                            {!! $data->mail_regarding !!}
                         @endif
                     </div>
                 </div>
@@ -184,7 +184,7 @@
                         @if($data->signing_other == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
-                            {{ $data->signing_other }}
+                            {!! $data->signing_other !!}
                         @endif
                     </div>
                 </div>
@@ -196,7 +196,7 @@
                         @if($data->receiver == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
-                            {{ $data->receiver }}
+                            {!! $data->receiver !!}
                         @endif
                     </div>
                 </div>
@@ -323,21 +323,14 @@
             </div> --}}
             <div class="col-lg-4">
                 <div class="form-group">
-                    <div><span class="text-bold">Jumlah Lampiran :</span></div>
-                    <span>
+                    <div><span class="text-bold">Lampiran :</span></div>
+                    <div class="card p-2 mt-1" style="background-color:rgb(253, 253, 253);">
                         @if($data->attachment_text == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
-                            {{ $data->attachment_text }}
+                            {!! $data->attachment_text !!}
                         @endif
-                    </span>
-                    {{-- <div class="card p-2 mt-1" style="background-color:rgb(253, 253, 253);">
-                        @if($data->attachment_text == null)
-                            <span class="badge bg-secondary">Tidak Diisi..</span>
-                        @else
-                            {{ $data->attachment_text }}
-                        @endif
-                    </div> --}}
+                    </div>
                 </div>
             </div>
             <div class="col-lg-12">
@@ -347,7 +340,7 @@
                         @if($data->information == null)
                             <span class="badge bg-secondary">Tidak Diisi..</span>
                         @else
-                            {{ $data->information }}
+                            {!! $data->information !!}
                         @endif
                     </div>
                 </div>
