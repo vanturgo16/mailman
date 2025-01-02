@@ -78,11 +78,11 @@
                             <td>{{ ++$no }}</td>
                             <td>{{ \Carbon\Carbon::parse($sk_keluar->mail_date)->format('Y-m-d') }}</td>
                             <td>{{ $sk_keluar->mail_number }}</td>
-                            <td>{{ $sk_keluar->receiver }}</td>
-                            <td>{{ $sk_keluar->mail_regarding }}</td>
-                            <td>{{ $sk_keluar->attachment_text }}</td>
+                            <td>{!! $sk_keluar->receiver !!}</td>
+                            <td>{!! $sk_keluar->mail_regarding !!}</td>
+                            <td>{!! $sk_keluar->attachment_text !!}</td>
                             <td>{{ $sk_keluar->drafter_name }}</td>
-                            <td>{{ $sk_keluar->information }}</td>
+                            <td>{!! $sk_keluar->information !!}</td>
                             <td>{{ $sk_keluar->created_at }}<br><b>{{ $sk_keluar->updated_by }}</b></td>
                         </tr>
                         @endforeach
@@ -130,10 +130,10 @@
                             <td class="align-middle text-center">{{ $sk_masuk->agenda_number }}</td>
                             <td class="align-middle text-center">{{ $sk_masuk->mail_number }}</td>
                             <td class="align-middle text-center">{{ $sk_masuk->sender }}</td>
-                            <td class="align-middle text-center">{{ $sk_masuk->mail_regarding }}</td>
+                            <td class="align-middle text-center">{!! $sk_masuk->mail_regarding !!}</td>
                             <td class="align-middle text-center">{{ $sk_masuk->attachment_text }}</td>
-                            <td class="align-middle text-center">{{ $sk_masuk->receiver_name }}</td>
-                            <td class="align-middle text-center">{{ $sk_masuk->information }}</td>
+                            <td class="align-middle text-center">{!! $sk_masuk->receiver !!}</td>
+                            <td class="align-middle text-center">{!! $sk_masuk->information !!}</td>
                             <td class="align-middle text-center">{{ $sk_masuk->created_at }}<br><b>{{ $sk_masuk->updated_by }}</b></td>
                         </tr>
                         @endforeach
