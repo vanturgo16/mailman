@@ -25,10 +25,10 @@ class IncommingMailController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth'); 
+        $this->middleware('auth');
         $this->middleware(['permission:surat_masuk']);
-    } 
-    
+    }
+
     public function index(Request $request)
     {
         // Initiate Variable Filter
@@ -45,7 +45,7 @@ class IncommingMailController extends Controller
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
         $complains = Complain::get();
         $letters = Letter::get();
-        $sators = Sator::orderBy('sator_name','asc')->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->get();
 
         $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'incomming_mails.created_at as created', 'master_unit_letter.unit_name', 'master_sub_sator.sub_sator_name')
             ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
@@ -72,29 +72,42 @@ class IncommingMailController extends Controller
         if ($letter != null) {
             $datas->where('incomming_mails.id_mst_letter', $letter);
         }
-    
+
         // Get Query
         $datas = $datas->get();
         // dd($datas);
 
         if ($request->ajax()) {
             $data = DataTables::of($datas)
-            ->addColumn('action', function ($data) {
-                return view('mail.incomming.action', compact('data'));
-            })
-            ->toJson();
+                ->addColumn('action', function ($data) {
+                    return view('mail.incomming.action', compact('data'));
+                })
+                ->toJson();
             return $data;
         }
 
-        return view('mail.incomming.index', compact('workunits', 'placemans', 'complains', 'letters',
-            'entry_date', 'mail_date', 'mail_number', 'placeman', 'receiverMails', 'org_unit', 'sators', 'complain', 'letter'));
+        return view('mail.incomming.index', compact(
+            'workunits',
+            'placemans',
+            'complains',
+            'letters',
+            'entry_date',
+            'mail_date',
+            'mail_number',
+            'placeman',
+            'receiverMails',
+            'org_unit',
+            'sators',
+            'complain',
+            'letter'
+        ));
     }
-    
+
     public function directupdate(Request $request, $id)
     {
         $id = $id;
 
-        if($request[1] != null){
+        if ($request[1] != null) {
             $date = new DateTime($request[1]);
             $dateVal = $date->format('Y-m-d H:i:s');
         } else {
@@ -113,10 +126,10 @@ class IncommingMailController extends Controller
         $databefore->attachment_text = $request[8];
         $databefore->information = $request[9];
 
-        if($databefore->isDirty()){
+        if ($databefore->isDirty()) {
             DB::beginTransaction();
             try {
-                
+
                 // Update Incomming Mail
                 IncommingMail::where('id', $id)->update([
                     'entry_date' => $request[1],
@@ -130,15 +143,14 @@ class IncommingMailController extends Controller
                     'information' => $request[9],
                     'updated_by' => auth()->user()->name,
                 ]);
-    
+
                 DB::commit();
                 return response()->json(['success' => true]);
             } catch (Throwable $th) {
                 DB::rollback();
                 return response()->json(['success' => false]);
             }
-        }
-        else {
+        } else {
             return response()->json(['success' => "Same"]);
         }
     }
@@ -156,14 +168,13 @@ class IncommingMailController extends Controller
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
         $complains = Complain::get();
         $letters = Letter::get();
-        
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman) || isset($letter)) 
-        {
+
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman) || isset($letter)) {
             $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'master_unit_letter.unit_name', 'master_sub_sator.sub_sator_name')
-            ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
-            ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
-            ->orderBy('created_at', 'desc');
-            
+                ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
+                ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
+                ->orderBy('agenda_number', 'desc');
+
             // Filter
             if ($startdate != null) {
                 $startdatesearch = (new DateTime($startdate))->format('Y-m-d H:i:s');
@@ -194,10 +205,9 @@ class IncommingMailController extends Controller
             if ($letter != null) {
                 $datas->where('incomming_mails.id_mst_letter', $letter);
             }
-        
+
             // Get Query
             $datas = $datas->get();
-
         } else {
             $datas = [];
         }
@@ -207,8 +217,18 @@ class IncommingMailController extends Controller
             return $data;
         }
 
-        return view('mail.incomming.rekapitulasi', compact('placemans', 'complains', 'letters',
-            'datas', 'startdate', 'enddate', 'mail_number', 'placeman', 'complain', 'letter'));
+        return view('mail.incomming.rekapitulasi', compact(
+            'placemans',
+            'complains',
+            'letters',
+            'datas',
+            'startdate',
+            'enddate',
+            'mail_number',
+            'placeman',
+            'complain',
+            'letter'
+        ));
     }
 
     public function rekapitulasiPrint(Request $request)
@@ -220,13 +240,12 @@ class IncommingMailController extends Controller
         $placeman = $request->get('placeman');
         $complain = $request->get('complain');
         $letter = $request->get('letter');
-        
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman) || isset($letter)) 
-        {
+
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($placeman) || isset($letter)) {
             $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'master_unit_letter.unit_name', 'master_sub_sator.sub_sator_name')
-            ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
-            ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
-            ->orderBy('created_at', 'desc');
+                ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
+                ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
+                ->orderBy('agenda_number', 'desc');
 
             // Filter
             if ($startdate != null) {
@@ -258,16 +277,15 @@ class IncommingMailController extends Controller
             if ($letter != null) {
                 $datas->where('incomming_mails.id_mst_letter', $letter);
             }
-        
+
             // Get Query
             $datas = $datas->get();
-
         } else {
             $datas = [];
         }
 
-        $now=Carbon::now()->format('YmdHis');
-        
+        $now = Carbon::now()->format('YmdHis');
+
         $pdf = PDF::loadView('pdf.rekapitulasi-suratmasuk', [
             'startdate' => $startdate,
             'enddate' => $enddate,
@@ -277,7 +295,6 @@ class IncommingMailController extends Controller
         ])->setPaper('a4', 'portrait');
 
         return $pdf->stream('Print Rekapitulasi Surat Masuk.pdf', array("Attachment" => false));
-
     }
 
     public function create(Request $request)
@@ -295,41 +312,54 @@ class IncommingMailController extends Controller
         $mailtypes = Dropdown::where('category', 'Jenis Surat')->get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
 
-        $sators = Sator::orderBy('sator_name','asc')->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->get();
 
-        return view('mail.incomming.create', compact('placemans', 'complains', 'letters',
-            'workunits', 'receiverMails', 'unitletters', 'classifications', 'results',
-            'approveds', 'mailtypes', 'receivedvias', 'sators'));
+        return view('mail.incomming.create', compact(
+            'placemans',
+            'complains',
+            'letters',
+            'workunits',
+            'receiverMails',
+            'unitletters',
+            'classifications',
+            'results',
+            'approveds',
+            'mailtypes',
+            'receivedvias',
+            'sators'
+        ));
     }
 
     public function store(Request $request)
     {
         // dd($request->all());
-        $request->validate([
-            "placeman" => "required",
-            "mail_regarding" => "required",
-            "entry_date" => "required",
-            "receiver" => "required",
-            "mail_quantity" => "required",
-            "mail_unit" => "required",
-            "id_mst_complain" => "required_if:placeman,PENGADUAN",
-            "id_mst_letter" => "required_unless:placeman,PENGADUAN",
-        ], 
-        [
-            'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
-            'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
-            'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
-            'receiver.required' => 'Penerima Wajib Untuk Diisi.',
-            'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
-            'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
-            'id_mst_complain.required' => 'Jenis Pengaduan Wajib Untuk Diisi.',
-            'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
-        ]);
+        $request->validate(
+            [
+                "placeman" => "required",
+                "mail_regarding" => "required",
+                "entry_date" => "required",
+                "receiver" => "required",
+                "mail_quantity" => "required",
+                "mail_unit" => "required",
+                "id_mst_complain" => "required_if:placeman,PENGADUAN",
+                "id_mst_letter" => "required_unless:placeman,PENGADUAN",
+            ],
+            [
+                'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
+                'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
+                'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
+                'receiver.required' => 'Penerima Wajib Untuk Diisi.',
+                'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
+                'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
+                'id_mst_complain.required' => 'Jenis Pengaduan Wajib Untuk Diisi.',
+                'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
+            ]
+        );
 
         DB::beginTransaction();
         try {
             // Store Outgoing Mail
-            if($request->placeman == "LITNADIN"){
+            if ($request->placeman == "LITNADIN") {
                 // $sender = $request->senderSelect;
                 $mail_type = null;
                 $result = $request->result;
@@ -342,7 +372,7 @@ class IncommingMailController extends Controller
                 $approved_by = null;
                 $received_via = $request->received_viaSelect;
             }
-            
+
             $store = IncommingMail::create([
                 'placeman' => $request->placeman,
                 'id_mst_letter' => $request->id_mst_letter,
@@ -372,7 +402,7 @@ class IncommingMailController extends Controller
             ]);
 
             // Register Que
-            if($request->placeman == "PENGADUAN"){
+            if ($request->placeman == "PENGADUAN") {
                 $id_mst_letter = 0;
             } else {
                 $id_mst_letter = $request->id_mst_letter;
@@ -405,42 +435,55 @@ class IncommingMailController extends Controller
         $mailtypes = Dropdown::where('category', 'Jenis Surat')->get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
 
-        $sators = Sator::orderBy('sator_name','asc')->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->get();
 
-        return view('mail.incomming.createbulk', compact('placemans', 'complains', 'letters',
-            'workunits', 'receiverMails', 'unitletters', 'classifications', 'results',
-            'approveds', 'mailtypes', 'receivedvias', 'sators'));
+        return view('mail.incomming.createbulk', compact(
+            'placemans',
+            'complains',
+            'letters',
+            'workunits',
+            'receiverMails',
+            'unitletters',
+            'classifications',
+            'results',
+            'approveds',
+            'mailtypes',
+            'receivedvias',
+            'sators'
+        ));
     }
 
     public function storebulk(Request $request)
     {
         // dd($request->all());
-        $request->validate([
-            "placeman" => "required",
-            "mail_regarding" => "required",
-            "entry_date" => "required",
-            "receiver" => "required",
-            "mail_quantity" => "required",
-            "mail_unit" => "required",
-            "id_mst_complain" => "required_if:placeman,PENGADUAN",
-            "id_mst_letter" => "required_unless:placeman,PENGADUAN",
-        ], 
-        [
-            'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
-            'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
-            'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
-            'receiver.required' => 'Penerima Wajib Untuk Diisi.',
-            'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
-            'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
-            'id_mst_complain.required' => 'Jenis Pengaduan Wajib Untuk Diisi.',
-            'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
-        ]);
+        $request->validate(
+            [
+                "placeman" => "required",
+                "mail_regarding" => "required",
+                "entry_date" => "required",
+                "receiver" => "required",
+                "mail_quantity" => "required",
+                "mail_unit" => "required",
+                "id_mst_complain" => "required_if:placeman,PENGADUAN",
+                "id_mst_letter" => "required_unless:placeman,PENGADUAN",
+            ],
+            [
+                'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
+                'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
+                'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
+                'receiver.required' => 'Penerima Wajib Untuk Diisi.',
+                'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
+                'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
+                'id_mst_complain.required' => 'Jenis Pengaduan Wajib Untuk Diisi.',
+                'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
+            ]
+        );
 
         $amountLetter = $request->amount_letter;
-        
+
         DB::beginTransaction();
         try {
-            if($request->placeman == "LITNADIN"){
+            if ($request->placeman == "LITNADIN") {
                 // $sender = $request->senderSelect;
                 $mail_type = null;
                 $result = $request->result;
@@ -455,7 +498,7 @@ class IncommingMailController extends Controller
             }
 
             for ($i = 0; $i < $amountLetter; $i++) {
-                
+
                 $store = IncommingMail::create([
                     'placeman' => $request->placeman,
                     'id_mst_letter' => $request->id_mst_letter,
@@ -485,7 +528,7 @@ class IncommingMailController extends Controller
                 ]);
 
                 // Register Que
-                if($request->placeman == "PENGADUAN"){
+                if ($request->placeman == "PENGADUAN") {
                     $id_mst_letter = 0;
                 } else {
                     $id_mst_letter = $request->id_mst_letter;
@@ -497,20 +540,27 @@ class IncommingMailController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('incommingmail.index')->with(['success' => 'Sukses Tambah Data (Bulk) Dengan Jumlah : '.$amountLetter.'']);
+            return redirect()->route('incommingmail.index')->with(['success' => 'Sukses Tambah Data (Bulk) Dengan Jumlah : ' . $amountLetter . '']);
         } catch (Throwable $th) {
             DB::rollback();
             return redirect()->back()->with(['fail' => 'Gagal Tambah Data (Bulk)!']);
         }
     }
-    
+
     public function detail($id)
     {
         $id = decrypt($id);
         // dd($id);
 
-        $data = IncommingMail::select('incomming_mails.*', 'master_letter.let_name', 'master_complain.com_name', 'receiv.work_name as receiver_name',
-            'master_unit_letter.unit_name', 'master_classification.classification_name', 'org.sator_name', 'suborg.sub_sator_name'
+        $data = IncommingMail::select(
+            'incomming_mails.*',
+            'master_letter.let_name',
+            'master_complain.com_name',
+            'receiv.work_name as receiver_name',
+            'master_unit_letter.unit_name',
+            'master_classification.classification_name',
+            'org.sator_name',
+            'suborg.sub_sator_name'
         )
             ->leftjoin('master_letter', 'master_letter.id', 'incomming_mails.id_mst_letter')
             ->leftjoin('master_complain', 'master_complain.id', 'incomming_mails.id_mst_complain')
@@ -524,7 +574,7 @@ class IncommingMailController extends Controller
 
         return view('mail.incomming.info', compact('data'));
     }
-    
+
     public function edit(Request $request, $id)
     {
         $id = decrypt($id);
@@ -541,10 +591,15 @@ class IncommingMailController extends Controller
         $approveds = Dropdown::where('category', 'Disetujui Oleh')->get();
         $mailtypes = Dropdown::where('category', 'Jenis Surat')->get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
-        $sators = Sator::orderBy('sator_name','asc')->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->get();
 
-        $data = IncommingMail::select('incomming_mails.*', 'master_letter.let_name', 'master_complain.com_name', 'receiv.work_name as receiver_name',
-            'master_unit_letter.unit_name', 'master_classification.classification_name'
+        $data = IncommingMail::select(
+            'incomming_mails.*',
+            'master_letter.let_name',
+            'master_complain.com_name',
+            'receiv.work_name as receiver_name',
+            'master_unit_letter.unit_name',
+            'master_classification.classification_name'
         )
             ->leftjoin('master_letter', 'master_letter.id', 'incomming_mails.id_mst_letter')
             ->leftjoin('master_complain', 'master_complain.id', 'incomming_mails.id_mst_complain')
@@ -554,39 +609,53 @@ class IncommingMailController extends Controller
             ->where('incomming_mails.id', $id)
             ->first();
 
-        return view('mail.incomming.edit', compact('placemans', 'complains', 'letters',
-            'receiverMails', 'workunits', 'unitletters', 'classifications',
-            'results', 'approveds', 'mailtypes', 'receivedvias', 'sators', 'data'));
+        return view('mail.incomming.edit', compact(
+            'placemans',
+            'complains',
+            'letters',
+            'receiverMails',
+            'workunits',
+            'unitletters',
+            'classifications',
+            'results',
+            'approveds',
+            'mailtypes',
+            'receivedvias',
+            'sators',
+            'data'
+        ));
     }
-    
+
     public function update(Request $request, $id)
     {
         $id = decrypt($id);
         //dd($id);
 
-        $request->validate([
-            "placeman" => "required",
-            "mail_regarding" => "required",
-            "entry_date" => "required",
-            "receiver" => "required",
-            "mail_quantity" => "required",
-            "mail_unit" => "required",
-            "id_mst_complain" => "required_if:placeman,PENGADUAN",
-            "id_mst_letter" => "required_unless:placeman,PENGADUAN",
-        ], 
-        [
-            'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
-            'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
-            'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
-            'receiver.required' => 'Penerima Wajib Untuk Diisi.',
-            'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
-            'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
-            'id_mst_complain.required' => 'Jenis Pengaduan Wajib Untuk Diisi.',
-            'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
-        ]);
+        $request->validate(
+            [
+                "placeman" => "required",
+                "mail_regarding" => "required",
+                "entry_date" => "required",
+                "receiver" => "required",
+                "mail_quantity" => "required",
+                "mail_unit" => "required",
+                "id_mst_complain" => "required_if:placeman,PENGADUAN",
+                "id_mst_letter" => "required_unless:placeman,PENGADUAN",
+            ],
+            [
+                'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
+                'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
+                'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
+                'receiver.required' => 'Penerima Wajib Untuk Diisi.',
+                'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
+                'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
+                'id_mst_complain.required' => 'Jenis Pengaduan Wajib Untuk Diisi.',
+                'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
+            ]
+        );
 
         $entry_date = (new DateTime($request->entry_date))->format('Y-m-d H:i:s');
-        if($request->mail_date != null)
+        if ($request->mail_date != null)
             $mail_date = (new DateTime($request->mail_date))->format('Y-m-d H:i:s');
         else {
             $mail_date = null;
@@ -594,7 +663,7 @@ class IncommingMailController extends Controller
         // $mail_retention_from = (new DateTime($request->mail_retention_from))->format('Y-m-d H:i:s');
         // $mail_retention_to = (new DateTime($request->mail_retention_to))->format('Y-m-d H:i:s');
 
-        if($request->placeman == "LITNADIN"){
+        if ($request->placeman == "LITNADIN") {
             // $sender = $request->senderSelect;
             $mail_type = null;
             $result = $request->result;
@@ -611,10 +680,10 @@ class IncommingMailController extends Controller
         // Check With Data Before
         $databefore = IncommingMail::where('id', $id)->first();
 
-        if($databefore->placeman == 'LITNADIN') {
+        if ($databefore->placeman == 'LITNADIN') {
             $databefore->result = $result;
             $databefore->approved_by = $approved_by;
-        } elseif($databefore->placeman == 'PENGADUAN') {
+        } elseif ($databefore->placeman == 'PENGADUAN') {
             $databefore->id_mst_complain = $request->id_mst_complain;
             $databefore->mail_type = $mail_type;
         } else {
@@ -640,7 +709,7 @@ class IncommingMailController extends Controller
         $databefore->attachment_text = $request->attachment_text;
         $databefore->information = $request->information;
 
-        if($databefore->isDirty()){
+        if ($databefore->isDirty()) {
             DB::beginTransaction();
             try {
                 IncommingMail::where('id', $id)->update([
@@ -676,8 +745,7 @@ class IncommingMailController extends Controller
                 DB::rollback();
                 return redirect()->back()->with(['fail' => 'Gagal Ubah Data!']);
             }
-        }
-        else {
+        } else {
             return redirect()->route('incommingmail.index')->with(['info' => 'Tidak ada perubahan, data sama dengan yang sebelumnya']);
         }
     }
@@ -719,7 +787,7 @@ class IncommingMailController extends Controller
         $complains = Complain::get();
         $letters = Letter::get();
         $jmlHals = Dropdown::where('category', 'Jumlah Halaman')->get();
-        $sators = Sator::orderBy('sator_name','asc')->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->get();
 
         $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'incomming_mails.created_at as created', 'master_unit_letter.unit_name', 'master_sub_sator.sub_sator_name')
             ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
@@ -755,10 +823,10 @@ class IncommingMailController extends Controller
                 $datas->where('incomming_mails.jml_hal', '>', 20);
             }
         }
-    
+
         // Get Query
         $datas = $datas->get();
-        foreach($datas as $item){
+        foreach ($datas as $item) {
             $countProgress = ProgressIncommingMail::where('id_incomming_mails', $item->id)->count();
             $progressStatus = ProgressIncommingMail::where('id_incomming_mails', $item->id)->get()->toArray();
             $item->progressStatus = $progressStatus;
@@ -768,22 +836,35 @@ class IncommingMailController extends Controller
 
         if ($request->ajax()) {
             $data = DataTables::of($datas)
-            ->addColumn('action', function ($data) {
-                return view('mail.incommingLitnadin.action', compact('data'));
-            })
-            ->toJson();
+                ->addColumn('action', function ($data) {
+                    return view('mail.incommingLitnadin.action', compact('data'));
+                })
+                ->toJson();
             return $data;
         }
 
-        return view('mail.incommingLitnadin.index', compact('workunits', 'complains', 'letters',
-            'entry_date', 'mail_date', 'mail_number', 'status', 'receiverMails', 'org_unit', 'jmlHal', 'letter', 'jmlHals', 'sators'));
+        return view('mail.incommingLitnadin.index', compact(
+            'workunits',
+            'complains',
+            'letters',
+            'entry_date',
+            'mail_date',
+            'mail_number',
+            'status',
+            'receiverMails',
+            'org_unit',
+            'jmlHal',
+            'letter',
+            'jmlHals',
+            'sators'
+        ));
     }
-    
+
     public function directupdateLitnadin(Request $request, $id)
     {
         $id = $id;
 
-        if($request[1] != null){
+        if ($request[1] != null) {
             $date = new DateTime($request[1]);
             $dateVal = $date->format('Y-m-d H:i:s');
         } else {
@@ -799,15 +880,15 @@ class IncommingMailController extends Controller
         $databefore->receiver = $request[5];
         $databefore->attachment_text = $request[6];
 
-        if($databefore->isDirty()){
+        if ($databefore->isDirty()) {
             DB::beginTransaction();
             try {
-                if($request[6] != null){
+                if ($request[6] != null) {
                     $jmlHal = $databefore->mail_quantity + $request[6];
                 } else {
                     $jmlHal = $databefore->mail_quantity;
                 }
-                
+
                 // Update Incomming Mail
                 IncommingMail::where('id', $id)->update([
                     'entry_date' => $request[1],
@@ -819,15 +900,14 @@ class IncommingMailController extends Controller
                     'jml_hal' => $jmlHal,
                     'updated_by' => auth()->user()->name,
                 ]);
-    
+
                 DB::commit();
                 return response()->json(['success' => true]);
             } catch (Throwable $th) {
                 DB::rollback();
                 return response()->json(['success' => false]);
             }
-        }
-        else {
+        } else {
             return response()->json(['success' => "Same"]);
         }
     }
@@ -840,16 +920,15 @@ class IncommingMailController extends Controller
         $mail_number = $request->get('mail_number');
         $status = $request->get('status');
         $letter = $request->get('letter');
-        
+
         $letters = Letter::get();
-        
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($status) || isset($letter)) 
-        {
+
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($status) || isset($letter)) {
             $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'master_unit_letter.unit_name', 'master_sub_sator.sub_sator_name')
-            ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
-            ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
-            ->where('placeman', 'LITNADIN')
-            ->orderBy('created_at', 'desc');
+                ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
+                ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
+                ->where('placeman', 'LITNADIN')
+                ->orderBy('created_at', 'desc');
 
             // Filter
             if ($startdate != null) {
@@ -881,10 +960,9 @@ class IncommingMailController extends Controller
             if ($letter != null) {
                 $datas->where('incomming_mails.id_mst_letter', $letter);
             }
-        
+
             // Get Query
             $datas = $datas->get();
-
         } else {
             $datas = [];
         }
@@ -894,8 +972,15 @@ class IncommingMailController extends Controller
             return $data;
         }
 
-        return view('mail.incommingLitnadin.rekapitulasi', compact('letters',
-            'datas', 'startdate', 'enddate', 'mail_number', 'status', 'letter'));
+        return view('mail.incommingLitnadin.rekapitulasi', compact(
+            'letters',
+            'datas',
+            'startdate',
+            'enddate',
+            'mail_number',
+            'status',
+            'letter'
+        ));
     }
 
     public function rekapitulasiPrintLitnadin(Request $request)
@@ -906,14 +991,13 @@ class IncommingMailController extends Controller
         $mail_number = $request->get('mail_number');
         $status = $request->get('status');
         $letter = $request->get('letter');
-        
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($status) || isset($letter)) 
-        {
+
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($status) || isset($letter)) {
             $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'master_unit_letter.unit_name', 'master_sub_sator.sub_sator_name')
-            ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
-            ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
-            ->where('placeman', 'LITNADIN')
-            ->orderBy('created_at', 'desc');
+                ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
+                ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
+                ->where('placeman', 'LITNADIN')
+                ->orderBy('created_at', 'desc');
 
             // Filter
             if ($startdate != null) {
@@ -945,16 +1029,15 @@ class IncommingMailController extends Controller
             if ($letter != null) {
                 $datas->where('incomming_mails.id_mst_letter', $letter);
             }
-        
+
             // Get Query
             $datas = $datas->get();
-
         } else {
             $datas = [];
         }
 
-        $now=Carbon::now()->format('YmdHis');
-        
+        $now = Carbon::now()->format('YmdHis');
+
         $pdf = PDF::loadView('pdf.rekapitulasi-suratmasukLitnadin', [
             'startdate' => $startdate,
             'enddate' => $enddate,
@@ -964,7 +1047,6 @@ class IncommingMailController extends Controller
         ])->setPaper('a4', 'portrait');
 
         return $pdf->stream('Print Rekapitulasi Surat Masuk (Litnadin).pdf', array("Attachment" => false));
-
     }
 
     public function createLitnadin(Request $request)
@@ -980,31 +1062,41 @@ class IncommingMailController extends Controller
         $results = Dropdown::where('category', 'Hasil Penelitian')->get();
         $approveds = Dropdown::where('category', 'Disetujui Oleh')->get();
 
-        $sators = Sator::orderBy('sator_name','asc')->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->get();
 
-        return view('mail.incommingLitnadin.create', compact('letters', 'workunits', 'receiverMails', 'unitletters', 'classifications', 'results', 'approveds',
-            'sators'));
+        return view('mail.incommingLitnadin.create', compact(
+            'letters',
+            'workunits',
+            'receiverMails',
+            'unitletters',
+            'classifications',
+            'results',
+            'approveds',
+            'sators'
+        ));
     }
 
     public function storeLitnadin(Request $request)
     {
         // dd($request->all());
-        $request->validate([
-            "placeman" => "required",
-            "mail_regarding" => "required",
-            "entry_date" => "required",
-            "receiver" => "required",
-            "mail_quantity" => "required",
-            "mail_unit" => "required",
-        ], 
-        [
-            'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
-            'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
-            'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
-            'receiver.required' => 'Penerima Wajib Untuk Diisi.',
-            'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
-            'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
-        ]);
+        $request->validate(
+            [
+                "placeman" => "required",
+                "mail_regarding" => "required",
+                "entry_date" => "required",
+                "receiver" => "required",
+                "mail_quantity" => "required",
+                "mail_unit" => "required",
+            ],
+            [
+                'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
+                'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
+                'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
+                'receiver.required' => 'Penerima Wajib Untuk Diisi.',
+                'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
+                'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
+            ]
+        );
 
         DB::beginTransaction();
         try {
@@ -1015,12 +1107,12 @@ class IncommingMailController extends Controller
             $approved_by = $request->approved_by;
             $received_via = $request->received_viaInput;
 
-            if($request->attachment_text != null){
+            if ($request->attachment_text != null) {
                 $jmlHal = $request->mail_quantity + $request->attachment_text;
             } else {
                 $jmlHal = $request->mail_quantity;
             }
-            
+
             $store = IncommingMail::create([
                 'placeman' => $request->placeman,
                 'id_mst_letter' => $request->id_mst_letter,
@@ -1076,34 +1168,44 @@ class IncommingMailController extends Controller
         $results = Dropdown::where('category', 'Hasil Penelitian')->get();
         $approveds = Dropdown::where('category', 'Disetujui Oleh')->get();
 
-        $sators = Sator::orderBy('sator_name','asc')->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->get();
 
-        return view('mail.incommingLitnadin.createbulk', compact('letters', 'workunits', 'receiverMails', 'unitletters', 'classifications', 'results', 'approveds',
-            'sators'));
+        return view('mail.incommingLitnadin.createbulk', compact(
+            'letters',
+            'workunits',
+            'receiverMails',
+            'unitletters',
+            'classifications',
+            'results',
+            'approveds',
+            'sators'
+        ));
     }
-    
+
     public function storebulkLitnadin(Request $request)
     {
         // dd($request->all());
-        $request->validate([
-            "placeman" => "required",
-            "mail_regarding" => "required",
-            "entry_date" => "required",
-            "receiver" => "required",
-            "mail_quantity" => "required",
-            "mail_unit" => "required",
-        ], 
-        [
-            'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
-            'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
-            'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
-            'receiver.required' => 'Penerima Wajib Untuk Diisi.',
-            'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
-            'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
-        ]);
+        $request->validate(
+            [
+                "placeman" => "required",
+                "mail_regarding" => "required",
+                "entry_date" => "required",
+                "receiver" => "required",
+                "mail_quantity" => "required",
+                "mail_unit" => "required",
+            ],
+            [
+                'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
+                'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
+                'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
+                'receiver.required' => 'Penerima Wajib Untuk Diisi.',
+                'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
+                'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
+            ]
+        );
 
         $amountLetter = $request->amount_letter;
-        
+
         DB::beginTransaction();
         try {
             // $sender = $request->senderSelect;
@@ -1112,14 +1214,14 @@ class IncommingMailController extends Controller
             $approved_by = $request->approved_by;
             $received_via = $request->received_viaInput;
 
-            if($request->attachment_text != null){
+            if ($request->attachment_text != null) {
                 $jmlHal = $request->mail_quantity + $request->attachment_text;
             } else {
                 $jmlHal = $request->mail_quantity;
             }
 
             for ($i = 0; $i < $amountLetter; $i++) {
-                
+
                 $store = IncommingMail::create([
                     'placeman' => $request->placeman,
                     'id_mst_letter' => $request->id_mst_letter,
@@ -1156,20 +1258,27 @@ class IncommingMailController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('incommingmail.indexLitnadin')->with(['success' => 'Sukses Tambah Data (Bulk) Dengan Jumlah : '.$amountLetter.'']);
+            return redirect()->route('incommingmail.indexLitnadin')->with(['success' => 'Sukses Tambah Data (Bulk) Dengan Jumlah : ' . $amountLetter . '']);
         } catch (Throwable $th) {
             DB::rollback();
             return redirect()->back()->with(['fail' => 'Gagal Tambah Data (Bulk)!']);
         }
     }
-    
+
     public function detailLitnadin($id)
     {
         $id = decrypt($id);
         // dd($id);
 
-        $data = IncommingMail::select('incomming_mails.*', 'master_letter.let_name', 'master_complain.com_name', 'receiv.work_name as receiver_name',
-            'master_unit_letter.unit_name', 'master_classification.classification_name', 'org.sator_name', 'suborg.sub_sator_name'
+        $data = IncommingMail::select(
+            'incomming_mails.*',
+            'master_letter.let_name',
+            'master_complain.com_name',
+            'receiv.work_name as receiver_name',
+            'master_unit_letter.unit_name',
+            'master_classification.classification_name',
+            'org.sator_name',
+            'suborg.sub_sator_name'
         )
             ->leftjoin('master_letter', 'master_letter.id', 'incomming_mails.id_mst_letter')
             ->leftjoin('master_complain', 'master_complain.id', 'incomming_mails.id_mst_complain')
@@ -1183,7 +1292,7 @@ class IncommingMailController extends Controller
 
         return view('mail.incommingLitnadin.info', compact('data'));
     }
-    
+
     public function editLitnadin(Request $request, $id)
     {
         $id = decrypt($id);
@@ -1196,10 +1305,15 @@ class IncommingMailController extends Controller
         $results = Dropdown::where('category', 'Hasil Penelitian')->get();
         $approveds = Dropdown::where('category', 'Disetujui Oleh')->get();
 
-        $sators = Sator::orderBy('sator_name','asc')->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->get();
 
-        $data = IncommingMail::select('incomming_mails.*', 'master_letter.let_name', 'master_complain.com_name', 'receiv.work_name as receiver_name',
-            'master_unit_letter.unit_name', 'master_classification.classification_name'
+        $data = IncommingMail::select(
+            'incomming_mails.*',
+            'master_letter.let_name',
+            'master_complain.com_name',
+            'receiv.work_name as receiver_name',
+            'master_unit_letter.unit_name',
+            'master_classification.classification_name'
         )
             ->leftjoin('master_letter', 'master_letter.id', 'incomming_mails.id_mst_letter')
             ->leftjoin('master_complain', 'master_complain.id', 'incomming_mails.id_mst_complain')
@@ -1209,41 +1323,52 @@ class IncommingMailController extends Controller
             ->where('incomming_mails.id', $id)
             ->first();
 
-        return view('mail.incommingLitnadin.edit', compact('letters', 'receiverMails', 'workunits', 'unitletters', 'classifications',
-            'results', 'approveds', 'sators', 'data'));
+        return view('mail.incommingLitnadin.edit', compact(
+            'letters',
+            'receiverMails',
+            'workunits',
+            'unitletters',
+            'classifications',
+            'results',
+            'approveds',
+            'sators',
+            'data'
+        ));
     }
-    
+
     public function updateLitnadin(Request $request, $id)
     {
         $id = decrypt($id);
         //dd($id);
 
-        $request->validate([
-            "placeman" => "required",
-            "mail_regarding" => "required",
-            "entry_date" => "required",
-            "receiver" => "required",
-            "mail_quantity" => "required",
-            "mail_unit" => "required",
-        ], 
-        [
-            'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
-            'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
-            'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
-            'receiver.required' => 'Penerima Wajib Untuk Diisi.',
-            'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
-            'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
-        ]);
+        $request->validate(
+            [
+                "placeman" => "required",
+                "mail_regarding" => "required",
+                "entry_date" => "required",
+                "receiver" => "required",
+                "mail_quantity" => "required",
+                "mail_unit" => "required",
+            ],
+            [
+                'placeman.required' => 'Pejabat / Naskah Wajib Untuk Diisi.',
+                'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
+                'entry_date.required' => 'Tanggal Masuk Wajib Untuk Diisi.',
+                'receiver.required' => 'Penerima Wajib Untuk Diisi.',
+                'mail_quantity.required' => 'Jumlah Surat Wajib Untuk Diisi.',
+                'mail_unit.required' => 'Satuan Surat Wajib Untuk Diisi.',
+            ]
+        );
 
         $entry_date = (new DateTime($request->entry_date))->format('Y-m-d H:i:s');
-        if($request->mail_date != null)
+        if ($request->mail_date != null)
             $mail_date = (new DateTime($request->mail_date))->format('Y-m-d H:i:s');
         else {
             $mail_date = null;
         }
         // $mail_retention_from = (new DateTime($request->mail_retention_from))->format('Y-m-d H:i:s');
         // $mail_retention_to = (new DateTime($request->mail_retention_to))->format('Y-m-d H:i:s');
-        
+
         // $sender = $request->senderSelect;
         $mail_type = null;
         $result = $request->result;
@@ -1252,7 +1377,7 @@ class IncommingMailController extends Controller
 
         // Check With Data Before
         $databefore = IncommingMail::where('id', $id)->first();
-        
+
         $databefore->result = $result;
         $databefore->approved_by = $approved_by;
 
@@ -1274,13 +1399,13 @@ class IncommingMailController extends Controller
         $databefore->information = $request->information;
         $databefore->status = $request->status;
 
-        if($request->attachment_text != null){
+        if ($request->attachment_text != null) {
             $jmlHal = $request->mail_quantity + $request->attachment_text;
         } else {
             $jmlHal = $request->mail_quantity;
         }
 
-        if($databefore->isDirty()){
+        if ($databefore->isDirty()) {
             DB::beginTransaction();
             try {
                 IncommingMail::where('id', $id)->update([
@@ -1316,8 +1441,7 @@ class IncommingMailController extends Controller
                 DB::rollback();
                 return redirect()->back()->with(['fail' => 'Gagal Ubah Data!']);
             }
-        }
-        else {
+        } else {
             return redirect()->route('incommingmail.indexLitnadin')->with(['info' => 'Tidak ada perubahan, data sama dengan yang sebelumnya']);
         }
     }
@@ -1326,14 +1450,16 @@ class IncommingMailController extends Controller
     {
         $id = decrypt($id);
 
-        $request->validate([
-            "information" => "required",
-            "status" => "required",
-        ], 
-        [
-            'information.required' => 'Keterangan Wajib Untuk Diisi.',
-            'status.required' => 'Status Wajib Untuk Diisi.',
-        ]);
+        $request->validate(
+            [
+                "information" => "required",
+                "status" => "required",
+            ],
+            [
+                'information.required' => 'Keterangan Wajib Untuk Diisi.',
+                'status.required' => 'Status Wajib Untuk Diisi.',
+            ]
+        );
 
         DB::beginTransaction();
         try {
