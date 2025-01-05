@@ -114,7 +114,7 @@
                 <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
                     <div class="row">
                         <div class="col-12">
-                            <label>Tanggal Terima</label>
+                            <label>Tanggal Agenda</label>
                         </div>
                         <div class="col-6">
                             <div class="form-group">
@@ -138,7 +138,7 @@
                             <div class="form-group">
                                 <label id="labeljenisNaskah">Jenis Naskah</label>
                                 <div id="jenisNaskah">
-                                    <select class="form-control js-example-basic-single" id="mst_letter" name="id_mst_letter" style="width: 100%;">
+                                    <select class="form-control js-example-basic-single" id="mst_letter" name="letter" style="width: 100%;">
                                         <option value="">- Pilih -</option>
                                         @foreach($letters as $item)
                                         <option value="{{ $item->id }}" @if($letter == $item->id) selected="selected" @endif>{{ $item->let_name }}</option>
@@ -214,7 +214,7 @@
                 {
                     data: 'entry_date',
                     name: 'entry_date',
-                    orderable: true,
+                    orderable: false,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
@@ -231,7 +231,7 @@
                 {
                     data: 'mail_number',
                     name: 'mail_number',
-                    orderable: true,
+                    orderable: false,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
@@ -247,7 +247,7 @@
                 {
                     data: 'sub_sator_name',
                     name: 'sub_sator_name',
-                    orderable: true,
+                    orderable: false,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
@@ -263,7 +263,7 @@
                 {
                     data: 'mail_regarding',
                     name: 'mail_regarding',
-                    orderable: true,
+                    orderable: false,
                     searchable: true,
                     render: function(data, type, row) {
                         var html;
@@ -280,7 +280,7 @@
                 {
                     data: 'attachment_text',
                     name: 'attachment_text',
-                    orderable: true,
+                    orderable: false,
                     searchable: true,
                     render: function(data, type, row) {
                         return $('<div/>').html(data).text();
@@ -289,7 +289,7 @@
                 {
                     data: 'receiver',
                     name: 'receiver',
-                    orderable: true,
+                    orderable: false,
                     searchable: true,
                     className: 'text-center',
                     render: function(data, type, row) {
@@ -305,7 +305,7 @@
                 {
                     data: 'status',
                     name: 'status',
-                    orderable: true,
+                    orderable: false,
                     searchable: true,
                     render: function(data, type, row) {
                         var html
@@ -322,7 +322,7 @@
                 {
                     data: 'information',
                     name: 'information',
-                    orderable: true,
+                    orderable: false,
                     searchable: true,
                     render: function(data, type, row) {
                         var html;

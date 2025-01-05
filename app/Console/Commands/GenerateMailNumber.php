@@ -137,16 +137,18 @@ class GenerateMailNumber extends Command
                             $timestamp = strtotime($q->created_mail);
                             $value = date('Y', $timestamp);
                             $mail_number[] = $value;
+                        // Pattern Symbol
                         } else {
-                            $value = "Null";
-                            $mail_number[] = $value;
+                            // $value = "Null";
+                            $mail_number[] = $pat;
                         }
                     }
                     // Filter out null values
                     $mail_number = array_filter($mail_number, function($value) {
                         return $value !== null;
                     });
-                    $mail_number = implode('/', $mail_number);
+                    // $mail_number = implode('/', $mail_number);
+                    $mail_number = implode('', $mail_number);
     
                     //Update Mail Number
                     OutgoingMail::where('id', $q->id_mail)->update(["mail_number" => $mail_number]);
