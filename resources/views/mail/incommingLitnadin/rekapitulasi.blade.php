@@ -114,7 +114,7 @@
                 <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
                     <div class="row">
                         <div class="col-12">
-                            <label>Tanggal Terima</label>
+                            <label>Tanggal Agenda</label>
                         </div>
                         <div class="col-6">
                             <div class="form-group">
@@ -138,7 +138,7 @@
                             <div class="form-group">
                                 <label id="labeljenisNaskah">Jenis Naskah</label>
                                 <div id="jenisNaskah">
-                                    <select class="form-control js-example-basic-single" id="mst_letter" name="id_mst_letter" style="width: 100%;">
+                                    <select class="form-control js-example-basic-single" id="mst_letter" name="letter" style="width: 100%;">
                                         <option value="">- Pilih -</option>
                                         @foreach($letters as $item)
                                         <option value="{{ $item->id }}" @if($letter == $item->id) selected="selected" @endif>{{ $item->let_name }}</option>
