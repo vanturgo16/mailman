@@ -126,13 +126,13 @@
                     @csrf
                     <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
-                                    <label>Tanggal Masuk</label>
+                                    <label>Tanggal Agenda</label>
                                     <input type="date" name="entry_date" value="{{ $entry_date }}" class="form-control">
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Tanggal Surat</label>
                                     <input type="date" name="mail_date" value="{{ $mail_date }}" class="form-control">

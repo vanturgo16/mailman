@@ -137,8 +137,14 @@
                     <td><label class="text-danger" id="labeljenisNaskah">Jenis Naskah *</label></td>
                     <td>
                       <div id="jenisNaskah">
-                        <input type="hidden" name="id_mst_letter" value="{{ $data->id_mst_letter }}">
-                        <input type="text" class="form-control" value="{{ $data->let_name }}" style="width: 100%;" readonly>
+                        {{-- <input type="hidden" name="id_mst_letter" value="{{ $data->id_mst_letter }}"> --}}
+                        {{-- <input type="text" class="form-control" value="{{ $data->let_name }}" style="width: 100%;" readonly> --}}
+                        <select class="form-control js-example-basic-single" id="mst_letter" name="id_mst_letter" style="width: 100%;" required>
+                          <option value="">- Pilih -</option>
+                          @foreach($letters as $letter)
+                              <option value="{{ $letter->id }}" @if($data->id_mst_letter == $letter->id) selected="selected" @endif>{{ $letter->let_name }}</option>
+                          @endforeach
+                        </select>
                       </div>
                     </td>
                   </tr>

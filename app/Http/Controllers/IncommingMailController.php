@@ -173,7 +173,7 @@ class IncommingMailController extends Controller
             $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'master_unit_letter.unit_name', 'master_sub_sator.sub_sator_name')
                 ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
                 ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
-                ->orderBy('agenda_number', 'desc');
+                ->orderBy('created_at', 'asc');
 
             // Filter
             if ($startdate != null) {
@@ -245,7 +245,7 @@ class IncommingMailController extends Controller
             $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'master_unit_letter.unit_name', 'master_sub_sator.sub_sator_name')
                 ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
                 ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
-                ->orderBy('agenda_number', 'desc');
+                ->orderBy('created_at', 'asc');
 
             // Filter
             if ($startdate != null) {
@@ -928,7 +928,7 @@ class IncommingMailController extends Controller
                 ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
                 ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
                 ->where('placeman', 'LITNADIN')
-                ->orderBy('created_at', 'desc');
+                ->orderBy('created_at', 'asc');
 
             // Filter
             if ($startdate != null) {
@@ -997,7 +997,7 @@ class IncommingMailController extends Controller
                 ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
                 ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
                 ->where('placeman', 'LITNADIN')
-                ->orderBy('created_at', 'desc');
+                ->orderBy('created_at', 'asc');
 
             // Filter
             if ($startdate != null) {
@@ -1382,6 +1382,7 @@ class IncommingMailController extends Controller
         $databefore->approved_by = $approved_by;
 
         $databefore->sender = $request->senderInput;
+        $databefore->id_mst_letter = $request->id_mst_letter;
         $databefore->org_unit = $request->org_unit;
         $databefore->sub_org_unit = $request->sub_org_unit;
         $databefore->mail_number = $request->mail_number;
