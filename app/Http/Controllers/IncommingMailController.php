@@ -793,7 +793,8 @@ class IncommingMailController extends Controller
             ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
             ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
             ->where('placeman', 'LITNADIN')
-            ->orderBy('created_at', 'desc');
+            // ->orderBy('created_at', 'desc');
+            ->orderBy('created_at', 'asc');
 
         // FIlter
         if ($entry_date != null) {
@@ -1112,8 +1113,11 @@ class IncommingMailController extends Controller
             } else {
                 $jmlHal = $request->mail_quantity;
             }
+            $maxLitnadinNumber = IncomingMail::max('litnadin_number');
+            $nextLitnadinNumber = $maxLitnadinNumber ? ((int) $maxLitnadinNumber + 1) : 1;
 
             $store = IncommingMail::create([
+                'litnadin_number' => $nextLitnadinNumber,
                 'placeman' => $request->placeman,
                 'id_mst_letter' => $request->id_mst_letter,
                 'id_mst_complain' => $request->id_mst_complain,
@@ -1220,9 +1224,13 @@ class IncommingMailController extends Controller
                 $jmlHal = $request->mail_quantity;
             }
 
+            $maxLitnadinNumber = IncomingMail::max('litnadin_number');
+            $nextLitnadinNumber = $maxLitnadinNumber ? ((int) $maxLitnadinNumber + 1) : 1;
+
             for ($i = 0; $i < $amountLetter; $i++) {
 
                 $store = IncommingMail::create([
+                    'litnadin_number' => $nextLitnadinNumber,
                     'placeman' => $request->placeman,
                     'id_mst_letter' => $request->id_mst_letter,
                     'org_unit' => $request->org_unit,
@@ -1249,6 +1257,8 @@ class IncommingMailController extends Controller
                     'status' => $request->status,
                     'created_by' => auth()->user()->name,
                 ]);
+
+                $nextLitnadinNumber++;
 
                 // Register Que
                 QueNumbIncMail::create([

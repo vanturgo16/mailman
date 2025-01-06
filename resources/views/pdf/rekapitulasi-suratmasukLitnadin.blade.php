@@ -126,7 +126,7 @@
         <thead>
           
           <tr>
-              <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal; width:5%;">No.</th>
+              <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal; width:5%;">No. <br>Litnadin</th>
               <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Tgl. Agenda</th>
               <th colspan="3" class="align-middle text-center px-1" style="font-weight: normal;">Naskah / Surat</th>
               <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Jumlah<br>Lampiran</th>
@@ -150,7 +150,7 @@
             @foreach ($datas as $item)
               <?php $no++; ?>
               <tr>
-                <td class="align-top text-center">{{ $no }}</td>
+                <td class="align-top text-center">{{ $item->litnadin_number ?? '' }}</td>
                 <td class="align-top text-center text-left px-1">{{ date('d-m-Y', strtotime($item->entry_date)) }}</td>
                 <td class="align-middle text-center text-left px-1">
                   @if($item->mail_number == null)
