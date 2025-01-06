@@ -90,7 +90,7 @@
                 <table id="server-side-table" class="table table-bordered" style="font-size: small" width="100%">
                     <thead>
                         <tr>
-                            <th rowspan="2" class="align-middle text-center">No.</th>
+                            <th rowspan="2" class="align-middle text-center">No. <br>Litnadin</th>
                             <th rowspan="2" class="align-middle text-center">Tgl. Agenda</th>
                             <th colspan="3" class="align-middle text-center">Naskah / Surat</th>
                             <th rowspan="2" class="align-middle text-center">Kepada</th>
@@ -283,15 +283,31 @@
                     }
                 },
                 "columns": [
+                    // {
+                    //     data: null,
+                    //     render: function(data, type, row, meta) {
+                    //         return meta.row + meta.settings._iDisplayStart + 1;
+                    //     },
+                    //     orderable: false,
+                    //     searchable: false,
+                    //     className: 'text-center',
+                    // }, 
                     {
-                        data: null,
-                        render: function(data, type, row, meta) {
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                        },
-                        orderable: false,
-                        searchable: false,
+                        data: 'litnadin_number',
+                        name: 'litnadin_number',
+                        orderable: true,
+                        searchable: true,
                         className: 'text-center',
-                    }, 
+                        render: function(data, type, row) {
+                            var html
+                            if(row.litnadin_number == null){
+                                html = '';
+                            } else {
+                                html = row.litnadin_number;
+                            }
+                            return html;
+                        },
+                    },
                     {
                         data: 'entry_date',
                         name: 'entry_date',
