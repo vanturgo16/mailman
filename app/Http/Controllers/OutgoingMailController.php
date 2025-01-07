@@ -424,17 +424,17 @@ class OutgoingMailController extends Controller
 
     public function create(Request $request)
     {
-        $letters = Letter::get();
-        $workunits = WorkUnit::get();
-        $sators = Sator::get();
-        // Surat Keluar Kategori 2 & 3
-        $unitletters = UnitLetter::whereIn('category', ['2', '3'])->get();
-        $classifications = Classification::get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
         $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
-        $gedungs = DaftarGedung::get();
-        $sators = Sator::orderBy('sator_name', 'asc')->get();
-        $kkaTypes = KkaType::get();
+
+        $letters = Letter::where('is_active', 1)->get();
+        $workunits = WorkUnit::where('is_active', 1)->get();
+        $sators = Sator::where('is_active', 1)->get();
+        $unitletters = UnitLetter::whereIn('category', ['2', '3'])->where('is_active', 1)->get(); // Surat Keluar Kategori 2 & 3
+        $classifications = Classification::where('is_active', 1)->get();
+        $gedungs = DaftarGedung::where('is_active', 1)->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->where('is_active', 1)->get();
+        $kkaTypes = KkaType::where('is_active', 1)->get();
 
         $datas = IncommingMail::orderBy('created_at', 'desc')->get();
         if ($request->ajax()) {
@@ -561,17 +561,17 @@ class OutgoingMailController extends Controller
 
     public function createbulk(Request $request)
     {
-        $letters = Letter::get();
-        $workunits = WorkUnit::get();
-        $sators = Sator::get();
-        // Surat Keluar Kategori 2 & 3
-        $unitletters = UnitLetter::whereIn('category', ['2', '3'])->get();
-        $classifications = Classification::get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
         $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
-        $gedungs = DaftarGedung::get();
-        $sators = Sator::orderBy('sator_name', 'asc')->get();
-        $kkaTypes = KkaType::get();
+
+        $letters = Letter::where('is_active', 1)->get();
+        $workunits = WorkUnit::where('is_active', 1)->get();
+        $sators = Sator::where('is_active', 1)->get();
+        $unitletters = UnitLetter::whereIn('category', ['2', '3'])->where('is_active', 1)->get(); // Surat Keluar Kategori 2 & 3
+        $classifications = Classification::where('is_active', 1)->get();
+        $gedungs = DaftarGedung::where('is_active', 1)->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->where('is_active', 1)->get();
+        $kkaTypes = KkaType::where('is_active', 1)->get();
 
         $datas = IncommingMail::orderBy('created_at', 'desc')->get();
         if ($request->ajax()) {
@@ -700,58 +700,6 @@ class OutgoingMailController extends Controller
         }
     }
 
-    // public function storebulk(Request $request)
-    // {
-    //     // dd($request->all());
-    //     $request->validate([
-    //         "id_mst_letter" => "required",
-    //         "amount_letter" => "required",
-    //     ], [
-    //         'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
-    //         'amount_letter.required' => 'Jumlah Naskah Wajib Untuk Diisi.',
-    //     ]);
-
-    //     $idMstLetter = $request->id_mst_letter;
-    //     $org_unit = $request->org_unit;
-    //     $amountLetter = $request->amount_letter;
-
-    //     DB::beginTransaction();
-    //     try {
-    //         for ($i = 0; $i < $amountLetter; $i++) {
-
-    //             $location_save_route = json_encode([
-    //                 'idGedung' => null,
-    //                 'idLantai' => null,
-    //                 'idRuang' => null,
-    //                 'idRak' => null,
-    //                 'idBaris' => null,
-    //                 'idKolom' => null,
-    //                 'idBoks' => null,
-    //             ]);
-
-    //             // Store Outgoing Mail
-    //             $store = OutgoingMail::create([
-    //                 'id_mst_letter' => $idMstLetter,
-    //                 'org_unit' => $org_unit,
-    //                 'location_save_route' => $location_save_route,
-    //                 'status' => null,
-    //                 'created_by' => auth()->user()->name,
-    //             ]);
-    //             // Register Que
-    //             QueNumbOutMail::create([
-    //                 'id_mail' => $store->id,
-    //                 'id_mst_letter' => $idMstLetter
-    //             ]);
-    //         }
-
-    //         DB::commit();
-    //         return redirect()->route('outgoingmail.index')->with(['success' => 'Sukses Tambah Data (Bulk) Dengan Jumlah : '.$amountLetter.'']);
-    //     } catch (Throwable $th) {
-    //         DB::rollback();
-    //         return redirect()->back()->with(['fail' => 'Gagal Tambah Data (Bulk)!']);
-    //     }
-    // }
-
     public function detail($id)
     {
         $id = decrypt($id);
@@ -793,15 +741,28 @@ class OutgoingMailController extends Controller
     {
         $id = decrypt($id);
 
-        $letters = Letter::get();
-        $workunits = WorkUnit::get();
-        $sators = Sator::get();
-        $unitletters = UnitLetter::get();
-        $classifications = Classification::get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
-        $sators = Sator::orderBy('sator_name', 'asc')->get();
         $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
-        $gedungs = DaftarGedung::get();
+
+        $letters = Letter::where('is_active', 1)->get();
+        $workunits = WorkUnit::where('is_active', 1)->get();
+        $unitletters = UnitLetter::where('is_active', 1)->get();
+        $classifications = Classification::where('is_active', 1)->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->where('is_active', 1)->get();
+        $gedungs = DaftarGedung::where('is_active', 1)->get();
+
+        $dataEdit = OutgoingMail::where('id', $id)->first();
+        // Fetch the corresponding additional data
+        $lettersData = Letter::where('id', $dataEdit->id_mst_letter)->first();
+        $workunitsData = WorkUnit::where('id', $dataEdit->signing)->first();
+        $unitlettersData = UnitLetter::where('id', $dataEdit->mail_unit)->first();
+        $satorsData = Sator::where('id', $dataEdit->org_unit)->first();
+        // Merge the original collections with the additional data if not null, and remove duplicates based on 'id'
+        $letters = $lettersData ? $letters->merge([$lettersData])->unique('id') : $letters;
+        $workunits = $workunitsData ? $workunits->merge([$workunitsData])->unique('id') : $workunits;
+        $unitletters = $unitlettersData ? $unitletters->merge([$unitlettersData])->unique('id') : $unitletters;
+        $sators = $satorsData ? $sators->merge([$satorsData])->unique('id') : $sators;
+
 
         $datas = IncommingMail::orderBy('created_at', 'desc')->get();
         if ($request->ajax()) {
