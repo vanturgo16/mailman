@@ -75,7 +75,7 @@ class IncommingMailController extends Controller
 
         // Get Query
         $datas = $datas->get();
-        // dd($datas);
+        $lastUpdated = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
 
         if ($request->ajax()) {
             $data = DataTables::of($datas)
@@ -99,7 +99,8 @@ class IncommingMailController extends Controller
             'org_unit',
             'sators',
             'complain',
-            'letter'
+            'letter',
+            'lastUpdated'
         ));
     }
 
@@ -767,6 +768,18 @@ class IncommingMailController extends Controller
         $changes = ($firstTimestamp != $secondTimestamp);
 
         return response()->json(['changes' => $changes]);
+    }
+    public function checkChangeIncomming(Request $request)
+    {
+        $lastUpdated = $request->input('lastUpdated');
+        $datas = IncommingMail::where('placeman', '!=', 'LITNADIN')->get();
+        $lastUpdatedNow = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
+        $changes = ($lastUpdated != $lastUpdatedNow);
+
+        return response()->json([
+            'changes' => $changes,
+            'lastUpdatedNow' => $lastUpdatedNow,
+        ]);
     }
 
 
