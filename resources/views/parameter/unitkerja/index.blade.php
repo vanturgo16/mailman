@@ -127,7 +127,7 @@
                                                             <label class="text text-danger"><i>TIDAK AKTIF</i></label>
                                                         @endif
                                                     </td>
-                                                    <td>
+                                                    <td data-search='false'>
                                                         <!-- Button trigger modal -->
                                                         <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#editModal{{ $data->id }}">
                                                             Edit Data
