@@ -1224,7 +1224,7 @@ class IncommingMailController extends Controller
                 $jmlHal = $request->mail_quantity;
             }
 
-            $maxLitnadinNumber = IncomingMail::max('litnadin_number');
+            $maxLitnadinNumber = IncommingMail::max('litnadin_number');
             $nextLitnadinNumber = $maxLitnadinNumber ? ((int) $maxLitnadinNumber + 1) : 1;
 
             for ($i = 0; $i < $amountLetter; $i++) {
