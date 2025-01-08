@@ -763,6 +763,16 @@ class OutgoingMailController extends Controller
         $unitletters = $unitlettersData ? $unitletters->merge([$unitlettersData])->unique('id') : $unitletters;
         $sators = $satorsData ? $sators->merge([$satorsData])->unique('id') : $sators;
 
+        // Check Letter Has KKA
+        $kkaTypes = [];
+        $kkaCodes = [];
+        if ($dataEdit->kka_type != null) {
+            $kkaTypes = KkaType::where('is_active', 1)->get();
+            $kkaTypeData = KkaType::where('id', $dataEdit->kka_type)->first();
+            $kkaTypes = $kkaTypeData ? $kkaTypes->merge([$kkaTypeData])->unique('id') : $kkaTypes;
+
+            $kkaCodes = KkaCode::where('id_kka_type', $dataEdit->kka_type)->get();
+        }
 
         $datas = IncommingMail::orderBy('created_at', 'desc')->get();
         if ($request->ajax()) {
@@ -821,7 +831,9 @@ class OutgoingMailController extends Controller
             'listRak',
             'listBaris',
             'listKolom',
-            'listBoks'
+            'listBoks',
+            'kkaTypes',
+            'kkaCodes'
         ));
     }
 
@@ -832,7 +844,6 @@ class OutgoingMailController extends Controller
 
         $request->validate([
             "id_mst_letter" => "required",
-            // "drafter" => "required",
             "mail_regarding" => "required",
             "out_date" => "required",
             "signing" => "required",
@@ -841,7 +852,6 @@ class OutgoingMailController extends Controller
             "archive_remain" => "required",
         ], [
             'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
-            // 'drafter.required' => 'Konseptor Wajib Untuk Diisi.',
             'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
             'out_date.required' => 'Tanggal Keluar Wajib Untuk Diisi.',
             'signing.required' => 'Penandatanganan Wajib Untuk Diisi.',
@@ -868,8 +878,11 @@ class OutgoingMailController extends Controller
         // Check With Data Before
         $databefore = OutgoingMail::where('id', $id)->first();
 
+        $kkaCodeUpdated = ($databefore->kka_code != $request->kka_code);
+
         $databefore->id_mst_letter = $request->id_mst_letter;
-        // $databefore->drafter = $request->drafter;
+        $databefore->kka_type = $request->kka_type;
+        $databefore->kka_code = $request->kka_code;
         $databefore->org_unit = $request->org_unit;
         $databefore->sub_org_unit = $request->sub_org_unit;
         $databefore->mail_regarding = $request->mail_regarding;
@@ -881,6 +894,10 @@ class OutgoingMailController extends Controller
         $databefore->mail_quantity = $request->mail_quantity;
         $databefore->mail_unit = $request->mail_unit;
         $databefore->archive_remains = $request->archive_remain;
+        $databefore->attachment_text = $request->attachment_text;
+        $databefore->information = $request->information;
+
+        // $databefore->drafter = $request->drafter;
         // $databefore->archive_classification = $request->archive_classification;
         // $databefore->mail_retention_from = $mail_retention_from;
         // $databefore->mail_retention_to = $mail_retention_to;
@@ -894,8 +911,6 @@ class OutgoingMailController extends Controller
         // $databefore->received_via = $request->received_via;
         // $databefore->ref_number = $request->ref_number;
         // $databefore->ref_mail = $request->mail_ref;
-        $databefore->attachment_text = $request->attachment_text;
-        $databefore->information = $request->information;
 
         // if($request->attachment_text != null){
         //     $jmlHal = $request->mail_quantity + $request->attachment_text;
@@ -906,10 +921,20 @@ class OutgoingMailController extends Controller
         if ($databefore->isDirty()) {
             DB::beginTransaction();
             try {
+                if ($kkaCodeUpdated) {
+                    $mailNumber = str_replace($request->kka_code_before, $request->kka_code, $databefore->mail_number);
+                } else {
+                    $mailNumber = $databefore->mail_number;
+                }
+
                 // Update Outgoing Mail
                 OutgoingMail::where('id', $id)->update([
                     'id_mst_letter' => $request->id_mst_letter,
-                    // 'drafter' => $request->drafter,
+
+                    'mail_number' => $mailNumber,
+                    'kka_type' => $request->kka_type,
+                    'kka_code' => $request->kka_code,
+
                     'org_unit' => $request->org_unit,
                     'sub_org_unit' => $request->sub_org_unit,
                     'mail_regarding' => $request->mail_regarding,
@@ -921,19 +946,21 @@ class OutgoingMailController extends Controller
                     'mail_quantity' => $request->mail_quantity,
                     'mail_unit' => $request->mail_unit,
                     'archive_remains' => $request->archive_remain,
+                    'attachment_text' => $request->attachment_text,
+                    'information' => $request->information,
+                    'status' => null,
+                    'updated_by' => auth()->user()->name,
+
+                    // 'drafter' => $request->drafter,
                     // 'archive_classification' => $request->archive_classification,
                     // 'mail_retention_from' => $request->mail_retention_from,
                     // 'mail_retention_to' => $request->mail_retention_to,
                     // 'location_save' => $request->save_location,
                     // 'location_save_route' => $location_save_route,
                     // 'received_via' => $request->received_via,
-                    'attachment_text' => $request->attachment_text,
                     // 'ref_number' => $request->ref_number,
                     // 'ref_mail' => $request->mail_ref,
-                    'information' => $request->information,
                     // 'jml_hal' => $jmlHal,
-                    'status' => null,
-                    'updated_by' => auth()->user()->name,
                 ]);
 
                 DB::commit();
