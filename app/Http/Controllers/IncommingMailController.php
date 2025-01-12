@@ -360,7 +360,10 @@ class IncommingMailController extends Controller
         DB::beginTransaction();
         try {
             // Store Outgoing Mail
+            $maxOrderNumber = IncommingMail::max('no_order');
+            $nextOrderNumber = $maxOrderNumber ? ((int) $maxOrderNumber + 1) : 1;
             $store = IncommingMail::create([
+                'no_order' => $nextOrderNumber,
                 'placeman' => $request->placeman,
                 'id_mst_letter' => $request->id_mst_letter,
                 'id_mst_complain' => $request->id_mst_complain,
@@ -456,9 +459,12 @@ class IncommingMailController extends Controller
 
         DB::beginTransaction();
         try {
+            $maxOrderNumber = IncommingMail::max('no_order');
+            $nextOrderNumber = $maxOrderNumber ? ((int) $maxOrderNumber + 1) : 1;
             for ($i = 0; $i < $amountLetter; $i++) {
                 // Store Outgoing Mail
                 $store = IncommingMail::create([
+                    'no_order' => $nextOrderNumber,
                     'placeman' => $request->placeman,
                     'id_mst_letter' => $request->id_mst_letter,
                     'id_mst_complain' => $request->id_mst_complain,
@@ -483,6 +489,7 @@ class IncommingMailController extends Controller
                     'id_mail' => $store->id,
                     'id_mst_letter' => ($request->placeman == "PENGADUAN") ? 0 : $request->id_mst_letter
                 ]);
+                $nextOrderNumber++;
             }
 
             DB::commit();

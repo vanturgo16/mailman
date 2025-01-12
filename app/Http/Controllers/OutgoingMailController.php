@@ -285,7 +285,7 @@ class OutgoingMailController extends Controller
             ->leftjoin('master_sub_sator', 'outgoing_mails.sub_org_unit', 'master_sub_sator.id')
             ->leftjoin('master_workunit as signer', 'signer.id', 'outgoing_mails.signing')
             ->leftjoin('master_unit_letter', 'master_unit_letter.id', 'outgoing_mails.mail_unit')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('created_at', 'asc');
 
         // Filter
         if (!empty($filters['startdate'])) {
@@ -384,7 +384,10 @@ class OutgoingMailController extends Controller
         DB::beginTransaction();
         try {
             // Store Outgoing Mail
+            $maxOrderNumber = OutgoingMail::max('no_order');
+            $nextOrderNumber = $maxOrderNumber ? ((int) $maxOrderNumber + 1) : 1;
             $store = OutgoingMail::create([
+                'no_order' => $nextOrderNumber,
                 'id_mst_letter' => $request->id_mst_letter,
                 'kka_type' => $request->kka_type,
                 'kka_code' => $request->kka_code,
@@ -478,9 +481,12 @@ class OutgoingMailController extends Controller
         DB::beginTransaction();
         try {
             $amountLetter = $request->amount_letter;
+            $maxOrderNumber = OutgoingMail::max('no_order');
+            $nextOrderNumber = $maxOrderNumber ? ((int) $maxOrderNumber + 1) : 1;
             for ($i = 0; $i < $amountLetter; $i++) {
                 // Store Outgoing Mail
                 $store = OutgoingMail::create([
+                    'no_order' => $nextOrderNumber,
                     'id_mst_letter' => $request->id_mst_letter,
                     'kka_type' => $request->kka_type,
                     'kka_code' => $request->kka_code,
@@ -505,6 +511,7 @@ class OutgoingMailController extends Controller
                     'id_mail' => $store->id,
                     'id_mst_letter' => $request->id_mst_letter
                 ]);
+                $nextOrderNumber++;
             }
 
             DB::commit();

@@ -149,6 +149,8 @@ class GenerateMailNumber extends Command
                     });
                     // $mail_number = implode('/', $mail_number);
                     $mail_number = implode('', $mail_number);
+                    // Ensure no trailing slash remains
+                    $mail_number = rtrim($mail_number, '/');
     
                     //Update Mail Number
                     OutgoingMail::where('id', $q->id_mail)->update(["mail_number" => $mail_number]);
