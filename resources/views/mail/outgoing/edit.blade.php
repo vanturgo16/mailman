@@ -114,6 +114,7 @@
                     <label class="text-danger">Induk Satuan Organisasi *</label>
                   </div>
                   <div class="col-9">
+                    <input type="hidden" name="org_unit_before" value="{{ $data->org_unit }}">
                     <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
                       <option value="">- Pilih -</option>
                       @foreach($sators as $sator)

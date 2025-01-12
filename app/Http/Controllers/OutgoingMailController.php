@@ -686,7 +686,9 @@ class OutgoingMailController extends Controller
         // Check With Data Before
         $databefore = OutgoingMail::where('id', $id)->first();
 
+        $satorUpdated = ($databefore->org_unit != $request->org_unit);
         $kkaCodeUpdated = ($databefore->kka_code != $request->kka_code);
+
         $databefore->id_mst_letter = $request->id_mst_letter;
         $databefore->kka_type = $request->kka_type;
         $databefore->kka_code = $request->kka_code;
@@ -717,10 +719,20 @@ class OutgoingMailController extends Controller
         if ($databefore->isDirty()) {
             DB::beginTransaction();
             try {
-                $mailNumber = $kkaCodeUpdated
-                    ? str_replace($request->kka_code_before, $request->kka_code, $databefore->mail_number)
-                    : $databefore->mail_number;
-
+                if ($satorUpdated) {
+                    $satorStringBefore = Sator::find($request->org_unit_before)->sator_name ?? null;
+                    $satorStringNew = Sator::find($request->org_unit)->sator_name ?? null;
+                    $mailNumber = isset($satorStringBefore, $satorStringNew)
+                        ? str_replace($satorStringBefore, $satorStringNew, $databefore->mail_number)
+                        : $databefore->mail_number;
+                } else {
+                    $mailNumber = $databefore->mail_number;
+                }
+                
+                if ($kkaCodeUpdated) {
+                    $mailNumber = str_replace($request->kka_code_before, $request->kka_code, $mailNumber);
+                }
+                    
                 // Update Outgoing Mail
                 OutgoingMail::where('id', $id)->update([
                     'id_mst_letter' => $request->id_mst_letter,
