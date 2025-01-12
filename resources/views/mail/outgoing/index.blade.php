@@ -413,11 +413,14 @@
                 ]
             });
 
-            setTimeout(checkForChanges, 10);
-            setTimeout(checkForChanges, 20);
+            //Check Table Update
+            var lastUpdated = '{{ $lastUpdated }}';
+            setTimeout(() => checkForChangeOutgoing(lastUpdated), 10);
 
-            setTimeout(checkForChangeUpdate, 10);
-            setTimeout(checkForChangeUpdate, 20);
+            // setTimeout(checkForChanges, 10);
+            // setTimeout(checkForChanges, 20);
+            // setTimeout(checkForChangeUpdate, 10);
+            // setTimeout(checkForChangeUpdate, 20);
 
             function makeRowEditable($row) {
                 if (editingRow && editingRow.index() !== $row.index()) {
@@ -590,34 +593,60 @@
             // });
         });
 
-        function checkForChanges() {
+        // Function Table Update
+        function checkForChangeOutgoing(lastUpdated) {
             $.ajax({
-                url: '{{ route("outgoingmail.checkChanges") }}',
-                method: 'GET',
-                success: function(response) {
+                url: '{{ route("outgoingmail.checkChangeOutgoing") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    lastUpdated: lastUpdated
+                },
+                success: function (response) {
+                    // console.log('Last : ' + lastUpdated);
+                    // console.log('Now : ' + response.lastUpdatedNow);
                     if (response.changes) {
                         $("#server-side-table").DataTable().ajax.reload();
+                        lastUpdated = response.lastUpdatedNow;
                     }
                 },
-                complete: function() {
-                    setTimeout(checkForChanges, 10);
+                complete: function () {
+                    setTimeout(() => checkForChangeOutgoing(lastUpdated), 5000); // every 5s
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error in checkForChangeOutgoing:", error);
+                    setTimeout(() => checkForChangeOutgoing(lastUpdated), 5000);
                 }
             });
         }
-        function checkForChangeUpdate() {
-            $.ajax({
-                url: '{{ route("outgoingmail.checkChangeUpdate") }}',
-                method: 'GET',
-                success: function(response) {
-                    if (response.changes) {
-                        $("#server-side-table").DataTable().ajax.reload();
-                    }
-                },
-                complete: function() {
-                    setTimeout(checkForChangeUpdate, 10);
-                }
-            });
-        }
+        // function checkForChanges() {
+        //     $.ajax({
+        //         url: '{{ route("outgoingmail.checkChanges") }}',
+        //         method: 'GET',
+        //         success: function(response) {
+        //             if (response.changes) {
+        //                 $("#server-side-table").DataTable().ajax.reload();
+        //             }
+        //         },
+        //         complete: function() {
+        //             setTimeout(checkForChanges, 10);
+        //         }
+        //     });
+        // }
+        // function checkForChangeUpdate() {
+        //     $.ajax({
+        //         url: '{{ route("outgoingmail.checkChangeUpdate") }}',
+        //         method: 'GET',
+        //         success: function(response) {
+        //             if (response.changes) {
+        //                 $("#server-side-table").DataTable().ajax.reload();
+        //             }
+        //         },
+        //         complete: function() {
+        //             setTimeout(checkForChangeUpdate, 10);
+        //         }
+        //     });
+        // }
     </script>
 
 <!-- Select2 -->

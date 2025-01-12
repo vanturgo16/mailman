@@ -38,6 +38,61 @@
                 <input type="text" value="{{ $data->let_name }}" class="form-control" readonly>
               </div>
             </div>
+            @if($data->kka_type)
+              {{-- KKA Type --}}
+              <div class="row row-separator">
+                <div class="col-3">
+                  <label class="text-danger">KKA Type *</label>
+                </div>
+                <div class="col-9">
+                  <select class="form-control js-example-basic-single" name="kka_type" style="width: 100%;" required>
+                    <option value="">- Pilih -</option>
+                    @foreach($kkaTypes as $item)
+                      <option value="{{ $item->id }}" @if($data->kka_type == $item->id) selected="selected" @endif>{{ $item->kka_primary_code." - ".$item->kka_type }}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+              {{-- KKA Code --}}
+              <div class="row row-separator">
+                <div class="col-3">
+                  <label class="text-danger">KKA Code *</label>
+                </div>
+                <div class="col-9">
+                  <input type="hidden" name="kka_code_before" value="{{ $data->kka_code }}">
+                  <select class="form-control js-example-basic-single" name="kka_code" id="kka_code" style="width: 100%;" required>
+                    <option value="">- Pilih -</option>
+                    @foreach($kkaCodes as $item)
+                      <option value="{{ $item->kka_code }}" @if($data->kka_code == $item->kka_code) selected="selected" @endif>{{ $item->kka_code." - ".$item->kka_desc }}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+              <script>
+                // Map KKA 
+                $('select[name="kka_type"]').on('change', function() {
+                  const typeKka = $(this).val();
+                  var url = '{{ route("outgoingmail.mapKka", ":id") }}';
+                  url = url.replace(':id', typeKka);
+                  if (typeKka) {
+                      $.ajax({
+                          url: url,
+                          type: "GET",
+                          dataType: "json",
+                          success: function(data) {
+                              $('#kka_code').empty().append('<option value="">- Pilih -</option>');
+                              $.each(data, function(div, value) {
+                                  $('#kka_code').append(
+                                      '<option value="' + value.kka_code + '">' + value.kka_code + ' - ' + value.kka_desc + '</option>');
+                              });
+                          }
+                      });
+                  } else {
+                      $('#kka_code').empty().append('<option value="">- Pilih -</option>');
+                  }
+                });
+              </script>
+            @endif
             {{-- Konseptor --}}
             {{-- <div class="row row-separator">
               <div class="col-3">

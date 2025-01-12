@@ -75,7 +75,7 @@ class IncommingMailController extends Controller
 
         // Get Query
         $datas = $datas->get();
-        // dd($datas);
+        $lastUpdated = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
 
         if ($request->ajax()) {
             $data = DataTables::of($datas)
@@ -99,7 +99,8 @@ class IncommingMailController extends Controller
             'org_unit',
             'sators',
             'complain',
-            'letter'
+            'letter',
+            'lastUpdated'
         ));
     }
 
@@ -300,19 +301,19 @@ class IncommingMailController extends Controller
     public function create(Request $request)
     {
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
-        $complains = Complain::get();
-        $letters = Letter::get();
+        $complains = Complain::where('is_active', 1)->get();
+        $letters = Letter::where('is_active', 1)->get();
         $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
-        $workunits = WorkUnit::get();
+        $workunits = WorkUnit::where('is_active', 1)->get();
         // Surat Masuk Kategori 1 & 3
-        $unitletters = UnitLetter::whereIn('category', ['1', '3'])->get();
+        $unitletters = UnitLetter::whereIn('category', ['1', '3'])->where('is_active', 1)->get();
         $classifications = Classification::get();
         $results = Dropdown::where('category', 'Hasil Penelitian')->get();
         $approveds = Dropdown::where('category', 'Disetujui Oleh')->get();
         $mailtypes = Dropdown::where('category', 'Jenis Surat')->get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
 
-        $sators = Sator::orderBy('sator_name', 'asc')->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->where('is_active', 1)->get();
 
         return view('mail.incomming.create', compact(
             'placemans',
@@ -423,19 +424,19 @@ class IncommingMailController extends Controller
     public function createbulk(Request $request)
     {
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
-        $complains = Complain::get();
-        $letters = Letter::get();
+        $complains = Complain::where('is_active', 1)->get();
+        $letters = Letter::where('is_active', 1)->get();
         $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
-        $workunits = WorkUnit::get();
+        $workunits = WorkUnit::where('is_active', 1)->get();
         // Surat Masuk Kategori 1 & 3
-        $unitletters = UnitLetter::whereIn('category', ['1', '3'])->get();
+        $unitletters = UnitLetter::whereIn('category', ['1', '3'])->where('is_active', 1)->get();
         $classifications = Classification::get();
         $results = Dropdown::where('category', 'Hasil Penelitian')->get();
         $approveds = Dropdown::where('category', 'Disetujui Oleh')->get();
         $mailtypes = Dropdown::where('category', 'Jenis Surat')->get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
 
-        $sators = Sator::orderBy('sator_name', 'asc')->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->where('is_active', 1)->get();
 
         return view('mail.incomming.createbulk', compact(
             'placemans',
@@ -580,18 +581,29 @@ class IncommingMailController extends Controller
         $id = decrypt($id);
 
         $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
-        $complains = Complain::get();
-        $letters = Letter::get();
         $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
-        $workunits = WorkUnit::get();
-        // Surat Masuk Kategori 1 & 3
-        $unitletters = UnitLetter::whereIn('category', ['1', '3'])->get();
-        $classifications = Classification::get();
         $results = Dropdown::where('category', 'Hasil Penelitian')->get();
         $approveds = Dropdown::where('category', 'Disetujui Oleh')->get();
         $mailtypes = Dropdown::where('category', 'Jenis Surat')->get();
         $receivedvias = Dropdown::where('category', 'Diterima Via')->get();
-        $sators = Sator::orderBy('sator_name', 'asc')->get();
+
+        // GET MASTER
+        $complains = Complain::where('is_active', 1)->get();
+        $letters = Letter::where('is_active', 1)->get();
+        $unitletters = UnitLetter::whereIn('category', ['1', '3'])->where('is_active', 1)->get(); // Surat Masuk Kategori 1 & 3
+        $sators = Sator::orderBy('sator_name', 'asc')->where('is_active', 1)->get();
+
+        $dataEdit = IncommingMail::where('id', $id)->first();
+        // Fetch the corresponding additional data
+        $complainsData = Complain::where('id', $dataEdit->id_mst_complain)->first();
+        $lettersData = Letter::where('id', $dataEdit->id_mst_letter)->first();
+        $unitlettersData = UnitLetter::where('id', $dataEdit->mail_unit)->first();
+        $satorsData = Sator::where('id', $dataEdit->org_unit)->first();
+        // Merge the original collections with the additional data if not null, and remove duplicates based on 'id'
+        $complains = $complainsData ? $complains->merge([$complainsData])->unique('id') : $complains;
+        $letters = $lettersData ? $letters->merge([$lettersData])->unique('id') : $letters;
+        $unitletters = $unitlettersData ? $unitletters->merge([$unitlettersData])->unique('id') : $unitletters;
+        $sators = $satorsData ? $sators->merge([$satorsData])->unique('id') : $sators;
 
         $data = IncommingMail::select(
             'incomming_mails.*',
@@ -614,9 +626,7 @@ class IncommingMailController extends Controller
             'complains',
             'letters',
             'receiverMails',
-            'workunits',
             'unitletters',
-            'classifications',
             'results',
             'approveds',
             'mailtypes',
@@ -767,6 +777,18 @@ class IncommingMailController extends Controller
         $changes = ($firstTimestamp != $secondTimestamp);
 
         return response()->json(['changes' => $changes]);
+    }
+    public function checkChangeIncomming(Request $request)
+    {
+        $lastUpdated = $request->input('lastUpdated');
+        $datas = IncommingMail::where('placeman', '!=', 'LITNADIN')->get();
+        $lastUpdatedNow = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
+        $changes = ($lastUpdated != $lastUpdatedNow);
+
+        return response()->json([
+            'changes' => $changes,
+            'lastUpdatedNow' => $lastUpdatedNow,
+        ]);
     }
 
 
@@ -1052,18 +1074,18 @@ class IncommingMailController extends Controller
 
     public function createLitnadin(Request $request)
     {
-        $letters = Letter::get();
+        $letters = Letter::where('is_active', 1)->get();
         $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
-        $workunits = WorkUnit::get();
+        $workunits = WorkUnit::where('is_active', 1)->get();
         // Surat Masuk Kategori 1 & 3
         // $unitletters = UnitLetter::whereIn('category', ['1', '3'])->get();
         // Surat Masuk Litnadin Lembar
-        $unitletters = UnitLetter::where('unit_name', 'Lembar')->get();
-        $classifications = Classification::get();
+        $unitletters = UnitLetter::where('unit_name', 'Lembar')->where('is_active', 1)->get();
+        $classifications = Classification::where('is_active', 1)->get();
         $results = Dropdown::where('category', 'Hasil Penelitian')->get();
         $approveds = Dropdown::where('category', 'Disetujui Oleh')->get();
 
-        $sators = Sator::orderBy('sator_name', 'asc')->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->where('is_active', 1)->get();
 
         return view('mail.incommingLitnadin.create', compact(
             'letters',
@@ -1161,18 +1183,18 @@ class IncommingMailController extends Controller
 
     public function createbulkLitnadin(Request $request)
     {
-        $letters = Letter::get();
+        $letters = Letter::where('is_active', 1)->get();
         $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
-        $workunits = WorkUnit::get();
+        $workunits = WorkUnit::where('is_active', 1)->get();
         // Surat Masuk Kategori 1 & 3
         // $unitletters = UnitLetter::whereIn('category', ['1', '3'])->get();
         // Surat Masuk Litnadin Lembar
         $unitletters = UnitLetter::where('unit_name', 'Lembar')->get();
-        $classifications = Classification::get();
+        $classifications = Classification::where('is_active', 1)->get();
         $results = Dropdown::where('category', 'Hasil Penelitian')->get();
         $approveds = Dropdown::where('category', 'Disetujui Oleh')->get();
 
-        $sators = Sator::orderBy('sator_name', 'asc')->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->where('is_active', 1)->get();
 
         return view('mail.incommingLitnadin.createbulk', compact(
             'letters',
@@ -1307,15 +1329,24 @@ class IncommingMailController extends Controller
     {
         $id = decrypt($id);
 
-        $letters = Letter::get();
         $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
-        $workunits = WorkUnit::get();
-        $unitletters = UnitLetter::get();
-        $classifications = Classification::get();
         $results = Dropdown::where('category', 'Hasil Penelitian')->get();
         $approveds = Dropdown::where('category', 'Disetujui Oleh')->get();
 
-        $sators = Sator::orderBy('sator_name', 'asc')->get();
+        // GET MASTER
+        $letters = Letter::where('is_active', 1)->get();
+        $unitletters = UnitLetter::where('is_active', 1)->get();
+        $sators = Sator::orderBy('sator_name', 'asc')->where('is_active', 1)->get();
+
+        $dataEdit = IncommingMail::where('id', $id)->first();
+        // Fetch the corresponding additional data
+        $lettersData = Letter::where('id', $dataEdit->id_mst_letter)->first();
+        $unitlettersData = UnitLetter::where('id', $dataEdit->mail_unit)->first();
+        $satorsData = Sator::where('id', $dataEdit->org_unit)->first();
+        // Merge the original collections with the additional data if not null, and remove duplicates based on 'id'
+        $letters = $lettersData ? $letters->merge([$lettersData])->unique('id') : $letters;
+        $unitletters = $unitlettersData ? $unitletters->merge([$unitlettersData])->unique('id') : $unitletters;
+        $sators = $satorsData ? $sators->merge([$satorsData])->unique('id') : $sators;
 
         $data = IncommingMail::select(
             'incomming_mails.*',
@@ -1336,9 +1367,7 @@ class IncommingMailController extends Controller
         return view('mail.incommingLitnadin.edit', compact(
             'letters',
             'receiverMails',
-            'workunits',
             'unitletters',
-            'classifications',
             'results',
             'approveds',
             'sators',

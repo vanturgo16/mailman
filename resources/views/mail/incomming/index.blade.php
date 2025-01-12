@@ -520,11 +520,13 @@
             });
 
             //Check Table Update
-            setTimeout(checkForChanges, 10);
-            setTimeout(checkForChanges, 20);
+            var lastUpdated = '{{ $lastUpdated }}';
+            setTimeout(() => checkForChangeIncomming(lastUpdated), 10);
 
-            setTimeout(checkForChangeUpdate, 10);
-            setTimeout(checkForChangeUpdate, 20);
+            // setTimeout(checkForChanges, 10);
+            // setTimeout(checkForChanges, 20);
+            // setTimeout(checkForChangeUpdate, 10);
+            // setTimeout(checkForChangeUpdate, 20);
 
             function makeRowEditable($row) {
                 if (editingRow && editingRow.index() !== $row.index()) {
@@ -742,34 +744,59 @@
         });
 
         // Function Table Update
-        function checkForChanges() {
+        function checkForChangeIncomming(lastUpdated) {
             $.ajax({
-                url: '{{ route("incommingmail.checkChanges") }}',
-                method: 'GET',
-                success: function(response) {
+                url: '{{ route("incommingmail.checkChangeIncomming") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    lastUpdated: lastUpdated
+                },
+                success: function (response) {
+                    // console.log('Last : ' + lastUpdated);
+                    // console.log('Now : ' + response.lastUpdatedNow);
                     if (response.changes) {
                         $("#server-side-table").DataTable().ajax.reload();
+                        lastUpdated = response.lastUpdatedNow;
                     }
                 },
-                complete: function() {
-                    setTimeout(checkForChanges, 10);
+                complete: function () {
+                    setTimeout(() => checkForChangeIncomming(lastUpdated), 5000); // every 5s
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error in checkForChangeIncomming:", error);
+                    setTimeout(() => checkForChangeIncomming(lastUpdated), 5000);
                 }
             });
         }
-        function checkForChangeUpdate() {
-            $.ajax({
-                url: '{{ route("incommingmail.checkChangeUpdate") }}',
-                method: 'GET',
-                success: function(response) {
-                    if (response.changes) {
-                        $("#server-side-table").DataTable().ajax.reload();
-                    }
-                },
-                complete: function() {
-                    setTimeout(checkForChangeUpdate, 10);
-                }
-            });
-        }
+        // function checkForChanges() {
+        //     $.ajax({
+        //         url: '{{ route("incommingmail.checkChanges") }}',
+        //         method: 'GET',
+        //         success: function(response) {
+        //             if (response.changes) {
+        //                 $("#server-side-table").DataTable().ajax.reload();
+        //             }
+        //         },
+        //         complete: function() {
+        //             setTimeout(checkForChanges, 10);
+        //         }
+        //     });
+        // }
+        // function checkForChangeUpdate() {
+        //     $.ajax({
+        //         url: '{{ route("incommingmail.checkChangeUpdate") }}',
+        //         method: 'GET',
+        //         success: function(response) {
+        //             if (response.changes) {
+        //                 $("#server-side-table").DataTable().ajax.reload();
+        //             }
+        //         },
+        //         complete: function() {
+        //             setTimeout(checkForChangeUpdate, 10);
+        //         }
+        //     });
+        // }
     </script>
 
     

@@ -56,6 +56,7 @@ use PgSql\Lob;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 Route::controller(FrondandController::class)->group(function () {
     Route::get('/', 'login')->name('login');
 });
@@ -63,7 +64,6 @@ Route::controller(FrondandController::class)->group(function () {
 Route::group(['middleware' => 'cekadmin'], function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
-
     });
 
     //opd
@@ -75,13 +75,12 @@ Route::group(['middleware' => 'cekadmin'], function () {
     //     Route::patch('/opd/update/{opd}', 'update');
     //     Route::delete('/opd/{id}/destroy', 'destroy');   
     // });
-        
+
     // Permission
     Route::controller(PermissionController::class)->group(function () {
         Route::get('/permission', 'index');
         Route::get('/permission/create', 'create');
         Route::post('/permission', 'store');
-
     });
 
     //user
@@ -92,7 +91,6 @@ Route::group(['middleware' => 'cekadmin'], function () {
         Route::get('/user/edit/{user}', 'edit');
         Route::patch('/user/update/{user}', 'update');
         Route::delete('/hapus-user/{user}', 'destroy');
-
     });
 
     // role
@@ -102,14 +100,14 @@ Route::group(['middleware' => 'cekadmin'], function () {
         Route::post('/role', 'store');
         Route::get('/role/edit/{role}', 'edit');
         Route::patch('/role/update/{role}', 'update');
-    }); 
+    });
 
-// master
+    // master
     Route::resource('gedung', DaftarGedungController::class);
     Route::patch('/gedung/aktif/{id}', [DaftarGedungController::class, 'aktif']);
-        
+
     Route::resource('lantai', DaftarLantaiController::class);
-        Route::patch('/lantai/aktif/{id}', [DaftarLantaiController::class, 'aktif']);
+    Route::patch('/lantai/aktif/{id}', [DaftarLantaiController::class, 'aktif']);
 
     Route::resource('ruang', DaftarRuangController::class);
     Route::patch('/ruang/aktif/{id}', [DaftarRuangController::class, 'aktif']);
@@ -182,6 +180,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
             Route::post('/directupdate/{id}', 'directupdate')->name('incommingmail.directupdate');
             Route::get('/check-table-changes', 'checkChanges')->name('incommingmail.checkChanges');
             Route::get('/check-table-changes-update', 'checkChangeUpdate')->name('incommingmail.checkChangeUpdate');
+            Route::post('/check-update', 'checkChangeIncomming')->name('incommingmail.checkChangeIncomming');
             Route::get('/tambah', 'create')->name('incommingmail.create');
             Route::post('/store', 'store')->name('incommingmail.store');
             Route::get('/tambahbulk', 'createbulk')->name('incommingmail.createbulk');
@@ -223,6 +222,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
             Route::get('/mapKka/{id}', 'mapKka')->name('outgoingmail.mapKka');
             Route::get('/check-table-changes', 'checkChanges')->name('outgoingmail.checkChanges');
             Route::get('/check-table-changes-update', 'checkChangeUpdate')->name('outgoingmail.checkChangeUpdate');
+            Route::post('/check-update', 'checkChangeOutgoing')->name('outgoingmail.checkChangeOutgoing');
             Route::get('/tambah', 'create')->name('outgoingmail.create');
             Route::post('/store', 'store')->name('outgoingmail.store');
             Route::get('/tambahbulk', 'createbulk')->name('outgoingmail.createbulk');
@@ -255,10 +255,10 @@ Route::group(['middleware' => 'cekadmin'], function () {
     //     Route::get('/profile/edit', 'edit_profil');
     //     Route::patch('/profile/update', 'update');
     //     Route::patch('/foto-profile/update', 'update_image');
-       
+
     // });
 
 });
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
