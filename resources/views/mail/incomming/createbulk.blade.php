@@ -16,77 +16,15 @@
       </div>
   </div>
 </div>
-@include('mail.alert')
 
+@include('mail.alert')
 <div class="container-fluid">
   <div class="card card-primary card-outline">
       <div class="card-header"><h3 class="card-title"></h3></div>
+      
       <form action="{{ route('incommingmail.storebulk') }}" method="POST" enctype="multipart/form-data" id="formIncommingMail">
         @csrf
         <div class="card-body" style="max-height: 55vh; overflow-y: auto;">
-          {{-- <div class="card p-3" style="background-color:rgb(240, 240, 240);"> --}}
-            {{-- Kode Satuan Organisasi --}}
-            {{-- <div class="row row-separator">
-              <div class="col-3">
-                <label id="labelkso">Kode Satuan Organisasi</label>
-                <br>
-                <small>* (Harus diisi khusus untuk Jenis Naskah Surat, Nota Dinas, Surat Pengantar dan Telaahan Staf jika bukan ditandatangani oleh Kapolri/Wakapolri)</small>
-              </div>
-              <div class="col-9">
-                <div class="row">
-                  <div class="col-12">
-                    <label>Induk Satuan Organisasi</label>
-                  </div>
-                  <div class="col-9">
-                    <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
-                      <option value="">- Pilih -</option>
-                      @foreach($sators as $sator)
-                        <option value="{{ $sator->id }}">{{ $sator->sator_name }}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                  <div class="col-3">
-                    <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#satuanOrg"><i class="fa fa-plus"></i> Tambah Baru</button>
-                  </div>
-                  <div class="col-12 mt-3">
-                    <label id="labelSubSator">Konseptor</label>
-                  </div>
-                  <div class="col-9">
-                    <select class="form-control js-example-basic-single" name="sub_org_unit" id="sub_org_unit" style="width: 100%;">
-                      <option value="">- Pilih -</option>
-                    </select>
-                  </div>
-                  <div class="col-3">
-                  </div>
-                  <script>
-                    // Map Sator 
-                    $('select[name="org_unit"]').on('change', function() {
-                      const sator = $(this).val();
-                      var url = '{{ route("sator.mapSator", ":id") }}';
-                      url = url.replace(':id', sator);
-                      if (sator) {
-                          $.ajax({
-                              url: url,
-                              type: "GET",
-                              dataType: "json",
-                              success: function(data) {
-                                  $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
-                                  $.each(data, function(div, value) {
-                                      $('#sub_org_unit').append(
-                                          '<option value="' + value.id + '">' + value.sub_sator_name + '</option>');
-                                  });
-                              }
-                          });
-                      } else {
-                          $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
-                      }
-                    });
-                  </script>
-                </div>
-              </div>
-            </div> --}}
-          {{-- </div> --}}
-
           <div class="row px-1">
             <div class="col-md-12">
               <table class="table table-bordered">
@@ -133,28 +71,6 @@
                       </div>
                     </td>
                   </tr>
-                  {{-- Pengirim --}}
-                  {{-- <tr>
-                    <td><label class="text-danger" id="labelpengirim">Pengirim *</label></td>
-                    <td>
-                      <input type="text" name="senderInput" id="pengirim1" value="{{ old('sender') }}" class="form-control" placeholder="Masukkan Pengirim.." required>
-                      
-                      <div class="row" id="pengirim2" hidden>
-                        <div class="col-md-9">
-                          <select class="form-control js-example-basic-single" id="pengirimselect" name="senderSelect" style="width: 100%;" required>
-                            <option value="">- Pilih -</option>
-                            @foreach($workunits as $workunit)
-                              <option value="{{ $workunit->work_name }}">{{ $workunit->work_name }}</option>
-                            @endforeach
-                          </select>
-                        </div>
-                        <div class="col-md-3">
-                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#unitKerja"><i class="fa fa-plus"></i> Tambah Baru</button>
-                        </div>
-                      </div>
-                    </td>
-                    </td>
-                  </tr> --}}
                   {{-- No Surat --}}
                   <tr>
                     <td><label id="labelnoSurat">Nomor Surat</label></td>
@@ -236,22 +152,6 @@
                       </div>
                     </td>
                   </tr>
-                  {{-- Retensi Surat --}}
-                  {{-- <tr>
-                    <td><label>Retensi Surat</label></td>
-                    <td>
-                      <div class="row">
-                        <div class="col-6">
-                          <label>Dari</label>
-                          <input type="date" name="mail_retention_from" value="{{ old('mail_retention_from') }}" class="form-control">
-                        </div>
-                        <div class="col-6">
-                          <label>Hingga</label>
-                          <input type="date" name="mail_retention_to" value="{{ old('mail_retention_to') }}" class="form-control">
-                        </div>
-                      </div>
-                    </td>
-                  </tr> --}}
                   {{-- Jenis Surat --}}
                   <tr id="jenisSurat">
                     <td><label>Jenis Surat</label></td>
@@ -378,103 +278,58 @@
 @include('mail.modal')
 
 <script>
-  $(".js-example-basic-single").select2().on("select2:open", function () {
-      document.querySelector(".select2-search__field").focus();
-  });
-</script>
+  $(document).ready(function() {
+    const labeljenisNaskah = document.getElementById('labeljenisNaskah');
+    const jenisNaskah = document.getElementById('jenisNaskah');
+    const jenisPengaduan = document.getElementById('jenisPengaduan');
+    const idLetter = document.getElementById('mst_letter');
+    const idComplain = document.getElementById('mst_complain');
+    const labelnoSurat = document.getElementById('labelnoSurat');
+    const labelPenerima = document.getElementById('labelPenerima');
+    const jenisSurat = document.getElementById('jenisSurat');
+    const hasilPenelitian = document.getElementById('hasilPenelitian');
+    const disetujuiOleh = document.getElementById('disetujuiOleh');
+    const selectDiterimaVia = document.getElementById('selectDiterimaVia');
+    const inputDiterimaVia = document.getElementById('inputDiterimaVia');
 
-<script>
-  // const labelpengirim = document.getElementById('labelpengirim');
-  // const pengirim1 = document.getElementById('pengirim1');
-  // const pengirim2 = document.getElementById('pengirim2');
-  // const pengirimselect = document.getElementById('pengirimselect');
-  const labeljenisNaskah = document.getElementById('labeljenisNaskah');
-  const jenisNaskah = document.getElementById('jenisNaskah');
-  const jenisPengaduan = document.getElementById('jenisPengaduan');
-  const idLetter = document.getElementById('mst_letter');
-  const idComplain = document.getElementById('mst_complain');
-  const labelnoSurat = document.getElementById('labelnoSurat');
-  const labelPenerima = document.getElementById('labelPenerima');
-  const jenisSurat = document.getElementById('jenisSurat');
-  const hasilPenelitian = document.getElementById('hasilPenelitian');
-  const disetujuiOleh = document.getElementById('disetujuiOleh');
-  const selectDiterimaVia = document.getElementById('selectDiterimaVia');
-  const inputDiterimaVia = document.getElementById('inputDiterimaVia');
+    const jenisSuratselect = document.getElementById('jenisSuratselect');
+    const resultSelect = document.getElementById('resultSelect');
+    const approvedSelect = document.getElementById('approvedSelect');
 
-  const jenisSuratselect = document.getElementById('jenisSuratselect');
-  const resultSelect = document.getElementById('resultSelect');
-  const approvedSelect = document.getElementById('approvedSelect');
-
-  $('select[id="placeman"]').on('change', function() {
-      const placeman = $(this).val();
-      if (placeman == 'LITNADIN') {
-        // labelpengirim.textContent = "Pengirim / Konseptor *";
-        // pengirim1.hidden = true;
-        // pengirim2.hidden = false;
-        // pengirim1.required = false;
-        // pengirimselect.required = true;
-        labeljenisNaskah.textContent = "Jenis Naskah *";
-        jenisNaskah.hidden = false;
-        jenisPengaduan.hidden = true;
-        idLetter.required = true;
-        idComplain.required = false;
-        labelnoSurat.textContent = "Nomor Surat Pengantar";
-        labelPenerima.textContent = "Penandatanganan *";
-        jenisSurat.hidden = true;
-        hasilPenelitian.hidden = false;
-        disetujuiOleh.hidden = false;
-        selectDiterimaVia.hidden = true;
-        inputDiterimaVia.hidden = false;
-        // jenisSuratselect.required = false;
-        resultSelect.required = true;
-        approvedSelect.required = true;
-      } 
-      else if (placeman == 'PENGADUAN') 
-      {
-        // labelpengirim.textContent = "Pengirim *";
-        // pengirim1.hidden = false;
-        // pengirim2.hidden = true;
-        // pengirim1.required = true;
-        // pengirimselect.required = false;
-        labeljenisNaskah.textContent = "Jenis Pengaduan *";
-        jenisNaskah.hidden = true;
-        jenisPengaduan.hidden = false;
-        idLetter.required = false;
-        idComplain.required = true;
-        labelnoSurat.textContent = "Nomor Surat";
-        labelPenerima.textContent = "Penerima *";
-        jenisSurat.hidden = false;
-        hasilPenelitian.hidden = true;
-        disetujuiOleh.hidden = true;
-        selectDiterimaVia.hidden = false;
-        inputDiterimaVia.hidden = true;
-        // jenisSuratselect.required = true;
-        resultSelect.required = false;
-        approvedSelect.required = false;
-      } 
-      else 
-      {
-        // labelpengirim.textContent = "Pengirim *";
-        // pengirim1.hidden = false;
-        // pengirim2.hidden = true;
-        // pengirim1.required = true;
-        // pengirimselect.required = false;
-        labeljenisNaskah.textContent = "Jenis Naskah *";
-        jenisNaskah.hidden = false;
-        jenisPengaduan.hidden = true;
-        idLetter.required = true;
-        idComplain.required = false;
-        labelnoSurat.textContent = "Nomor Surat";
-        labelPenerima.textContent = "Penerima *";
-        jenisSurat.hidden = false;
-        hasilPenelitian.hidden = true;
-        disetujuiOleh.hidden = true;
-        selectDiterimaVia.hidden = false;
-        inputDiterimaVia.hidden = true;
-        // jenisSuratselect.required = true;
-        resultSelect.required = false;
-        approvedSelect.required = false;
-      }
+    $('select[id="placeman"]').on('change', function() {
+        const placeman = $(this).val();
+        if (placeman == 'PENGADUAN') {
+          labeljenisNaskah.textContent = "Jenis Pengaduan *";
+          jenisNaskah.hidden = true;
+          jenisPengaduan.hidden = false;
+          idLetter.required = false;
+          idComplain.required = true;
+          labelnoSurat.textContent = "Nomor Surat";
+          labelPenerima.textContent = "Penerima *";
+          jenisSurat.hidden = false;
+          hasilPenelitian.hidden = true;
+          disetujuiOleh.hidden = true;
+          selectDiterimaVia.hidden = false;
+          inputDiterimaVia.hidden = true;
+          resultSelect.required = false;
+          approvedSelect.required = false;
+        } else {
+          labeljenisNaskah.textContent = "Jenis Naskah *";
+          jenisNaskah.hidden = false;
+          jenisPengaduan.hidden = true;
+          idLetter.required = true;
+          idComplain.required = false;
+          labelnoSurat.textContent = "Nomor Surat";
+          labelPenerima.textContent = "Penerima *";
+          jenisSurat.hidden = false;
+          hasilPenelitian.hidden = true;
+          disetujuiOleh.hidden = true;
+          selectDiterimaVia.hidden = false;
+          inputDiterimaVia.hidden = true;
+          resultSelect.required = false;
+          approvedSelect.required = false;
+        }
+    });
   });
 </script>
 

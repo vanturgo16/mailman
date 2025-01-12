@@ -33,7 +33,7 @@ use App\Models\Pattern;
 use App\Models\SubSator;
 use Hamcrest\Arrays\IsArray;
 
-class OutgoingMailController extends Controller
+class OutgoingMailControllerOld extends Controller
 {
     public function __construct()
     {
@@ -57,13 +57,14 @@ class OutgoingMailController extends Controller
         $id_mst_letter = $request->get('id_mst_letter');
         $archive_remain = $request->get('archive_remain');
         $org_unit = $request->get('org_unit');
-        $idUpdated = $request->get('idUpdated');
+        $jmlHal = $request->get('jmlHal');
 
-        // Master Dropdown
         $workunits = WorkUnit::get();
+
         $letters = Letter::get();
         $sators = Sator::orderBy('sator_name', 'asc')->get();
         $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
+        $jmlHals = Dropdown::where('category', 'Jumlah Halaman')->get();
 
         $datas = OutgoingMail::select(
             'outgoing_mails.*',
@@ -97,29 +98,34 @@ class OutgoingMailController extends Controller
         if ($org_unit != null) {
             $datas->where('org_unit', $org_unit);
         }
-
-        // Get Query
-        $datas = $datas->get();
-        // Get Page Number
-        $page_number = 1;
-        if ($idUpdated) {
-            $page_size = 10;
-            $item = $datas->firstWhere('id', $idUpdated);
-            if ($item) {
-                $index = $datas->search(function ($value) use ($idUpdated) {
-                    return $value->id == $idUpdated;
-                });
-                $page_number = (int) ceil(($index + 1) / $page_size);
+        if ($jmlHal != null) {
+            if ($jmlHal == '1-3') {
+                $datas->whereBetween('outgoing_mails.jml_hal', [1, 3]);
+            } elseif ($jmlHal == '4-20') {
+                $datas->whereBetween('outgoing_mails.jml_hal', [4, 20]);
             } else {
-                $page_number = 1;
+                $datas->where('outgoing_mails.jml_hal', '>', 20);
             }
         }
+
+        // Get Query
+        // $datas = $datas->take(3)->get();
+
+        $datas = $datas->get();
         $lastUpdated = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
 
+        // $datas = $datas->map(function($item) {
+        //     $item->mail_regarding_filtered = $this->cleanText($item->mail_regarding);
+        //     return $item;
+        // });
+
         if ($request->ajax()) {
-            return DataTables::of($datas)->addColumn('action', function ($data) {
-                return view('mail.outgoing.action', compact('data'));
-            })->toJson();
+            $data = DataTables::of($datas)
+                ->addColumn('action', function ($data) {
+                    return view('mail.outgoing.action', compact('data'));
+                })
+                ->toJson();
+            return $data;
         }
 
         return view('mail.outgoing.index', compact(
@@ -134,9 +140,9 @@ class OutgoingMailController extends Controller
             'id_mst_letter',
             'archive_remain',
             'org_unit',
-            'idUpdated',
-            'page_number',
-            'lastUpdated',
+            'jmlHal',
+            'jmlHals',
+            'lastUpdated'
         ));
     }
 
@@ -146,8 +152,10 @@ class OutgoingMailController extends Controller
 
         // Check With Data Before
         $databefore = OutgoingMail::where('id', $id)->first();
+        // $databefore->mail_number = $request[2];
         $databefore->receiver = $request[3];
         $databefore->mail_regarding = $request[4];
+        // $databefore->drafter = $request[5];
         $databefore->mail_quantity = $request[6];
         $databefore->attachment_text = $request[7];
         $databefore->information = $request[8];
@@ -155,36 +163,63 @@ class OutgoingMailController extends Controller
         if ($databefore->isDirty()) {
             DB::beginTransaction();
 
+            // if($request[5] != null){
+            //     $jmlHal = $databefore->mail_quantity + $request[5];
+            // } else {
+            //     $jmlHal = $databefore->mail_quantity;
+            // }
+
             try {
                 // Update Outgoing Mail
                 OutgoingMail::where('id', $id)->update([
+                    // 'mail_number' => $request[2],
+                    // 'drafter' => $request[6],
                     'receiver' => $request[3],
                     'mail_regarding' => $request[4],
+                    // 'attachment_text' => $request[5],
+                    // 'jml_hal' => $jmlHal,
                     'mail_quantity' => $request[6],
                     'attachment_text' => $request[7],
                     'information' => $request[8],
                     'updated_by' => auth()->user()->name,
                 ]);
-                $datas = OutgoingMail::get();
-                $lastUpdatedNow = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
 
                 DB::commit();
-                return response()->json(['success' => true, 'idUpdated' => $id, 'updatedAt' => $lastUpdatedNow]);
+                return response()->json(['success' => true]);
             } catch (Throwable $th) {
                 DB::rollback();
-                return response()->json(['success' => false, 'errors' => $th]);
+                return response()->json(['success' => false]);
             }
         } else {
             return response()->json(['success' => "Same"]);
         }
     }
 
-    public function checkChanges(Request $request)
+    public function checkChanges()
+    {
+        $firstque = QueNumbOutMail::count();
+        sleep(3);
+        $secondque = QueNumbOutMail::count();
+        $changes = ($firstque != $secondque);
+
+        return response()->json(['changes' => $changes]);
+    }
+    public function checkChangeUpdate()
+    {
+        $firstTimestamp = OutgoingMail::max('updated_at');
+        sleep(3);
+        $secondTimestamp = OutgoingMail::max('updated_at');
+        $changes = ($firstTimestamp != $secondTimestamp);
+
+        return response()->json(['changes' => $changes]);
+    }
+    public function checkChangeOutgoing(Request $request)
     {
         $lastUpdated = $request->input('lastUpdated');
         $datas = OutgoingMail::get();
         $lastUpdatedNow = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
         $changes = ($lastUpdated != $lastUpdatedNow);
+
         return response()->json([
             'changes' => $changes,
             'lastUpdatedNow' => $lastUpdatedNow,
@@ -214,36 +249,87 @@ class OutgoingMailController extends Controller
         $workunit = $request->get('workunit');
         $archive_remain = $request->get('archive_remain');
 
-        $sators = Sator::orderBy('sator_name', 'asc')->get();
         $letters = Letter::get();
         $workunits = WorkUnit::get();
+        $sators = Sator::orderBy('sator_name', 'asc')->get();
         $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
 
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($drafter) || isset($id_mst_letter) || isset($workunit) || isset($archive_remain)) {
-            // Fetch filters from request
-            $filters = $request->only(['startdate', 'enddate', 'mail_number', 'drafter', 'id_mst_letter', 'workunit', 'archive_remain']);
-            $datas = $this->getFilteredData($filters);
+        if (isset($startdate) || isset($enddate) || isset($drafter) || isset($mail_number) || isset($id_mst_letter) || isset($workunit) || isset($archive_remain)) {
+            $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'master_unit_letter.unit_name', 'signer.work_name as signer', 'master_sub_sator.sub_sator_name')
+                ->leftjoin('master_sub_sator', 'outgoing_mails.sub_org_unit', 'master_sub_sator.id')
+                ->leftjoin('master_workunit as signer', 'signer.id', 'outgoing_mails.signing')
+                ->leftjoin('master_unit_letter', 'master_unit_letter.id', 'outgoing_mails.mail_unit')
+                ->orderBy('created_at', 'desc');
+
+            // Filter
+            if ($startdate != null) {
+                $datas->where(function ($query) use ($startdate) {
+                    $query->where('outgoing_mails.mail_date', '>=', $startdate)
+                        ->orWhere('outgoing_mails.out_date', '>=', $startdate);
+                });
+            }
+            if ($enddate != null) {
+                $datas->where(function ($query) use ($enddate) {
+                    $query->where('outgoing_mails.mail_date', '<=', $enddate)
+                        ->orWhere('outgoing_mails.out_date', '<=', $enddate);
+                });
+            }
+            if ($drafter != null) {
+                $datas->where('outgoing_mails.org_unit', $drafter);
+            }
+            if ($mail_number != null) {
+                $datas->where('outgoing_mails.mail_number', 'like', '%' . $mail_number . '%')
+                    ->orWhere('outgoing_mails.mail_regarding', 'like', '%' . $mail_number . '%');
+            }
+            if ($id_mst_letter != null) {
+                $datas->where('outgoing_mails.id_mst_letter', $id_mst_letter);
+            }
+            if ($workunit != null) {
+                $datas->where('outgoing_mails.signing', $workunit);
+            }
+            if ($archive_remain != null) {
+                $datas->where('outgoing_mails.archive_remain', $archive_remain);
+            }
+
+            // Get Query
+            $datas = $datas->get();
+
+            // $datas = $datas->map(function($item) {
+            //     $item->mail_regarding_filtered = $this->cleanText($item->mail_regarding);
+            //     return $item;
+            // });
+
+            // $datas = $datas->map(function($item) {
+            //     $item->attachment_text_filtered = $this->cleanText($item->attachment_text);
+            //     return $item;
+            // });
+
+            // $datas = $datas->map(function($item) {
+            //     $item->information_filtered = $this->cleanText($item->information);
+            //     return $item;
+            // });
         } else {
             $datas = [];
         }
 
         if ($request->ajax()) {
-            return DataTables::of($datas)->toJson();
+            $data = DataTables::of($datas)->toJson();
+            return $data;
         }
 
         return view('mail.outgoing.rekapitulasi', compact(
-            'startdate',
-            'enddate',
-            'mail_number',
-            'drafter',
-            'id_mst_letter',
+            'letters',
+            'sators',
             'workunits',
             'archive_remains',
-            'sators',
-            'letters',
-            'workunit',
-            'archive_remain',
             'datas',
+            'startdate',
+            'enddate',
+            'drafter',
+            'mail_number',
+            'id_mst_letter',
+            'workunit',
+            'archive_remain'
         ));
     }
 
@@ -252,75 +338,88 @@ class OutgoingMailController extends Controller
         // Initiate Variable Filter
         $startdate = $request->get('startdate');
         $enddate = $request->get('enddate');
-        $mail_number = $request->get('mail_number');
         $drafter = $request->get('drafter');
+        $mail_number = $request->get('mail_number');
         $id_mst_letter = $request->get('id_mst_letter');
-        $workunit = $request->get('workunit');
+        $workunit = $request->get('workunits');
         $archive_remain = $request->get('archive_remain');
 
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($drafter) || isset($id_mst_letter) || isset($workunit) || isset($archive_remain)) {
-            // Fetch filters from request
-            $filters = $request->only(['startdate', 'enddate', 'mail_number', 'drafter', 'id_mst_letter', 'workunit', 'archive_remain']);
-            $datas = $this->getFilteredData($filters);
+        if (isset($startdate) || isset($enddate) || isset($drafter) || isset($mail_number) || isset($id_mst_letter) || isset($workunit) || isset($archive_remain)) {
+            $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'master_unit_letter.unit_name', 'signer.work_name as signer', 'master_sub_sator.sub_sator_name')
+                ->leftjoin('master_sub_sator', 'outgoing_mails.sub_org_unit', 'master_sub_sator.id')
+                ->leftjoin('master_workunit as signer', 'signer.id', 'outgoing_mails.signing')
+                ->leftjoin('master_unit_letter', 'master_unit_letter.id', 'outgoing_mails.mail_unit')
+                ->orderBy('created_at', 'desc');
+
+            // Filter
+            if ($startdate != null) {
+                $datas->where(function ($query) use ($startdate) {
+                    $query->where('outgoing_mails.mail_date', '>=', $startdate)
+                        ->orWhere('outgoing_mails.out_date', '>=', $startdate);
+                });
+            }
+            if ($enddate != null) {
+                $datas->where(function ($query) use ($enddate) {
+                    $query->where('outgoing_mails.mail_date', '<=', $enddate)
+                        ->orWhere('outgoing_mails.out_date', '<=', $enddate);
+                });
+            }
+            if ($drafter != null) {
+                $datas->where('outgoing_mails.org_unit', $drafter);
+            }
+            if ($mail_number != null) {
+                $datas->where('outgoing_mails.mail_number', 'like', '%' . $mail_number . '%')
+                    ->orWhere('outgoing_mails.mail_regarding', 'like', '%' . $mail_number . '%');
+            }
+            if ($id_mst_letter != null) {
+                $datas->where('outgoing_mails.id_mst_letter', $id_mst_letter);
+            }
+            if ($workunit != null) {
+                $datas->where('outgoing_mails.signing', $workunit);
+            }
+            if ($archive_remain != null) {
+                $datas->where('outgoing_mails.archive_remain', $archive_remain);
+            }
+
+            // Get Query
+            $datas = $datas->get();
+
+            // $datas = $datas->map(function($item) {
+            //     $item->mail_regarding_filtered = $this->cleanText($item->mail_regarding);
+            //     return $item;
+            // });
+
+            // $datas = $datas->map(function($item) {
+            //     $item->attachment_text_filtered = $this->cleanText($item->attachment_text);
+            //     return $item;
+            // });
+
+            // $datas = $datas->map(function($item) {
+            //     $item->information_filtered = $this->cleanText($item->information);
+            //     return $item;
+            // });
         } else {
             $datas = [];
         }
 
-        $pdf = PDF::loadView('pdf.rekapitulasi.main', [
-            'startdate' => $filters['startdate'] ?? null,
-            'enddate' => $filters['enddate'] ?? null,
-            'print_date' => Carbon::now()->format('YmdHis'),
-            'letter' => $request->id_mst_letter ? Letter::find($request->id_mst_letter)->let_name ?? null : null,
+        $now = Carbon::now()->format('YmdHis');
+
+        if ($id_mst_letter != null) {
+            $letter = Letter::where('id', $id_mst_letter)->first()->let_name;
+        } else {
+            $letter = null;
+        }
+
+        $pdf = PDF::loadView('pdf.rekapitulasi', [
+            'startdate' => $startdate,
+            'enddate' => $enddate,
+            'print_date' => $now,
+            'letter' => $letter,
             'user' => auth()->user()->name,
             'datas' => $datas,
-            'mailType' => 'Surat Keluar',
         ])->setPaper('a4', 'portrait');
 
-        return $pdf->stream('Print Rekapitulasi Surat Keluar.pdf', array("Attachment" => false));
-    }
-
-    private function getFilteredData($filters)
-    {
-        $datas = OutgoingMail::select('outgoing_mails.*', 'outgoing_mails.updated_at as last_update', 'master_unit_letter.unit_name', 'signer.work_name as signer', 'master_sub_sator.sub_sator_name')
-            ->leftjoin('master_sub_sator', 'outgoing_mails.sub_org_unit', 'master_sub_sator.id')
-            ->leftjoin('master_workunit as signer', 'signer.id', 'outgoing_mails.signing')
-            ->leftjoin('master_unit_letter', 'master_unit_letter.id', 'outgoing_mails.mail_unit')
-            ->orderBy('created_at', 'desc');
-
-        // Filter
-        if (!empty($filters['startdate'])) {
-            $startdatesearch = (new DateTime($filters['startdate']))->format('Y-m-d H:i:s');
-            $datas->where(function ($query) use ($startdatesearch) {
-                $query->where('outgoing_mails.mail_date', '>=', $startdatesearch)
-                    ->orWhere('outgoing_mails.out_date', '>=', $startdatesearch);
-            });
-        }
-        if (!empty($filters['enddate'])) {
-            $enddatesearch = (new DateTime($filters['enddate']))->format('Y-m-d H:i:s');
-            $datas->where(function ($query) use ($enddatesearch) {
-                $query->where('outgoing_mails.mail_date', '<=', $enddatesearch)
-                    ->orWhere('outgoing_mails.out_date', '<=', $enddatesearch);
-            });
-        }
-        if (!empty($filters['mail_number'])) {
-            $datas->where(function ($query) use ($filters) {
-                $query->where('outgoing_mails.mail_number', 'like', '%' . $filters['mail_number'] . '%')
-                    ->orWhere('outgoing_mails.mail_regarding', 'like', '%' . $filters['mail_number'] . '%');
-            });
-        }
-        if (!empty($filters['drafter'])) {
-            $datas->where('outgoing_mails.org_unit', $filters['drafter']);
-        }
-        if (!empty($filters['id_mst_letter'])) {
-            $datas->where('outgoing_mails.id_mst_letter', $filters['id_mst_letter']);
-        }
-        if (!empty($filters['workunit'])) {
-            $datas->where('outgoing_mails.signing', $filters['workunit']);
-        }
-        if (!empty($filters['archive_remain'])) {
-            $datas->where('outgoing_mails.archive_remain', $filters['archive_remain']);
-        }
-        return $datas->get();
+        return $pdf->stream('Print Rekapitulasi.pdf', array("Attachment" => false));
     }
 
     public function create(Request $request)
@@ -363,8 +462,10 @@ class OutgoingMailController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             "id_mst_letter" => "required",
+            // "drafter" => "required",
             "mail_regarding" => "required",
             "out_date" => "required",
             "signing" => "required",
@@ -373,6 +474,7 @@ class OutgoingMailController extends Controller
             "archive_remain" => "required",
         ], [
             'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
+            // 'drafter.required' => 'Konseptor Wajib Untuk Diisi.',
             'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
             'out_date.required' => 'Tanggal Keluar Wajib Untuk Diisi.',
             'signing.required' => 'Penandatanganan Wajib Untuk Diisi.',
@@ -383,11 +485,40 @@ class OutgoingMailController extends Controller
 
         DB::beginTransaction();
         try {
+            // if($request->save_location != null){
+            //     $location_save_route = json_encode([
+            //         'idGedung' => $request->input('namaGedung'),
+            //         'idLantai' => $request->input('namaLantai'),
+            //         'idRuang' => $request->input('namaRuang'),
+            //         'idRak' => $request->input('namaRak'),
+            //         'idBaris' => $request->input('namaBaris'),
+            //         'idKolom' => $request->input('namaKolom'),
+            //         'idBoks' => $request->input('namaBoks'),
+            //     ]);
+            // } else {
+            //     $location_save_route = json_encode([
+            //         'idGedung' => null,
+            //         'idLantai' => null,
+            //         'idRuang' => null,
+            //         'idRak' => null,
+            //         'idBaris' => null,
+            //         'idKolom' => null,
+            //         'idBoks' => null,
+            //     ]);
+            // }
+
+            // if($request->attachment_text != null){
+            //     $jmlHal = $request->mail_quantity + $request->attachment_text;
+            // } else {
+            //     $jmlHal = $request->mail_quantity;
+            // }
+
             // Store Outgoing Mail
             $store = OutgoingMail::create([
                 'id_mst_letter' => $request->id_mst_letter,
                 'kka_type' => $request->kka_type,
                 'kka_code' => $request->kka_code,
+                // 'drafter' => $request->drafter,
                 'org_unit' => $request->org_unit,
                 'sub_org_unit' => $request->sub_org_unit,
                 'mail_regarding' => $request->mail_regarding,
@@ -399,8 +530,18 @@ class OutgoingMailController extends Controller
                 'mail_quantity' => $request->mail_quantity,
                 'mail_unit' => $request->mail_unit,
                 'archive_remains' => $request->archive_remain,
+                // 'archive_classification' => $request->archive_classification,
+                // 'mail_retention_from' => $request->mail_retention_from,
+                // 'mail_retention_to' => $request->mail_retention_to,
+                // 'location_save' => $request->save_location,
+                // 'location_save_route' => $location_save_route,
+                // 'received_via' => $request->received_via,
                 'attachment_text' => $request->attachment_text,
+                // 'ref_number' => $request->ref_number,
+                // 'ref_mail' => $request->mail_ref,
                 'information' => $request->information,
+                // 'jml_hal' => $jmlHal,
+                'status' => null,
                 'created_by' => auth()->user()->name,
             ]);
 
@@ -457,8 +598,10 @@ class OutgoingMailController extends Controller
     }
     public function storebulk(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             "id_mst_letter" => "required",
+            // "drafter" => "required",
             "mail_regarding" => "required",
             "out_date" => "required",
             "signing" => "required",
@@ -467,6 +610,7 @@ class OutgoingMailController extends Controller
             "archive_remain" => "required",
         ], [
             'id_mst_letter.required' => 'Jenis Naskah Wajib Untuk Diisi.',
+            // 'drafter.required' => 'Konseptor Wajib Untuk Diisi.',
             'mail_regarding.required' => 'Perihal Wajib Untuk Diisi.',
             'out_date.required' => 'Tanggal Keluar Wajib Untuk Diisi.',
             'signing.required' => 'Penandatanganan Wajib Untuk Diisi.',
@@ -475,15 +619,46 @@ class OutgoingMailController extends Controller
             'archive_remain.required' => 'Arsip Pertinggal Wajib Untuk Diisi.',
         ]);
 
+        $amountLetter = $request->amount_letter;
+
         DB::beginTransaction();
         try {
-            $amountLetter = $request->amount_letter;
+            // if($request->save_location != null){
+            //     $location_save_route = json_encode([
+            //         'idGedung' => $request->input('namaGedung'),
+            //         'idLantai' => $request->input('namaLantai'),
+            //         'idRuang' => $request->input('namaRuang'),
+            //         'idRak' => $request->input('namaRak'),
+            //         'idBaris' => $request->input('namaBaris'),
+            //         'idKolom' => $request->input('namaKolom'),
+            //         'idBoks' => $request->input('namaBoks'),
+            //     ]);
+            // } else {
+            //     $location_save_route = json_encode([
+            //         'idGedung' => null,
+            //         'idLantai' => null,
+            //         'idRuang' => null,
+            //         'idRak' => null,
+            //         'idBaris' => null,
+            //         'idKolom' => null,
+            //         'idBoks' => null,
+            //     ]);
+            // }
+
+            // if($request->attachment_text != null){
+            //     $jmlHal = $request->mail_quantity + $request->attachment_text;
+            // } else {
+            //     $jmlHal = $request->mail_quantity;
+            // }
+
             for ($i = 0; $i < $amountLetter; $i++) {
+
                 // Store Outgoing Mail
                 $store = OutgoingMail::create([
                     'id_mst_letter' => $request->id_mst_letter,
                     'kka_type' => $request->kka_type,
                     'kka_code' => $request->kka_code,
+                    // 'drafter' => $request->drafter,
                     'org_unit' => $request->org_unit,
                     'sub_org_unit' => $request->sub_org_unit,
                     'mail_regarding' => $request->mail_regarding,
@@ -495,8 +670,18 @@ class OutgoingMailController extends Controller
                     'mail_quantity' => $request->mail_quantity,
                     'mail_unit' => $request->mail_unit,
                     'archive_remains' => $request->archive_remain,
+                    // 'archive_classification' => $request->archive_classification,
+                    // 'mail_retention_from' => $request->mail_retention_from,
+                    // 'mail_retention_to' => $request->mail_retention_to,
+                    // 'location_save' => $request->save_location,
+                    // 'location_save_route' => $location_save_route,
+                    // 'received_via' => $request->received_via,
                     'attachment_text' => $request->attachment_text,
+                    // 'ref_number' => $request->ref_number,
+                    // 'ref_mail' => $request->mail_ref,
                     'information' => $request->information,
+                    // 'jml_hal' => $jmlHal,
+                    'status' => null,
                     'created_by' => auth()->user()->name,
                 ]);
 
@@ -518,6 +703,7 @@ class OutgoingMailController extends Controller
     public function detail($id)
     {
         $id = decrypt($id);
+        // dd($id);
 
         $data = OutgoingMail::select(
             'outgoing_mails.*',
@@ -548,7 +734,7 @@ class OutgoingMailController extends Controller
             $kka_codes = KkaCode::where('kka_code', $data->kka_code)->first();
         }
 
-        return view('mail.outgoing.info', compact('data', 'kka_type', 'kka_codes', 'id'));
+        return view('mail.outgoing.info', compact('data', 'kka_type', 'kka_codes'));
     }
 
     public function edit(Request $request, $id)
@@ -654,6 +840,7 @@ class OutgoingMailController extends Controller
     public function update(Request $request, $id)
     {
         $id = decrypt($id);
+        // dd($request->all());
 
         $request->validate([
             "id_mst_letter" => "required",
@@ -675,11 +862,24 @@ class OutgoingMailController extends Controller
 
         $out_date = (new DateTime($request->out_date))->format('Y-m-d H:i:s');
         $mail_date = (new DateTime($request->mail_date))->format('Y-m-d H:i:s');
+        // $mail_retention_from = (new DateTime($request->mail_retention_from))->format('Y-m-d H:i:s');
+        // $mail_retention_to = (new DateTime($request->mail_retention_to))->format('Y-m-d H:i:s');
+        // $location_save_route = [
+        //     'idGedung' => $request->input('namaGedung'),
+        //     'idLantai' => $request->input('namaLantai'),
+        //     'idRuang' => $request->input('namaRuang'),
+        //     'idRak' => $request->input('namaRak'),
+        //     'idBaris' => $request->input('namaBaris'),
+        //     'idKolom' => $request->input('namaKolom'),
+        //     'idBoks' => $request->input('namaBoks'),
+        // ];
+        // $location_save_route = json_encode($location_save_route);    
 
         // Check With Data Before
         $databefore = OutgoingMail::where('id', $id)->first();
 
         $kkaCodeUpdated = ($databefore->kka_code != $request->kka_code);
+
         $databefore->id_mst_letter = $request->id_mst_letter;
         $databefore->kka_type = $request->kka_type;
         $databefore->kka_code = $request->kka_code;
@@ -697,29 +897,44 @@ class OutgoingMailController extends Controller
         $databefore->attachment_text = $request->attachment_text;
         $databefore->information = $request->information;
 
-        $redirectParams = [
-            'entry_date' => $request->filt_entry_date,
-            'mail_date' => $request->filt_mail_date,
-            'mail_number' => $request->filt_mail_number,
-            'id_mst_letter' => $request->filt_id_mst_letter,
-            'archive_remain' => $request->filt_archive_remain,
-            'org_unit' => $request->filt_org_unit,
-            'idUpdated' => $id,
-        ];
+        // $databefore->drafter = $request->drafter;
+        // $databefore->archive_classification = $request->archive_classification;
+        // $databefore->mail_retention_from = $mail_retention_from;
+        // $databefore->mail_retention_to = $mail_retention_to;
+        // $databefore->location_save = $request->save_location;
+        // if($databefore->location_save != $request->save_location){
+        //     $databefore->location_save_route = $location_save_route;
+        //     $newroute = $location_save_route;
+        // } else {
+        //     $newroute = $databefore->location_save_route;
+        // }
+        // $databefore->received_via = $request->received_via;
+        // $databefore->ref_number = $request->ref_number;
+        // $databefore->ref_mail = $request->mail_ref;
+
+        // if($request->attachment_text != null){
+        //     $jmlHal = $request->mail_quantity + $request->attachment_text;
+        // } else {
+        //     $jmlHal = $request->mail_quantity;
+        // }
 
         if ($databefore->isDirty()) {
             DB::beginTransaction();
             try {
-                $mailNumber = $kkaCodeUpdated
-                    ? str_replace($request->kka_code_before, $request->kka_code, $databefore->mail_number)
-                    : $databefore->mail_number;
+                if ($kkaCodeUpdated) {
+                    $mailNumber = str_replace($request->kka_code_before, $request->kka_code, $databefore->mail_number);
+                } else {
+                    $mailNumber = $databefore->mail_number;
+                }
 
                 // Update Outgoing Mail
                 OutgoingMail::where('id', $id)->update([
                     'id_mst_letter' => $request->id_mst_letter,
+
                     'mail_number' => $mailNumber,
                     'kka_type' => $request->kka_type,
                     'kka_code' => $request->kka_code,
+
                     'org_unit' => $request->org_unit,
                     'sub_org_unit' => $request->sub_org_unit,
                     'mail_regarding' => $request->mail_regarding,
@@ -735,16 +950,27 @@ class OutgoingMailController extends Controller
                     'information' => $request->information,
                     'status' => null,
                     'updated_by' => auth()->user()->name,
+
+                    // 'drafter' => $request->drafter,
+                    // 'archive_classification' => $request->archive_classification,
+                    // 'mail_retention_from' => $request->mail_retention_from,
+                    // 'mail_retention_to' => $request->mail_retention_to,
+                    // 'location_save' => $request->save_location,
+                    // 'location_save_route' => $location_save_route,
+                    // 'received_via' => $request->received_via,
+                    // 'ref_number' => $request->ref_number,
+                    // 'ref_mail' => $request->mail_ref,
+                    // 'jml_hal' => $jmlHal,
                 ]);
 
                 DB::commit();
-                return redirect()->route('outgoingmail.index', $redirectParams)->with(['success' => 'Sukses Ubah Data']);
+                return redirect()->route('outgoingmail.index')->with(['success' => 'Sukses Ubah Data']);
             } catch (Throwable $th) {
                 DB::rollback();
                 return redirect()->back()->with(['fail' => 'Gagal Ubah Data!']);
             }
         } else {
-            return redirect()->route('outgoingmail.index', $redirectParams)->with(['info' => 'Tidak ada perubahan, data sama dengan yang sebelumnya']);
+            return redirect()->route('outgoingmail.index')->with(['info' => 'Tidak ada perubahan, data sama dengan yang sebelumnya']);
         }
     }
 

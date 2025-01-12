@@ -6,7 +6,7 @@
   <div class="container-fluid">
       <div class="row mb-2">
           <div class="col-sm-6">
-              <h1 class="m-0"><i class="fas fa-plus"></i> Formulir Tambah Surat Masuk (LITNADIN) (BULK)</h1>
+              <h1 class="m-0"><i class="fas fa-plus"></i> Formulir Tambah Surat Masuk (LITNADIN)</h1>
           </div>
           <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -18,12 +18,12 @@
       </div>
   </div>
 </div>
-
 @include('mail.alert')
+
 <div class="container-fluid">
   <div class="card card-primary card-outline">
       <div class="card-header"><h3 class="card-title"></h3></div>
-      <form action="{{ route('incommingmail.storebulkLitnadin') }}" method="POST" enctype="multipart/form-data" id="formIncommingMail">
+      <form action="{{ route('incommingmail.storeLitnadin') }}" method="POST" enctype="multipart/form-data" id="formIncommingMail">
         @csrf
         <div class="card-body" style="max-height: 55vh; overflow-y: auto;">
           <div class="card p-3" style="background-color:rgb(240, 240, 240);">
@@ -61,29 +61,27 @@
                   <div class="col-3">
                   </div>
                   <script>
-                    $(document).ready(function() {
-                      // Map Sator 
-                      $('select[name="org_unit"]').on('change', function() {
-                        const sator = $(this).val();
-                        var url = '{{ route("sator.mapSator", ":id") }}';
-                        url = url.replace(':id', sator);
-                        if (sator) {
-                            $.ajax({
-                                url: url,
-                                type: "GET",
-                                dataType: "json",
-                                success: function(data) {
-                                    $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
-                                    $.each(data, function(div, value) {
-                                        $('#sub_org_unit').append(
-                                            '<option value="' + value.id + '">' + value.sub_sator_name + '</option>');
-                                    });
-                                }
-                            });
-                        } else {
-                            $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
-                        }
-                      });
+                    // Map Sator 
+                    $('select[name="org_unit"]').on('change', function() {
+                      const sator = $(this).val();
+                      var url = '{{ route("sator.mapSator", ":id") }}';
+                      url = url.replace(':id', sator);
+                      if (sator) {
+                          $.ajax({
+                              url: url,
+                              type: "GET",
+                              dataType: "json",
+                              success: function(data) {
+                                  $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
+                                  $.each(data, function(div, value) {
+                                      $('#sub_org_unit').append(
+                                          '<option value="' + value.id + '">' + value.sub_sator_name + '</option>');
+                                  });
+                              }
+                          });
+                      } else {
+                          $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
+                      }
                     });
                   </script>
                 </div>
@@ -123,6 +121,26 @@
                       </div>
                     </td>
                   </tr>
+                  {{-- Pengirim --}}
+                  {{-- <tr>
+                    <td><label class="text-danger" id="labelpengirim">Pengirim / Konseptor *</label></td>
+                    <td>
+                      <div class="row" >
+                        <div class="col-md-9">
+                          <select class="form-control js-example-basic-single" id="pengirimselect" name="senderSelect" style="width: 100%;" required>
+                            <option value="">- Pilih -</option>
+                            @foreach($workunits as $workunit)
+                              <option value="{{ $workunit->work_name }}">{{ $workunit->work_name }}</option>
+                            @endforeach
+                          </select>
+                        </div>
+                        <div class="col-md-3">
+                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#unitKerja"><i class="fa fa-plus"></i> Tambah Baru</button>
+                        </div>
+                      </div>
+                    </td>
+                    </td>
+                  </tr> --}}
                   {{-- No Surat --}}
                   <tr>
                     <td><label id="labelnoSurat">Nomor Surat Pengantar</label></td>
@@ -204,6 +222,43 @@
                       </div>
                     </td>
                   </tr>
+                  {{-- Klasifikasi Arsip --}}
+                  {{-- <tr>
+                    <td><label>Klasifikasi Arsip</label></td>
+                    <td>
+                      <div class="row">
+                        <div class="col-md-9">
+                          <div class="form-group">
+                            <select class="form-control js-example-basic-single" name="archive_classification" style="width: 100%;">
+                              <option value="">- Pilih -</option>
+                              @foreach($classifications as $classification)
+                                <option value="{{ $classification->id }}">{{ $classification->classification_name }}</option>
+                              @endforeach
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#klasifikasi"><i class="fa fa-plus"></i> Tambah Baru</button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr> --}}
+                  {{-- Retensi Surat --}}
+                  {{-- <tr>
+                    <td><label>Retensi Surat</label></td>
+                    <td>
+                      <div class="row">
+                        <div class="col-6">
+                          <label>Dari</label>
+                          <input type="date" name="mail_retention_from" value="{{ old('mail_retention_from') }}" class="form-control">
+                        </div>
+                        <div class="col-6">
+                          <label>Hingga</label>
+                          <input type="date" name="mail_retention_to" value="{{ old('mail_retention_to') }}" class="form-control">
+                        </div>
+                      </div>
+                    </td>
+                  </tr> --}}
                   {{-- Hasil Penelitian --}}
                   <tr id="hasilPenelitian">
                     <td><label>Hasil Penelitian</label></td>
@@ -249,6 +304,7 @@
                     <td><label>Jumlah Lampiran</label></td>
                     <td>
                       <input type="number" class="form-control" name="attachment_text" value="{{ old('attachment_text') }}" placeholder="Masukkan Jumlah Lampiran..">
+                      {{-- <textarea class="form-control" rows="3" type="text" name="attachment_text" placeholder="Masukkan Lampiran.." value="{{ old('attachment_text') }}"></textarea> --}}
                     </td>
                   </tr>
                   {{-- Status --}}
@@ -267,14 +323,6 @@
                     <td><label>Keterangan</label></td>
                     <td>
                       <textarea class="summernote-editor" type="text" name="information" placeholder="Masukkan Keterangan.." value="{{ old('information') }}" style="width: 100%"></textarea>
-                    </td>
-                  </tr>
-
-                  {{-- Jumlah --}}
-                  <tr>
-                    <td><label class="text-danger">Jumlah Naskah *</label></td>
-                    <td>
-                      <input type="number" name="amount_letter" class="form-control" placeholder="Masukkan Jumlah Naskah Dalam Angka.." required>
                     </td>
                   </tr>
                 </tbody>
@@ -309,5 +357,11 @@
 
 {{-- MODAL ADD --}}
 @include('mail.modal')
+
+<script>
+  $(".js-example-basic-single").select2().on("select2:open", function () {
+      document.querySelector(".select2-search__field").focus();
+  });
+</script>
 
 @endsection

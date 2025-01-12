@@ -178,8 +178,6 @@ Route::group(['middleware' => 'cekadmin'], function () {
             Route::get('/', 'index')->name('incommingmail.index');
             Route::post('/', 'index')->name('incommingmail.index.post');
             Route::post('/directupdate/{id}', 'directupdate')->name('incommingmail.directupdate');
-            Route::get('/check-table-changes', 'checkChanges')->name('incommingmail.checkChanges');
-            Route::get('/check-table-changes-update', 'checkChangeUpdate')->name('incommingmail.checkChangeUpdate');
             Route::post('/check-update', 'checkChangeIncomming')->name('incommingmail.checkChangeIncomming');
             Route::get('/tambah', 'create')->name('incommingmail.create');
             Route::post('/store', 'store')->name('incommingmail.store');
@@ -199,6 +197,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
             Route::get('/', 'indexLitnadin')->name('incommingmail.indexLitnadin');
             Route::post('/', 'indexLitnadin')->name('incommingmail.indexLitnadin.post');
             Route::post('/directupdate/{id}', 'directupdateLitnadin')->name('incommingmail.directupdateLitnadin');
+            Route::post('/check-update', 'checkChangeIncommingLitnadin')->name('incommingmail.checkChangeIncommingLitnadin');
             Route::get('/tambah', 'createLitnadin')->name('incommingmail.createLitnadin');
             Route::post('/store', 'storeLitnadin')->name('incommingmail.storeLitnadin');
             Route::get('/tambahbulk', 'createbulkLitnadin')->name('incommingmail.createbulkLitnadin');
@@ -220,9 +219,7 @@ Route::group(['middleware' => 'cekadmin'], function () {
             Route::post('/directupdate/{id}', 'directupdate')->name('outgoingmail.directupdate');
             Route::get('/checkNumberingKka/{id}', 'checkNumberingKka')->name('outgoingmail.checkNumberingKka');
             Route::get('/mapKka/{id}', 'mapKka')->name('outgoingmail.mapKka');
-            Route::get('/check-table-changes', 'checkChanges')->name('outgoingmail.checkChanges');
-            Route::get('/check-table-changes-update', 'checkChangeUpdate')->name('outgoingmail.checkChangeUpdate');
-            Route::post('/check-update', 'checkChangeOutgoing')->name('outgoingmail.checkChangeOutgoing');
+            Route::post('/check-update', 'checkChanges')->name('outgoingmail.checkChanges');
             Route::get('/tambah', 'create')->name('outgoingmail.create');
             Route::post('/store', 'store')->name('outgoingmail.store');
             Route::get('/tambahbulk', 'createbulk')->name('outgoingmail.createbulk');

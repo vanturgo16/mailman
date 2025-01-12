@@ -77,18 +77,9 @@
           </td>
           <td>
             <span>
-              @if($startdate != null)
-                {{ date('d-m-Y', strtotime($startdate)) }}
-              @else
-                -
-              @endif
-                s.d 
-              @if($enddate != null)
-                {{ date('d-m-Y', strtotime($enddate)) }}
-              @else
-                -
-              @endif
-            </span>
+              {{ $startdate ? date('d-m-Y', strtotime($startdate)) : '-' }} s.d 
+              {{ $enddate ? date('d-m-Y', strtotime($enddate)) : '-' }}
+            </span>            
           </td>
           <td>
           </td>
@@ -169,13 +160,6 @@
                     {{ $item->mail_number }}
                   @endif
                 </td>
-                {{-- <td class="align-top text-left px-2">
-                  @if($item->sub_sator_name == null)
-                    -
-                  @else
-                    {{ $item->sub_sator_name }}
-                  @endif
-                </td> --}}
                 <td class="align-top text-left px-2">
                   @if($item->sender == null)
                     -
