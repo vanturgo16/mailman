@@ -28,6 +28,7 @@
                         <input type="hidden" name="mail_number" value="{{ $mail_number }}">
                         <input type="hidden" name="status" value="{{ $status }}">
                         <input type="hidden" name="letter" value="{{ $letter }}">
+                        <input type="hidden" name="jmlHal" value="{{ $jmlHal }}">
                         <button type="submit" class="btn btn-sm btn-danger"><i class="mdi mdi-file-pdf-box"></i> Cetak Ke PDF</button>
                     </form>
                 </div>
@@ -88,6 +89,17 @@
                                                 @endforeach
                                             </select>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Jumlah Halaman</label>
+                                        <select class="form-control js-example-basic-single" name="jmlHal" style="width: 100%;">
+                                            <option value="">- Pilih -</option>
+                                            @foreach($jmlHals as $item)
+                                                <option value="{{ $item->name_value }}" @if($jmlHal == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -167,6 +179,7 @@
                     mail_number: '{{ $mail_number }}',
                     status: '{{ $status }}',
                     letter: '{{ $letter }}',
+                    jmlHal: '{{ $jmlHal }}',
                 }
             },
             columns: [
