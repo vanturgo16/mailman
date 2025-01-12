@@ -2,12 +2,11 @@
 @section('content')
 
 @include('mail.head')
+
 <div class="content-header">
   <div class="container-fluid">
       <div class="row mb-2">
-          <div class="col-sm-6">
-              <h1 class="m-0"><i class="mdi mdi-file-edit"></i> Formulir Ubah Surat Masuk (LITNADIN)</h1>
-          </div>
+          <div class="col-sm-6"><h1 class="m-0"><i class="mdi mdi-file-edit"></i> Formulir Ubah Surat Masuk (LITNADIN)</h1></div>
           <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                   <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Beranda</a></li>
@@ -25,8 +24,17 @@
       <div class="card-header"><h3 class="card-title"></h3></div>
       <form action="{{ route('incommingmail.updateLitnadin', encrypt($data->id)) }}" method="POST" enctype="multipart/form-data" id="formIncommingMail">
         @csrf
-        <div class="card-body" style="max-height: 55vh; overflow-y: auto;">
+        <!-- Pass filters as hidden fields -->
+        <input type="hidden" name="filt_entry_date" value="{{ request()->get('entry_date') }}">
+        <input type="hidden" name="filt_mail_date" value="{{ request()->get('mail_date') }}">
+        <input type="hidden" name="filt_mail_number" value="{{ request()->get('mail_number') }}">
+        <input type="hidden" name="filt_org_unit" value="{{ request()->get('org_unit') }}">
+        <input type="hidden" name="filt_letter" value="{{ request()->get('letter') }}">
+        <input type="hidden" name="filt_receiver" value="{{ request()->get('receiver') }}">
+        <input type="hidden" name="filt_jmlHal" value="{{ request()->get('jmlHal') }}">
+        <input type="hidden" name="filt_status" value="{{ request()->get('status') }}">
 
+        <div class="card-body" style="max-height: 55vh; overflow-y: auto;">
           <div class="card p-3" style="background-color:rgb(240, 240, 240);">
             {{-- Kode Satuan Organisasi --}}
             <div class="row row-separator">
@@ -62,51 +70,53 @@
                   <div class="col-3">
                   </div>
                   <script>
-                    var satorBefore = "{{ $data->org_unit }}";
-                    var subSatorBefore = "{{ $data->sub_org_unit }}";
-                    if(satorBefore != null){
-                      var url = '{{ route("sator.mapSator", ":id") }}';
-                      url = url.replace(':id', satorBefore);
-                      if (satorBefore) {
-                          $.ajax({
-                              url: url,
-                              type: "GET",
-                              dataType: "json",
-                              success: function(data) {
-                                  $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
-                                  $.each(data, function(div, value) {
-                                      var selected = (subSatorBefore == value.id) ? ' selected' : '';
-                                      $('#sub_org_unit').append(
-                                          '<option value="' + value.id + '"' + selected + '>' + value.sub_sator_name + '</option>'
-                                      );
-                                  });
-                              }
-                          });
-                      } else {
-                          $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
+                    $(document).ready(function() {
+                      var satorBefore = "{{ $data->org_unit }}";
+                      var subSatorBefore = "{{ $data->sub_org_unit }}";
+                      if(satorBefore != null){
+                        var url = '{{ route("sator.mapSator", ":id") }}';
+                        url = url.replace(':id', satorBefore);
+                        if (satorBefore) {
+                            $.ajax({
+                                url: url,
+                                type: "GET",
+                                dataType: "json",
+                                success: function(data) {
+                                    $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
+                                    $.each(data, function(div, value) {
+                                        var selected = (subSatorBefore == value.id) ? ' selected' : '';
+                                        $('#sub_org_unit').append(
+                                            '<option value="' + value.id + '"' + selected + '>' + value.sub_sator_name + '</option>'
+                                        );
+                                    });
+                                }
+                            });
+                        } else {
+                            $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
+                        }
                       }
-                    }
-                    // Map Sator 
-                    $('select[name="org_unit"]').on('change', function() {
-                      const sator = $(this).val();
-                      var url = '{{ route("sator.mapSator", ":id") }}';
-                      url = url.replace(':id', sator);
-                      if (sator) {
-                          $.ajax({
-                              url: url,
-                              type: "GET",
-                              dataType: "json",
-                              success: function(data) {
-                                  $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
-                                  $.each(data, function(div, value) {
-                                      $('#sub_org_unit').append(
-                                          '<option value="' + value.id + '">' + value.sub_sator_name + '</option>');
-                                  });
-                              }
-                          });
-                      } else {
-                          $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
-                      }
+                      // Map Sator 
+                      $('select[name="org_unit"]').on('change', function() {
+                        const sator = $(this).val();
+                        var url = '{{ route("sator.mapSator", ":id") }}';
+                        url = url.replace(':id', sator);
+                        if (sator) {
+                            $.ajax({
+                                url: url,
+                                type: "GET",
+                                dataType: "json",
+                                success: function(data) {
+                                    $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
+                                    $.each(data, function(div, value) {
+                                        $('#sub_org_unit').append(
+                                            '<option value="' + value.id + '">' + value.sub_sator_name + '</option>');
+                                    });
+                                }
+                            });
+                        } else {
+                            $('#sub_org_unit').empty().append('<option value="">- Pilih -</option>');
+                        }
+                      });
                     });
                   </script>
                 </div>
@@ -137,8 +147,6 @@
                     <td><label class="text-danger" id="labeljenisNaskah">Jenis Naskah *</label></td>
                     <td>
                       <div id="jenisNaskah">
-                        {{-- <input type="hidden" name="id_mst_letter" value="{{ $data->id_mst_letter }}"> --}}
-                        {{-- <input type="text" class="form-control" value="{{ $data->let_name }}" style="width: 100%;" readonly> --}}
                         <select class="form-control js-example-basic-single" id="mst_letter" name="id_mst_letter" style="width: 100%;" required>
                           <option value="">- Pilih -</option>
                           @foreach($letters as $letter)
@@ -148,26 +156,6 @@
                       </div>
                     </td>
                   </tr>
-                  {{-- Pengirim --}}
-                  {{-- <tr>
-                    <td><label class="text-danger" id="labelpengirim">Pengirim / Konseptor *</label></td>
-                    <td>
-                      <div class="row" id="pengirim2">
-                        <div class="col-md-9">
-                          <select class="form-control js-example-basic-single" id="pengirimselect" name="senderSelect" style="width: 100%;" required>
-                            <option value="">- Pilih -</option>
-                            @foreach($workunits as $workunit)
-                              <option value="{{ $workunit->work_name }}" @if($data->sender == $workunit->work_name) selected="selected" @endif>{{ $workunit->work_name }}</option>
-                            @endforeach
-                          </select>
-                        </div>
-                        <div class="col-md-3">
-                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#unitKerja"><i class="fa fa-plus"></i> Tambah Baru</button>
-                        </div>
-                      </div>
-                    </td>
-                    </td>
-                  </tr> --}}
                   {{-- No Surat --}}
                   <tr>
                     <td><label id="labelnoSurat">Nomor Surat Pengantar</label></td>
@@ -249,43 +237,7 @@
                       </div>
                     </td>
                   </tr>
-                  {{-- Klasifikasi Arsip --}}
-                  {{-- <tr>
-                    <td><label>Klasifikasi Arsip</label></td>
-                    <td>
-                      <div class="row">
-                        <div class="col-md-9">
-                          <div class="form-group">
-                            <select class="form-control js-example-basic-single" name="archive_classification" style="width: 100%;">
-                              <option value="">- Pilih -</option>
-                              @foreach($classifications as $classification)
-                                <option value="{{ $classification->id }}" @if($data->archive_classification == $classification->id) selected="selected" @endif>{{ $classification->classification_name }}</option>
-                              @endforeach
-                            </select>
-                          </div>
-                        </div>
-                        <div class="col-md-3">
-                          <button type="button" class="btn btn-secondary" style="width: 100%" data-toggle="modal" data-target="#klasifikasi"><i class="fa fa-plus"></i> Tambah Baru</button>
-                        </div>
-                      </div>
-                    </td>
-                  </tr> --}}
-                  {{-- Retensi Surat --}}
-                  {{-- <tr>
-                    <td><label>Retensi Surat</label></td>
-                    <td>
-                      <div class="row">
-                        <div class="col-6">
-                          <label>Dari</label>
-                          <input type="date" name="mail_retention_from" value="{{ \Carbon\Carbon::parse($data->mail_retention_from)->format('Y-m-d') }}" class="form-control">
-                        </div>
-                        <div class="col-6">
-                          <label>Hingga</label>
-                          <input type="date" name="mail_retention_to" value="{{ \Carbon\Carbon::parse($data->mail_retention_to)->format('Y-m-d') }}" class="form-control">
-                        </div>
-                      </div>
-                    </td>
-                  </tr> --}}
+                  
                   {{-- Hasil Penelitian --}}
                   <tr id="hasilPenelitian">
                     <td><label>Hasil Penelitian</label></td>
@@ -378,14 +330,5 @@
 
 {{-- MODAL ADD --}}
 @include('mail.modal')
-
-{{-- CKEDITOR --}}
-<script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
-
-<script>
-  $(".js-example-basic-single").select2().on("select2:open", function () {
-      document.querySelector(".select2-search__field").focus();
-  });
-</script>
 
 @endsection

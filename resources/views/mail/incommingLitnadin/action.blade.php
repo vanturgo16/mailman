@@ -3,10 +3,35 @@
         Pilih Aksi
     </button>
     <div class="dropdown-menu dropdown-menu-right">
-      <a href="{{ route('incommingmail.detailLitnadin', encrypt($data->id)) }}" type="button" class="dropdown-item drpdwn" type="button"><span class="mdi mdi-information"></span> | Detail</a>
+      <a href="{{ route('incommingmail.detailLitnadin', [
+              'id' => encrypt($data->id),
+              'entry_date' => request()->get('entry_date'),
+              'mail_date' => request()->get('mail_date'),
+              'mail_number' => request()->get('mail_number'),
+              'org_unit' => request()->get('org_unit'),
+              'letter' => request()->get('letter'),
+              'receiver' => request()->get('receiver'),
+              'jmlHal' => request()->get('jmlHal'),
+              'status' => request()->get('status'),
+          ]) }}" type="button" class="dropdown-item drpdwn" type="button">
+          <span class="mdi mdi-information"></span> | Detail
+      </a>
       @if($data->agenda_number != null)
         <a href="#" type="button"  data-toggle="modal" data-target="#updateProgress{{ $data->id }}" class="dropdown-item drpdwn"><span class="mdi mdi-file-edit"></span> | Perbaharui Progress</a>
-        <a href="{{ route('incommingmail.editLitnadin', encrypt($data->id)) }}" type="button" class="dropdown-item drpdwn" type="button"><span class="mdi mdi-file-edit"></span> | Ubah Data Keseluruhan</a>
+
+        <a href="{{ route('incommingmail.editLitnadin', [
+                'id' => encrypt($data->id),
+                'entry_date' => request()->get('entry_date'),
+                'mail_date' => request()->get('mail_date'),
+                'mail_number' => request()->get('mail_number'),
+                'org_unit' => request()->get('org_unit'),
+                'letter' => request()->get('letter'),
+                'receiver' => request()->get('receiver'),
+                'jmlHal' => request()->get('jmlHal'),
+                'status' => request()->get('status'),
+            ]) }}" type="button" class="dropdown-item drpdwn" type="button">
+            <span class="mdi mdi-file-edit"></span> | Ubah Data Keseluruhan
+        </a>
       @endif
     </div>
 </div>
@@ -25,18 +50,28 @@
           @csrf
           <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
             @if($data->countProgress < 3)
-            <div class="form-group">
-              <label class="text-danger">Keterangan*</label>
-              <textarea class="summernote-editor" type="text" name="information" placeholder="Masukkan Keterangan.." value="" style="width: 100%" required></textarea>
-            </div>
-            <div class="form-group">
-              <label class="text-danger">Status*</label>
-              <select class="form-control js-example-basic-single" name="status" style="width: 100%;" required>
-                <option value="">- Pilih -</option>
-                <option value="0">Revisi</option>
-                <option value="1">Selesai</option>
-              </select>
-            </div>
+              <!-- Pass filters as hidden fields -->
+              <input type="hidden" name="filt_entry_date" value="{{ request()->get('entry_date') }}">
+              <input type="hidden" name="filt_mail_date" value="{{ request()->get('mail_date') }}">
+              <input type="hidden" name="filt_mail_number" value="{{ request()->get('mail_number') }}">
+              <input type="hidden" name="filt_org_unit" value="{{ request()->get('org_unit') }}">
+              <input type="hidden" name="filt_letter" value="{{ request()->get('letter') }}">
+              <input type="hidden" name="filt_receiver" value="{{ request()->get('receiver') }}">
+              <input type="hidden" name="filt_jmlHal" value="{{ request()->get('jmlHal') }}">
+              <input type="hidden" name="filt_status" value="{{ request()->get('status') }}">
+
+              <div class="form-group">
+                <label class="text-danger">Keterangan*</label>
+                <textarea class="summernote-editor" type="text" name="information" placeholder="Masukkan Keterangan.." value="" style="width: 100%" required></textarea>
+              </div>
+              <div class="form-group">
+                <label class="text-danger">Status*</label>
+                <select class="form-control js-example-basic-single" name="status" style="width: 100%;" required>
+                  <option value="">- Pilih -</option>
+                  <option value="0">Revisi</option>
+                  <option value="1">Selesai</option>
+                </select>
+              </div>
             @else
               <div class="text-center py-2">Tidak Dapat Melakukan Perubahan Progress Lagi, <br> Karena Sudah <b>3 Kali</b> Dilakukan Perubahan</div>
             @endif
@@ -52,31 +87,27 @@
                 </tr>
               </thead>
               <tbody>
-                @if($data->progressStatus == [])
+                @php $progressStatus = json_decode($data->progressStatus, true); @endphp
+                @if (empty($progressStatus))
                   <tr>
                     <td colspan="4" class="align-middle text-center"> - Belum Ada Riwayat Perubahan - </td>
                   </tr>
                 @else
-                  @php $i = 0; @endphp
-                  @foreach ($data->progressStatus as $item)
-                    @php $i++; @endphp
-                    <tr>
-                      <td class="align-middle text-center">{{ $i }}</td>
-                      <td class="align-middle">{!! $item['information'] !!}</td>
-                      <td class="align-middle text-center">
-                        @if($item['status'] == 1)
-                          <span class="badge bg-success text-white">Selesai</span>
-                        @elseif($item['status'] == 0)
-                          <span class="badge bg-warning text-white">Revisi</span>
-                        @else
-                          <span class="badge bg-secondary text-white">Null</span>
-                        @endif
-                      </td>
-                      <td class="align-middle">
-                        {{ \Illuminate\Support\Facades\Date::parse($item['created_at'])->format('Y-m-d H:i:s') }}
-                        <br><b>{{ $item['created_by'] }}</b>
-                      </td>
-                    </tr>
+                  @foreach ($progressStatus as $index => $item)
+                      <tr>
+                          <td class="align-middle text-center">{{ $index + 1 }}</td>
+                          <td class="align-middle">{!! $item['information'] ?? 'Keterangan tidak tersedia' !!}</td>
+                          <td class="align-middle text-center">
+                              @php
+                                  $badgeClasses = $item['status'] == '1' ? 'bg-success' : ($item['status'] == '0' ? 'bg-warning' : 'bg-secondary');
+                                  $statusText = $item['status'] == '1' ? 'Selesai' : ($item['status'] == '0' ? 'Revisi' : 'Null');
+                              @endphp
+                              <span class="badge {{ $badgeClasses }} text-white">{{ $statusText }}</span>
+                          </td>
+                          <td class="align-middle">
+                              {{ \Carbon\Carbon::parse($item['updated_at'])->format('Y-m-d H:i:s') }}
+                          </td>
+                      </tr>
                   @endforeach
                 @endif
               </tbody>

@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <!-- App favicon -->
-  <link rel="shortcut icon" href="{{ asset('assets/blackend/img_sk/logo.png') }}">
+  <link rel="shortcut icon" href="{{ asset('blackend/img_sk/logo.png') }}">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>E-Minu Polri</title>
   <meta name="csrf-token" content="{{ csrf_token() }}">
