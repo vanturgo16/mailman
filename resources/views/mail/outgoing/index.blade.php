@@ -126,7 +126,7 @@
                 <table id="server-side-table" class="table table-bordered" style="font-size: small" width="100%">
                     <thead>
                     <tr>
-                        <th class="align-middle text-center">No.<br>Order</th>
+                        <th class="align-middle text-center">No.</th>
                         <th class="align-middle text-center">Tgl. Surat</th>
                         <th class="align-middle text-center">No. Surat</th>
                         <th class="align-middle text-center">Penerima</th>
@@ -182,22 +182,31 @@
             "displayStart": displayStart,
             "pageLength": pageLength,
             "columns": [
+                // {
+                //     data: 'no_order',
+                //     name: 'no_order',
+                //     orderable: true,
+                //     searchable: true,
+                //     className: 'text-center',
+                //     render: function(data, type, row) {
+                //         var html
+                //         if(row.no_order == null){
+                //             html = '';
+                //         } else {
+                //             html = row.no_order;
+                //         }
+                //         return html;
+                //     },
+                // },
                 {
-                    data: 'no_order',
-                    name: 'no_order',
-                    orderable: true,
-                    searchable: true,
-                    className: 'text-center',
-                    render: function(data, type, row) {
-                        var html
-                        if(row.no_order == null){
-                            html = '';
-                        } else {
-                            html = row.no_order;
-                        }
-                        return html;
+                    data: null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
                     },
-                },
+                    orderable: false,
+                    searchable: false,
+                    className: 'text-center',
+                }, 
                 {
                     data: 'out_date',
                     name: 'out_date',

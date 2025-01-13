@@ -65,7 +65,7 @@
                         <select class="form-control js-example-basic-single" id="mst_complain" name="id_mst_complain" style="width: 100%;" required>
                           <option value="">- Pilih -</option>
                           @foreach($complains as $item)
-                            <option value="{{ $item->id }}">{{ $item->com_code }} - {{ $item->com_name }}</option>
+                            <option value="{{ $item->id }}" @if($item->com_code == 'I') selected="selected" @endif>{{ $item->com_code }} - {{ $item->com_name }}</option>
                           @endforeach
                         </select>
                       </div>

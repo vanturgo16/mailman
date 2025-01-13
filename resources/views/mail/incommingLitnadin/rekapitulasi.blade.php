@@ -26,6 +26,7 @@
                         <input type="hidden" name="startdate" value="{{ $startdate }}">
                         <input type="hidden" name="enddate" value="{{ $enddate }}">
                         <input type="hidden" name="mail_number" value="{{ $mail_number }}">
+                        <input type="hidden" name="litnadin_number" value="{{ $litnadin_number }}">
                         <input type="hidden" name="status" value="{{ $status }}">
                         <input type="hidden" name="letter" value="{{ $letter }}">
                         <input type="hidden" name="jmlHal" value="{{ $jmlHal }}">
@@ -76,6 +77,12 @@
                                     <div class="form-group">
                                         <label>Nomor Surat / Perihal / Pengirim / No.Agenda / Ket.</label>
                                         <input type="text" name="mail_number" value="{{ $mail_number }}" class="form-control" placeholder="Masukkan Kata Kunci..">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Nomor Litnadin</label>
+                                        <input type="number" name="litnadin_number" value="{{ $litnadin_number }}" class="form-control" placeholder="Masukkan Nomor Litnadin..">
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -177,6 +184,7 @@
                     startdate: '{{ $startdate }}',
                     enddate: '{{ $enddate }}',
                     mail_number: '{{ $mail_number }}',
+                    litnadin_number: '{{ $litnadin_number }}',
                     status: '{{ $status }}',
                     letter: '{{ $letter }}',
                     jmlHal: '{{ $jmlHal }}',
@@ -254,6 +262,11 @@
                     orderable: false,
                     searchable: true,
                     render: function(data, type, row) {
+                        if (row.jenis_naskah == null) {
+                            jenisNaskah = '';
+                        } else {
+                            jenisNaskah = row.jenis_naskah+'<br><br>';
+                        }
                         var html;
                         html = $('<div/>').html(data).text();
                         var quantity;
@@ -262,7 +275,7 @@
                         } else {
                             quantity = '<br><br><b>'+row.mail_quantity+' '+row.unit_name+'</b>';
                         }
-                        return html+quantity;
+                        return jenisNaskah+html+quantity;
                     },
                 },
                 {

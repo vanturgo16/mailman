@@ -67,6 +67,9 @@
                     <td class="align-top text-left px-2">{{ $item->mail_number ?? '-' }}</td>
                     <td class="align-top text-left px-2">{{ $item->sub_sator_name ?? '-' }}</td>
                     <td class="align-top text-left px-2">
+                        @if ($item->jenis_naskah)
+                            {{ $item->jenis_naskah }} <br><br>
+                        @endif
                         {!! $item->mail_regarding ?? '-' !!}
                         @if($item->mail_quantity)
                             <br><br><b>{{ $item->mail_quantity }} {{ $item->unit_name }}</b>

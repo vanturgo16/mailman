@@ -328,6 +328,7 @@
                         <input type="hidden" name="entry_date" value="{{ request()->get('entry_date') }}">
                         <input type="hidden" name="mail_date" value="{{ request()->get('mail_date') }}">
                         <input type="hidden" name="mail_number" value="{{ request()->get('mail_number') }}">
+                        <input type="hidden" name="litnadin_number" value="{{ request()->get('litnadin_number') }}">
                         <input type="hidden" name="org_unit" value="{{ request()->get('org_unit') }}">
                         <input type="hidden" name="letter" value="{{ request()->get('letter') }}">
                         <input type="hidden" name="jmlHal" value="{{ request()->get('jmlHal') }}">

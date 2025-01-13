@@ -28,6 +28,7 @@
         <input type="hidden" name="filt_entry_date" value="{{ request()->get('entry_date') }}">
         <input type="hidden" name="filt_mail_date" value="{{ request()->get('mail_date') }}">
         <input type="hidden" name="filt_mail_number" value="{{ request()->get('mail_number') }}">
+        <input type="hidden" name="filt_litnadin_number" value="{{ request()->get('litnadin_number') }}">
         <input type="hidden" name="filt_org_unit" value="{{ request()->get('org_unit') }}">
         <input type="hidden" name="filt_letter" value="{{ request()->get('letter') }}">
         <input type="hidden" name="filt_receiver" value="{{ request()->get('receiver') }}">
