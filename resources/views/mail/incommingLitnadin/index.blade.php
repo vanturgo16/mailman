@@ -66,6 +66,12 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
+                                        <label>Nomor Litnadin</label>
+                                        <input type="number" name="litnadin_number" value="{{ $litnadin_number }}" class="form-control" placeholder="Masukkan Nomor Litnadin..">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
                                         <label>Kode Satuan Organisasi (Induk)</label>
                                         <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
                                             <option value="">- Pilih -</option>
@@ -201,6 +207,7 @@
                     entry_date: '{{ $entry_date }}',
                     mail_date: '{{ $mail_date }}',
                     mail_number: '{{ $mail_number }}',
+                    litnadin_number: '{{ $litnadin_number }}',
                     org_unit: '{{ $org_unit }}',
                     letter: '{{ $letter }}',
                     receiver: '{{ $receiver }}',

@@ -696,6 +696,7 @@ class IncommingMailController extends Controller
         $entry_date = $request->get('entry_date');
         $mail_date = $request->get('mail_date');
         $mail_number = $request->get('mail_number');
+        $litnadin_number = $request->get('litnadin_number');
         $org_unit = $request->get('org_unit');
         $letter = $request->get('letter');
         $receiver = $request->get('receiver');
@@ -735,6 +736,9 @@ class IncommingMailController extends Controller
             })
             ->when($mail_number, function ($q) use ($mail_number) {
                 $q->where('incomming_mails.mail_number', 'like', "%$mail_number%");
+            })
+            ->when($litnadin_number, function ($q) use ($litnadin_number) {
+                $q->where('incomming_mails.litnadin_number', $litnadin_number);
             })
             ->when($org_unit, function ($q) use ($org_unit) {
                 $q->where('org_unit', $org_unit);
@@ -787,6 +791,7 @@ class IncommingMailController extends Controller
             'entry_date',
             'mail_date',
             'mail_number',
+            'litnadin_number',
             'org_unit',
             'letter',
             'receiver',
@@ -862,6 +867,7 @@ class IncommingMailController extends Controller
         $startdate = $request->get('startdate');
         $enddate = $request->get('enddate');
         $mail_number = $request->get('mail_number');
+        $litnadin_number = $request->get('litnadin_number');
         $letter = $request->get('letter');
         $jmlHal = $request->get('jmlHal');
         $status = $request->get('status');
@@ -869,9 +875,9 @@ class IncommingMailController extends Controller
         $letters = Letter::get();
         $jmlHals = Dropdown::where('category', 'Jumlah Halaman')->get();
 
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($letter) || isset($jmlHal) || isset($status)) {
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($litnadin_number) || isset($letter) || isset($jmlHal) || isset($status)) {
             // Fetch filters from request
-            $filters = $request->only(['startdate', 'enddate', 'mail_number', 'letter', 'jmlHal', 'status']);
+            $filters = $request->only(['startdate', 'enddate', 'mail_number', 'litnadin_number', 'letter', 'jmlHal', 'status']);
             $datas = $this->getFilteredDataLitnadin($filters);
         } else {
             $datas = [];
@@ -886,6 +892,7 @@ class IncommingMailController extends Controller
             'startdate',
             'enddate',
             'mail_number',
+            'litnadin_number',
             'letter',
             'jmlHal',
             'status',
@@ -901,13 +908,14 @@ class IncommingMailController extends Controller
         $startdate = $request->get('startdate');
         $enddate = $request->get('enddate');
         $mail_number = $request->get('mail_number');
+        $litnadin_number = $request->get('litnadin_number');
         $letter = $request->get('letter');
         $jmlHal = $request->get('jmlHal');
         $status = $request->get('status');
 
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($letter) || isset($jmlHal) || isset($status)) {
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($litnadin_number) || isset($letter) || isset($jmlHal) || isset($status)) {
             // Fetch filters from request
-            $filters = $request->only(['startdate', 'enddate', 'mail_number', 'letter', 'jmlHal', 'status']);
+            $filters = $request->only(['startdate', 'enddate', 'mail_number', 'litnadin_number', 'letter', 'jmlHal', 'status']);
             $datas = $this->getFilteredDataLitnadin($filters);
         } else {
             $datas = [];
@@ -927,7 +935,8 @@ class IncommingMailController extends Controller
 
     private function getFilteredDataLitnadin($filters)
     {
-        $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'master_unit_letter.unit_name', 'master_sub_sator.sub_sator_name')
+        $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'master_letter.let_name as jenis_naskah', 'master_unit_letter.unit_name', 'master_sub_sator.sub_sator_name')
+            ->leftjoin('master_letter', 'incomming_mails.id_mst_letter', 'master_letter.id')
             ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
             ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
             ->where('placeman', 'LITNADIN')
@@ -955,6 +964,9 @@ class IncommingMailController extends Controller
                     ->orWhere('incomming_mails.information', 'like', '%' . $filters['mail_number'] . '%')
                     ->orWhere('sub_sator_name', 'like', '%' . $filters['mail_number'] . '%');
             });
+        }
+        if (!empty($filters['litnadin_number'])) {
+            $datas->where('incomming_mails.litnadin_number', $filters['litnadin_number']);
         }
         if (!empty($filters['letter'])) {
             $datas->where('incomming_mails.id_mst_letter', $filters['letter']);
@@ -1158,7 +1170,7 @@ class IncommingMailController extends Controller
         }
     }
 
-    public function detailLitnadin($id)
+    public function detailLitnadin(Request $request, $id)
     {
         $id = decrypt($id);
 
@@ -1286,6 +1298,7 @@ class IncommingMailController extends Controller
             'entry_date' => $request->filt_entry_date,
             'mail_date' => $request->filt_mail_date,
             'mail_number' => $request->filt_mail_number,
+            'litnadin_number' => $request->filt_litnadin_number,
             'org_unit' => $request->filt_org_unit,
             'letter' => $request->filt_letter,
             'receiver' => $request->filt_receiver,
@@ -1350,6 +1363,7 @@ class IncommingMailController extends Controller
             'entry_date' => $request->filt_entry_date,
             'mail_date' => $request->filt_mail_date,
             'mail_number' => $request->filt_mail_number,
+            'litnadin_number' => $request->filt_litnadin_number,
             'org_unit' => $request->filt_org_unit,
             'letter' => $request->filt_letter,
             'receiver' => $request->filt_receiver,
