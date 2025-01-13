@@ -312,7 +312,7 @@
                             @if($data->updated_by == null)
                                 <span class="badge bg-secondary">Belum Ada..</span>
                             @else
-                            <b>{{ $data->created_by }}</b>
+                            <b>{{ $data->updated_by }}</b>
                             <br>{{ $data->updated_at }}
                             @endif
                         </span>
