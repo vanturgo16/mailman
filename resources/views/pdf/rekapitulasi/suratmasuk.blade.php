@@ -42,7 +42,7 @@
     <table class="styled-table-service">
         <thead>
             <tr>
-                <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal; width:5%;">No.<br>Order</th>
+                <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal; width:5%;">No.</th>
                 <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">Tgl. Agenda</th>
                 <th rowspan="2" class="align-middle text-center px-1" style="font-weight: normal;">No. Agenda</th>
                 <th colspan="3" class="align-middle text-center px-1" style="font-weight: normal;">Naskah / Surat</th>
@@ -62,7 +62,8 @@
             @else
                 @foreach ($datas as $item)
                 <tr>
-                    <td class="align-top text-center">{{ $item->no_order ?? '' }}</td>
+                    <td class="align-top text-center">{{ $loop->iteration }}</td>
+                    {{-- <td class="align-top text-center">{{ $item->no_order }}</td> --}}
                     <td class="align-top text-left px-2">{{ date('d-m-Y', strtotime($item->entry_date)) }}</td>
                     <td class="align-top text-left px-2"><b>{{ $item->agenda_number ?? '-' }}</b></td>
                     <td class="align-top text-left px-2">{{ $item->mail_number ?? '-' }}</td>
