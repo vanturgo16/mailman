@@ -285,7 +285,8 @@ class OutgoingMailController extends Controller
             ->leftjoin('master_sub_sator', 'outgoing_mails.sub_org_unit', 'master_sub_sator.id')
             ->leftjoin('master_workunit as signer', 'signer.id', 'outgoing_mails.signing')
             ->leftjoin('master_unit_letter', 'master_unit_letter.id', 'outgoing_mails.mail_unit')
-            ->orderBy('created_at', 'asc');
+            ->orderBy('created_at', 'asc')
+            ->orderBy('id', 'asc');
 
         // Filter
         if (!empty($filters['startdate'])) {
