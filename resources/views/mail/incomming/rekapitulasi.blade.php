@@ -170,7 +170,7 @@
             <table id="server-side-table" class="table table-bordered" style="font-size: small" width="100%">
                 <thead>
                     <tr>
-                        <th rowspan="2" class="align-middle text-center">No.<br>Order</th>
+                        <th rowspan="2" class="align-middle text-center">No.</th>
                         <th rowspan="2" class="align-middle text-center">Tgl. Agenda</th>
                         <th rowspan="2" class="align-middle text-center">No. Agenda</th>
                         <th colspan="3" class="align-middle text-center">Naskah / Surat</th>
@@ -214,21 +214,30 @@
             },
             columns: [
                 {
-                    data: 'no_order',
-                    name: 'no_order',
-                    orderable: false,
-                    searchable: true,
-                    className: 'text-center',
-                    render: function(data, type, row) {
-                        var html
-                        if(row.no_order == null){
-                            html = '';
-                        } else {
-                            html = row.no_order;
-                        }
-                        return html;
+                data: null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
                     },
+                    orderable: false,
+                    searchable: false,
+                    className: 'text-center',
                 },
+                // {
+                //     data: 'no_order',
+                //     name: 'no_order',
+                //     orderable: false,
+                //     searchable: true,
+                //     className: 'text-center',
+                //     render: function(data, type, row) {
+                //         var html
+                //         if(row.no_order == null){
+                //             html = '';
+                //         } else {
+                //             html = row.no_order;
+                //         }
+                //         return html;
+                //     },
+                // },
                 {
                     data: 'entry_date',
                     name: 'entry_date',
