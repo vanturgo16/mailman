@@ -682,7 +682,7 @@ class OutgoingMailController extends Controller
         ]);
 
         $out_date = (new DateTime($request->out_date))->format('Y-m-d H:i:s');
-        $mail_date = (new DateTime($request->mail_date))->format('Y-m-d H:i:s');
+        $mail_date = $request->mail_date ? (new DateTime($request->mail_date))->format('Y-m-d H:i:s') : null;
 
         // Check With Data Before
         $databefore = OutgoingMail::where('id', $id)->first();
@@ -729,11 +729,11 @@ class OutgoingMailController extends Controller
                 } else {
                     $mailNumber = $databefore->mail_number;
                 }
-                
+
                 if ($kkaCodeUpdated) {
                     $mailNumber = str_replace($request->kka_code_before, $request->kka_code, $mailNumber);
                 }
-                    
+
                 // Update Outgoing Mail
                 OutgoingMail::where('id', $id)->update([
                     'id_mst_letter' => $request->id_mst_letter,
