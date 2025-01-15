@@ -214,7 +214,7 @@
                         </div>
                         <div class="col-6">
                           <label>Tanggal Surat</label>
-                          <input type="date" name="mail_date" value="{{ \Carbon\Carbon::parse($data->mail_date)->format('Y-m-d') }}" class="form-control">
+                          <input type="date" name="mail_date" value="{{ $data->mail_date ? \Carbon\Carbon::parse($data->mail_date)->format('Y-m-d') : '' }}" class="form-control">
                         </div>
                       </div>
                     </td>
