@@ -21,6 +21,17 @@
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex justify-content-start align-items-center" id="export-buttons-container">
+                    {{-- <form action="{{ route('outgoingmail.rekapitulasiPrint') }}" method="POST" target="_blank" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="startdate" value="{{ $startdate }}">
+                        <input type="hidden" name="enddate" value="{{ $enddate }}">
+                        <input type="hidden" name="mail_number" value="{{ $mail_number }}">
+                        <input type="hidden" name="drafter" value="{{ $drafter }}">
+                        <input type="hidden" name="id_mst_letter" value="{{ $id_mst_letter }}">
+                        <input type="hidden" name="workunit" value="{{ $workunit }}">
+                        <input type="hidden" name="archive_remain" value="{{ $archive_remain }}">
+                        <button type="submit" class="btn btn-sm btn-danger"><i class="mdi mdi-file-pdf-box"></i> Cetak Ke PDF</button>
+                    </form> --}}
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
                     <a href="{{ route('outgoingmail.rekapitulasi') }}" type="button" class="btn btn-sm btn-secondary ml-1"><span class="mdi mdi-reload"></span> Reset Filter </a>
@@ -151,6 +162,7 @@
                     </tr>
                 </thead>
             </table>
+
         </div>
     </div>
 </div>
@@ -269,17 +281,21 @@
                     },
                 },
             ],
+            // dom: 'Bfrtip',
             dom: '<"d-flex justify-content-between align-items-center"lBf>rtip',
             buttons: [
                 {
                     extend: 'excelHtml5',
-                    text: '<i class="fas fa-file-excel"></i> Export to Excel',
+                    text: '<i class="fas fa-file-pdf"></i> Export Ke Excel',
                     className: 'btn btn-success',
                     exportOptions: {
                         columns: ':visible',
-                    },
-                    title: 'Surat Keluar_' + new Date().toLocaleString(),
-                    messageTop: `Exported by: ${'{{ auth()->user()->name }}'}, Export time: ${new Date().toLocaleString()}`,
+                        format: {
+                            body: function (data, row, column, node) {
+                                return data.replace(/<[^>]*>?/gm, '');
+                            }
+                        }
+                    }
                 },
                 {
                     extend: 'print',
@@ -293,9 +309,7 @@
                                 return data;
                             }
                         }
-                    },
-                    title: 'Surat Keluar_' + new Date().toLocaleString(),
-                    messageTop: `Exported by: ${'{{ auth()->user()->name }}'}<br>Export time: ${new Date().toLocaleString()}`,
+                    }
                 }
             ],
             responsive: true,
@@ -305,7 +319,8 @@
             serverSide: false,
         });
 
-        $('#server-side-table_wrapper .dt-buttons').appendTo('#export-buttons-container');
+        table.buttons().container().appendTo('#export-buttons-container');
+        // table.buttons().container().appendTo('#example3_wrapper .col-md-6:eq(0)');
     });
 </script>
 
