@@ -20,18 +20,7 @@
     <div class="card">
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex justify-content-start align-items-center">
-                    <form action="{{ route('incommingmail.rekapitulasiPrintLitnadin') }}" method="POST" target="_blank" enctype="multipart/form-data">
-                        @csrf
-                        <input type="hidden" name="startdate" value="{{ $startdate }}">
-                        <input type="hidden" name="enddate" value="{{ $enddate }}">
-                        <input type="hidden" name="mail_number" value="{{ $mail_number }}">
-                        <input type="hidden" name="litnadin_number" value="{{ $litnadin_number }}">
-                        <input type="hidden" name="status" value="{{ $status }}">
-                        <input type="hidden" name="letter" value="{{ $letter }}">
-                        <input type="hidden" name="jmlHal" value="{{ $jmlHal }}">
-                        <button type="submit" class="btn btn-sm btn-danger"><i class="mdi mdi-file-pdf-box"></i> Cetak Ke PDF</button>
-                    </form>
+                <div class="d-flex justify-content-start align-items-center" id="export-litnadin-buttons-container">
                 </div>
                 <div class="d-flex justify-content-end align-items-center">
                     <a href="{{ route('incommingmail.rekapitulasiLitnadin') }}" type="button" class="btn btn-sm btn-secondary ml-1"><span class="mdi mdi-reload"></span> Reset Filter </a>
@@ -338,7 +327,43 @@
                     },
                 },
             ],
+            dom: '<"d-flex justify-content-between align-items-center"lBf>rtip',
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    text: '<i class="fas fa-file-excel"></i> Export to Excel',
+                    className: 'btn btn-success',
+                    exportOptions: {
+                        columns: ':visible',
+                    },
+                    title: 'Surat Masuk (LITNADIN)_' + new Date().toLocaleString(),
+                    messageTop: `Exported by: ${'{{ auth()->user()->name }}'}, Export time: ${new Date().toLocaleString()}`,
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="fas fa-print"></i> Print Ke PDF',
+                    className: 'btn btn-danger',
+                    exportOptions: {
+                        columns: ':visible',
+                        stripHtml: false,
+                        format: {
+                            body: function (data, row, column, node) {
+                                return data;
+                            }
+                        }
+                    },
+                    title: 'Surat Masuk (LITNADIN)_' + new Date().toLocaleString(),
+                    messageTop: `Exported by: ${'{{ auth()->user()->name }}'}<br>Export time: ${new Date().toLocaleString()}`,
+                }
+            ],
+            responsive: true,
+            lengthChange: true,
+            autoWidth: false,
+            paging: true,
+            serverSide: false,
         });
+        
+        $('#server-side-table_wrapper .dt-buttons').appendTo('#export-litnadin-buttons-container');
     });
 </script>
 
