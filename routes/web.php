@@ -12,6 +12,7 @@ use App\Http\Controllers\DaftarLantaiController;
 use App\Http\Controllers\DaftarRakController;
 use App\Http\Controllers\DaftarRuangController;
 use App\Http\Controllers\DropdownController;
+use App\Http\Controllers\DownloadStController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -101,6 +102,8 @@ Route::group(['middleware' => 'cekadmin'], function () {
         Route::get('/role/edit/{role}', 'edit');
         Route::patch('/role/update/{role}', 'update');
     });
+
+
 
     // master
     Route::resource('gedung', DaftarGedungController::class);

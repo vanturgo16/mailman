@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use RealRashid\SweetAlert\Facades\Alert;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\OutgoingMail;
 use App\Models\IncommingMail;
@@ -61,8 +62,29 @@ class DashboardController extends Controller
             $monthlyOutgoingMails[$month] = $count;
         }
 
+        $mails = DB::table('outgoing_mails')
+                    ->join('master_letter', 'outgoing_mails.id_mst_letter', '=', 'master_letter.id')
+                    ->select('master_letter.let_name', DB::raw('count(outgoing_mails.id_mst_letter) as total'))
+                    ->groupBy('master_letter.let_name')
+                    ->get();
+
+        // Mendefinisikan array warna
+        $colors = [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+        ];
+
+        // Memastikan ada cukup warna untuk tiap let_name
+        $colorData = [];
+        foreach ($mails as $index => $mail) {
+            $colorData[] = $colors[$index % count($colors)];
+        }
     
-        return view('admin.dashboard', compact('datas', 'datas_in', 'monthlyIncomingMails', 'monthlyOutgoingMails'));
+        return view('admin.dashboard', compact('datas', 'datas_in', 'monthlyIncomingMails', 'monthlyOutgoingMails','mails','colorData'));
     }
     
 

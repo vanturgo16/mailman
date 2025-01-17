@@ -45,6 +45,21 @@
             </div>
         </div>
 
+        <div class="col-md-12">
+            <div class="card card-warning card-outline">
+                <div class="card-header">
+                    <h3 class="card-title">Grafik Surat Keluar Berdasarkan Jenis Surat</h3>
+                </div>
+                <div class="card-body">
+                    
+                    <div style="width: 60%; margin: auto;">
+                        <canvas id="mailChart"></canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
         <!-- Surat Keluar Hari Ini -->
         <div class="card card-warning card-outline">
             <div class="card-header">
@@ -190,5 +205,27 @@
         }
     });
 </script>
-
+<script>
+    var ctx = document.getElementById('mailChart').getContext('2d');
+    var mailChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {!! $mails->pluck('let_name')->toJson() !!},
+            datasets: [{
+                label: 'Total Mails',
+                data: {!! $mails->pluck('total')->toJson() !!},
+                backgroundColor: {!! json_encode($colorData) !!},
+                borderColor: {!! json_encode($colorData) !!}.map(color => color.replace('0.2', '1')),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
 @endsection
