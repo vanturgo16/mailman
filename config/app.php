@@ -181,7 +181,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-       
+        Maatwebsite\Excel\ExcelServiceProvider::class,
         Chatify\ChatifyServiceProvider::class,
         /*
          * Package Service Providers...
@@ -212,7 +212,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
         'Chatify' => Chatify\Facades\ChatifyMessenger::class,
-
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ])->toArray(),
 
 ];
