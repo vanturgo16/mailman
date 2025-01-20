@@ -273,17 +273,33 @@
             buttons: [
                 {
                     extend: 'excelHtml5',
-                    text: '<i class="fas fa-file-excel"></i> Export to Excel',
+                    text: '<i class="fas fa-file-excel"></i> Ekspor Ke Excel',
                     className: 'btn btn-success',
                     exportOptions: {
                         columns: ':visible',
                     },
                     title: 'Surat Keluar_' + new Date().toLocaleString(),
-                    messageTop: `Exported by: ${'{{ auth()->user()->name }}'}, Export time: ${new Date().toLocaleString()}`,
+                    messageTop: `Diekspor Oleh:  ${'{{ auth()->user()->name }}'}, Waktu Ekspor:  ${new Date().toLocaleString()}`,
                 },
+                // {
+                //     extend: 'print',
+                //     text: '<i class="fas fa-print"></i> Print Ke PDF',
+                //     className: 'btn btn-danger',
+                //     exportOptions: {
+                //         columns: ':visible',
+                //         stripHtml: false,
+                //         format: {
+                //             body: function (data, row, column, node) {
+                //                 return data;
+                //             }
+                //         }
+                //     },
+                //     title: 'Surat Keluar_' + new Date().toLocaleString(),
+                //     messageTop: `Exported by: ${'{{ auth()->user()->name }}'}<br>Export time: ${new Date().toLocaleString()}`,
+                // }
                 {
                     extend: 'print',
-                    text: '<i class="fas fa-print"></i> Print Ke PDF',
+                    text: '<i class="fas fa-print"></i> Cetak Ke PDF',
                     className: 'btn btn-danger',
                     exportOptions: {
                         columns: ':visible',
@@ -294,8 +310,27 @@
                             }
                         }
                     },
-                    title: 'Surat Keluar_' + new Date().toLocaleString(),
-                    messageTop: `Exported by: ${'{{ auth()->user()->name }}'}<br>Export time: ${new Date().toLocaleString()}`,
+                    title: 'Rekapitulasi Surat Keluar',
+                    messageTop: `Dicetak Oleh:  ${'{{ auth()->user()->name }}'}`,
+                    customize: function (win) {
+                        let css = '@page { size: landscape; }';
+                        let head = win.document.head || win.document.getElementsByTagName('head')[0];
+                        let style = win.document.createElement('style');
+
+                        style.type = 'text/css';
+                        style.appendChild(win.document.createTextNode(css));
+                        head.appendChild(style);
+
+                        $(win.document.body)
+                            .css('font-size', '10pt')
+                            .css('text-align', 'left')
+                            .find('table')
+                            .addClass('compact')
+                            .css('width', '100%');
+
+                        let filename = 'Rekapitulasi_Surat_Keluar_' + new Date().toLocaleString();
+                        win.document.title = filename;
+                    }
                 }
             ],
             responsive: true,
