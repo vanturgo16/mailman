@@ -303,13 +303,13 @@
                         if (row.mail_quantity == null) {
                             quantity = '';
                         } else {
-                            quantity = '<br><br><b>'+row.mail_quantity+' '+row.unit_name+'</b>';
+                            quantity = '<div class="mt-2"><b>'+row.mail_quantity+' '+row.unit_name+'</b></div>';
                         }
                         var mailType;
                         if (row.mail_type == null) {
                             mailType = '';
                         } else {
-                            mailType = '<br>'+row.mail_type;
+                            mailType = row.mail_type;
                         }
                         return html+quantity+mailType;
                     },
@@ -345,14 +345,21 @@
                     searchable: true,
                     render: function(data, type, row) {
                         var html;
-                        html = $('<div/>').html(data).text();
+                        if(html == null){
+                            html = '';
+                        } else {
+                            var html;
+                            html = $('<div/>').html(data).text();
+                            html = html.replace(/<p>/g, '<p class="custom-paragraph">');
+                        }
+                        // html = $('<div/>').html(data).text();
                         var sendVia;
                         if (row.received_via == null) {
                             sendVia = '-';
                         } else {
                             sendVia = row.received_via;
                         }
-                        return html+'<br><br>Dikirim Via: '+sendVia;
+                        return html+'Dikirim Via: '+sendVia;
                     },
                 },
             ],
@@ -384,6 +391,42 @@
                 //     title: 'Surat Masuk_' + new Date().toLocaleString(),
                 //     messageTop: `Exported by: ${'{{ auth()->user()->name }}'}<br>Export time: ${new Date().toLocaleString()}`,
                 // }
+
+                // {
+                //     extend: 'print',
+                //     text: '<i class="fas fa-print"></i> Cetak Ke PDF',
+                //     className: 'btn btn-danger',
+                //     exportOptions: {
+                //         columns: ':visible',
+                //         stripHtml: false,
+                //         format: {
+                //             body: function (data, row, column, node) {
+                //                 return data;
+                //             }
+                //         }
+                //     },
+                //     title: 'Rekapitulasi Surat Masuk',
+                //     messageTop: `Dicetak Oleh:  ${'{{ auth()->user()->name }}'}`,
+                //     customize: function (win) {
+                //         let css = '@page { size: landscape; }';
+                //         let head = win.document.head || win.document.getElementsByTagName('head')[0];
+                //         let style = win.document.createElement('style');
+
+                //         style.type = 'text/css';
+                //         style.appendChild(win.document.createTextNode(css));
+                //         head.appendChild(style);
+
+                //         $(win.document.body)
+                //             .css('font-size', '10pt')
+                //             .css('text-align', 'left')
+                //             .find('table')
+                //             .addClass('compact')
+                //             .css('width', '100%');
+
+                //         let filename = 'Rekapitulasi_Surat_Masuk_' + new Date().toLocaleString();
+                //         win.document.title = filename;
+                //     }
+                // }
                 {
                     extend: 'print',
                     text: '<i class="fas fa-print"></i> Cetak Ke PDF',
@@ -400,7 +443,12 @@
                     title: 'Rekapitulasi Surat Masuk',
                     messageTop: `Dicetak Oleh:  ${'{{ auth()->user()->name }}'}`,
                     customize: function (win) {
-                        let css = '@page { size: landscape; }';
+                        let css = `
+                            @page { size: landscape; }
+                            body { font-size: 9pt !important; }
+                            table { font-size: 7.5pt !important; width: 100%; }
+                            th, td { padding: 4px !important; }
+                        `;
                         let head = win.document.head || win.document.getElementsByTagName('head')[0];
                         let style = win.document.createElement('style');
 
@@ -409,7 +457,7 @@
                         head.appendChild(style);
 
                         $(win.document.body)
-                            .css('font-size', '10pt')
+                            .css('font-size', '8pt')
                             .css('text-align', 'left')
                             .find('table')
                             .addClass('compact')

@@ -868,16 +868,20 @@ class IncommingMailController extends Controller
         $enddate = $request->get('enddate');
         $mail_number = $request->get('mail_number');
         $litnadin_number = $request->get('litnadin_number');
+        $org_unit = $request->get('org_unit');
         $letter = $request->get('letter');
         $jmlHal = $request->get('jmlHal');
         $status = $request->get('status');
+        $result = $request->get('result');
 
+        $sators = Sator::orderBy('sator_name', 'asc')->get();
         $letters = Letter::get();
         $jmlHals = Dropdown::where('category', 'Jumlah Halaman')->get();
+        $results = Dropdown::where('category', 'Hasil Penelitian')->get();
 
         if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($litnadin_number) || isset($letter) || isset($jmlHal) || isset($status)) {
             // Fetch filters from request
-            $filters = $request->only(['startdate', 'enddate', 'mail_number', 'litnadin_number', 'letter', 'jmlHal', 'status']);
+            $filters = $request->only(['startdate', 'enddate', 'mail_number', 'litnadin_number', 'org_unit', 'letter', 'jmlHal', 'status', 'result']);
             $datas = $this->getFilteredDataLitnadin($filters);
         } else {
             $datas = [];
@@ -893,11 +897,15 @@ class IncommingMailController extends Controller
             'enddate',
             'mail_number',
             'litnadin_number',
+            'org_unit',
+            'sators',
             'letter',
             'jmlHal',
+            'results',
             'status',
             'letters',
             'jmlHals',
+            'result',
             'datas',
         ));
     }
@@ -968,6 +976,9 @@ class IncommingMailController extends Controller
         if (!empty($filters['litnadin_number'])) {
             $datas->where('incomming_mails.litnadin_number', $filters['litnadin_number']);
         }
+        if (!empty($filters['org_unit'])) {
+            $datas->where('incomming_mails.org_unit', $filters['org_unit']);
+        }
         if (!empty($filters['letter'])) {
             $datas->where('incomming_mails.id_mst_letter', $filters['letter']);
         }
@@ -982,6 +993,9 @@ class IncommingMailController extends Controller
         }
         if (!empty($filters['status'])) {
             $datas->where('incomming_mails.status', $filters['status']);
+        }
+        if (!empty($filters['result'])) {
+            $datas->where('incomming_mails.result', $filters['result']);
         }
         return $datas->get();
     }
