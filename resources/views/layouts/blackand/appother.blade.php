@@ -180,6 +180,18 @@
             color: #495057;
         } */
     </style>
+    
+    <style>
+        .custom-paragraph {
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+        p {
+            /* margin: 0 0 10px; */
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+    </style>
 </head>
 
 <body class="hold-transition sidebar-mini sidebar-collapse">

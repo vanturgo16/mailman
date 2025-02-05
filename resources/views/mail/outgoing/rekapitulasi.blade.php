@@ -233,8 +233,15 @@
                     orderable: false,
                     searchable: true,
                     render: function (data, type, row) {
-                        let html = $('<div/>').html(data).text();
-                        let quantity = row.mail_quantity ? `<br><br><b>${row.mail_quantity} ${row.unit_name}</b>` : '';
+                        var html;
+                        html = $('<div/>').html(data).text();
+                        html = html.replace(/<p>/g, '<p class="custom-paragraph">');
+                        var quantity;
+                        if (row.mail_quantity == null) {
+                            quantity = '';
+                        } else {
+                            quantity = '<div class="mt-2"><b>'+row.mail_quantity+' '+row.unit_name+'</b></div>';
+                        }
                         return html + quantity;
                     },
                 },
@@ -254,7 +261,7 @@
                     searchable: true,
                     render: function (data, type, row) {
                         let html = row.sub_sator_name || '';
-                        return html + '<br><br><b>Tanda Tangan:</b><br>' + row.signer;
+                        return html + '<br><b>Tanda Tangan:</b><br>' + row.signer;
                     },
                 },
                 {
@@ -263,9 +270,11 @@
                     orderable: false,
                     searchable: true,
                     render: function (data, type, row) {
-                        let html = $('<div/>').html(data).text();
+                        var html;
+                        html = $('<div/>').html(data).text();
+                        html = html.replace(/<p>/g, '<p class="custom-paragraph">');
                         let archiveRemains = row.archive_remains || 'Tanpa Arsip';
-                        return `(${archiveRemains})<br><br>${html}`;
+                        return `(${archiveRemains})<br>${html}`;
                     },
                 },
             ],
@@ -297,6 +306,42 @@
                 //     title: 'Surat Keluar_' + new Date().toLocaleString(),
                 //     messageTop: `Exported by: ${'{{ auth()->user()->name }}'}<br>Export time: ${new Date().toLocaleString()}`,
                 // }
+
+                // {
+                //     extend: 'print',
+                //     text: '<i class="fas fa-print"></i> Cetak Ke PDF',
+                //     className: 'btn btn-danger',
+                //     exportOptions: {
+                //         columns: ':visible',
+                //         stripHtml: false,
+                //         format: {
+                //             body: function (data, row, column, node) {
+                //                 return data;
+                //             }
+                //         }
+                //     },
+                //     title: 'Rekapitulasi Surat Keluar',
+                //     messageTop: `Dicetak Oleh:  ${'{{ auth()->user()->name }}'}`,
+                //     customize: function (win) {
+                //         let css = '@page { size: landscape; }';
+                //         let head = win.document.head || win.document.getElementsByTagName('head')[0];
+                //         let style = win.document.createElement('style');
+
+                //         style.type = 'text/css';
+                //         style.appendChild(win.document.createTextNode(css));
+                //         head.appendChild(style);
+
+                //         $(win.document.body)
+                //             .css('font-size', '10pt')
+                //             .css('text-align', 'left')
+                //             .find('table')
+                //             .addClass('compact')
+                //             .css('width', '100%');
+
+                //         let filename = 'Rekapitulasi_Surat_Keluar_' + new Date().toLocaleString();
+                //         win.document.title = filename;
+                //     }
+                // }
                 {
                     extend: 'print',
                     text: '<i class="fas fa-print"></i> Cetak Ke PDF',
@@ -313,7 +358,12 @@
                     title: 'Rekapitulasi Surat Keluar',
                     messageTop: `Dicetak Oleh:  ${'{{ auth()->user()->name }}'}`,
                     customize: function (win) {
-                        let css = '@page { size: landscape; }';
+                        let css = `
+                            @page { size: landscape; }
+                            body { font-size: 9pt !important; }
+                            table { font-size: 7.5pt !important; width: 100%; }
+                            th, td { padding: 4px !important; }
+                        `;
                         let head = win.document.head || win.document.getElementsByTagName('head')[0];
                         let style = win.document.createElement('style');
 
@@ -322,7 +372,7 @@
                         head.appendChild(style);
 
                         $(win.document.body)
-                            .css('font-size', '10pt')
+                            .css('font-size', '8pt')
                             .css('text-align', 'left')
                             .find('table')
                             .addClass('compact')

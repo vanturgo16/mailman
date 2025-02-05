@@ -76,6 +76,17 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
+                                        <label>Kode Satuan Organisasi (Induk)</label>
+                                        <select class="form-control js-example-basic-single" name="org_unit" style="width: 100%;">
+                                            <option value="">- Pilih -</option>
+                                            @foreach($sators as $sator)
+                                                <option value="{{ $sator->id }}" @if($org_unit == $sator->id) selected="selected" @endif>{{ $sator->sator_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
                                         <label id="labeljenisNaskah">Jenis Naskah</label>
                                         <div id="jenisNaskah">
                                             <select class="form-control js-example-basic-single" id="mst_letter" name="letter" style="width: 100%;">
@@ -94,6 +105,17 @@
                                             <option value="">- Pilih -</option>
                                             @foreach($jmlHals as $item)
                                                 <option value="{{ $item->name_value }}" @if($jmlHal == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Hasil Penelitian</label>
+                                        <select class="form-control js-example-basic-single" name="result" style="width: 100%;">
+                                            <option value="">- Pilih -</option>
+                                            @foreach($results as $item)
+                                                <option value="{{ $item->name_value }}" @if($result == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -154,7 +176,6 @@
         </div>
     </div>
 </div>
-
 <script>
     function formatDateToDMY(dateString) {
         const [datePart] = dateString.split(' ');
@@ -174,7 +195,9 @@
                     enddate: '{{ $enddate }}',
                     mail_number: '{{ $mail_number }}',
                     litnadin_number: '{{ $litnadin_number }}',
+                    org_unit: '{{ $org_unit }}',
                     status: '{{ $status }}',
+                    result: '{{ $result }}',
                     letter: '{{ $letter }}',
                     jmlHal: '{{ $jmlHal }}',
                 }
@@ -254,15 +277,17 @@
                         if (row.jenis_naskah == null) {
                             jenisNaskah = '';
                         } else {
-                            jenisNaskah = row.jenis_naskah+'<br><br>';
+                            jenisNaskah = row.jenis_naskah+'<br><div class="mt-2"></div>';
                         }
                         var html;
                         html = $('<div/>').html(data).text();
+                        html = html.replace(/<p>/g, '<p class="custom-paragraph">');
+
                         var quantity;
                         if (row.mail_quantity == null) {
                             quantity = '';
                         } else {
-                            quantity = '<br><br><b>'+row.mail_quantity+' '+row.unit_name+'</b>';
+                            quantity = '<div class="mt-2"><b>'+row.mail_quantity+' '+row.unit_name+'</b></div>';
                         }
                         return jenisNaskah+html+quantity;
                     },
@@ -316,14 +341,19 @@
                     searchable: true,
                     render: function(data, type, row) {
                         var html;
-                        html = $('<div/>').html(data).text();
+                        if(html == null){
+                            html = '';
+                        } else {
+                            html = $('<div/>').html(data).text()+'<br><br>';
+                        }
+                        // html = $('<div/>').html(data).text();
                         var sendVia;
                         if (row.received_via == null) {
                             sendVia = '-';
                         } else {
                             sendVia = row.received_via;
                         }
-                        return html+'<br><br>Dikirim Via: '+sendVia;
+                        return html+'Dikirim Via: '+sendVia;
                     },
                 },
             ],
@@ -355,6 +385,42 @@
                 //     title: 'Surat Masuk (LITNADIN)_' + new Date().toLocaleString(),
                 //     messageTop: `Exported by: ${'{{ auth()->user()->name }}'}<br>Export time: ${new Date().toLocaleString()}`,
                 // }
+
+                // {
+                //     extend: 'print',
+                //     text: '<i class="fas fa-print"></i> Cetak Ke PDF',
+                //     className: 'btn btn-danger',
+                //     exportOptions: {
+                //         columns: ':visible',
+                //         stripHtml: false,
+                //         format: {
+                //             body: function (data, row, column, node) {
+                //                 return data;
+                //             }
+                //         }
+                //     },
+                //     title: 'Rekapitulasi Surat Masuk (LITNADIN)',
+                //     messageTop: `Dicetak Oleh:  ${'{{ auth()->user()->name }}'}`,
+                //     customize: function (win) {
+                //         let css = '@page { size: landscape; }';
+                //         let head = win.document.head || win.document.getElementsByTagName('head')[0];
+                //         let style = win.document.createElement('style');
+
+                //         style.type = 'text/css';
+                //         style.appendChild(win.document.createTextNode(css));
+                //         head.appendChild(style);
+
+                //         $(win.document.body)
+                //             .css('font-size', '10pt')
+                //             .css('text-align', 'left')
+                //             .find('table')
+                //             .addClass('compact')
+                //             .css('width', '100%');
+
+                //         let filename = 'Rekapitulasi_Surat_Masuk_Litnadin_' + new Date().toLocaleString();
+                //         win.document.title = filename;
+                //     }
+                // }
                 {
                     extend: 'print',
                     text: '<i class="fas fa-print"></i> Cetak Ke PDF',
@@ -371,7 +437,12 @@
                     title: 'Rekapitulasi Surat Masuk (LITNADIN)',
                     messageTop: `Dicetak Oleh:  ${'{{ auth()->user()->name }}'}`,
                     customize: function (win) {
-                        let css = '@page { size: landscape; }';
+                        let css = `
+                            @page { size: landscape; }
+                            body { font-size: 9pt !important; }
+                            table { font-size: 7.5pt !important; width: 100%; }
+                            th, td { padding: 4px !important; }
+                        `;
                         let head = win.document.head || win.document.getElementsByTagName('head')[0];
                         let style = win.document.createElement('style');
 
@@ -380,7 +451,7 @@
                         head.appendChild(style);
 
                         $(win.document.body)
-                            .css('font-size', '10pt')
+                            .css('font-size', '8pt')
                             .css('text-align', 'left')
                             .find('table')
                             .addClass('compact')
