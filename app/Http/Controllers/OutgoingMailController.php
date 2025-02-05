@@ -319,7 +319,7 @@ class OutgoingMailController extends Controller
             $datas->where('outgoing_mails.signing', $filters['workunit']);
         }
         if (!empty($filters['archive_remain'])) {
-            $datas->where('outgoing_mails.archive_remain', $filters['archive_remain']);
+            $datas->where('outgoing_mails.archive_remains', $filters['archive_remain']);
         }
         return $datas->get();
     }
