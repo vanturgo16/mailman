@@ -100,6 +100,7 @@ class OutgoingMailController extends Controller
 
         // Get Query
         $datas = $datas->get();
+        // dd($datas);
         // Get Page Number
         $page_number = 1;
         if ($idUpdated) {
