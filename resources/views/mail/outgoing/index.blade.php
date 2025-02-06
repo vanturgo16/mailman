@@ -304,7 +304,10 @@
                     orderable: true,
                     searchable: true,
                     render: function(data, type, row) {
-                        return $('<div/>').html(data).text();
+                        var html;
+                        html = $('<div/>').html(data).text();
+                        let archiveRemains = row.archive_remains || 'Tanpa Arsip';
+                        return `(${archiveRemains})<br>${html}`;
                     }
                 },
                 {
