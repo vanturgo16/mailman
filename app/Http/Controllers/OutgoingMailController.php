@@ -76,7 +76,7 @@ class OutgoingMailController extends Controller
             ->leftjoin('master_sub_sator', 'outgoing_mails.sub_org_unit', 'master_sub_sator.id')
             ->leftjoin('master_unit_letter', 'outgoing_mails.mail_unit', 'master_unit_letter.id')
             ->leftjoin('master_letter', 'master_letter.id', 'outgoing_mails.id_mst_letter')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('no_order', 'desc');
 
         // FIlter
         if ($out_date != null) {
