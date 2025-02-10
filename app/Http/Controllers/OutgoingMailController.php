@@ -76,7 +76,7 @@ class OutgoingMailController extends Controller
             ->leftjoin('master_sub_sator', 'outgoing_mails.sub_org_unit', 'master_sub_sator.id')
             ->leftjoin('master_unit_letter', 'outgoing_mails.mail_unit', 'master_unit_letter.id')
             ->leftjoin('master_letter', 'master_letter.id', 'outgoing_mails.id_mst_letter')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('no_order', 'desc');
 
         // FIlter
         if ($out_date != null) {
@@ -100,6 +100,7 @@ class OutgoingMailController extends Controller
 
         // Get Query
         $datas = $datas->get();
+        // dd($datas);
         // Get Page Number
         $page_number = 1;
         if ($idUpdated) {
@@ -319,7 +320,7 @@ class OutgoingMailController extends Controller
             $datas->where('outgoing_mails.signing', $filters['workunit']);
         }
         if (!empty($filters['archive_remain'])) {
-            $datas->where('outgoing_mails.archive_remain', $filters['archive_remain']);
+            $datas->where('outgoing_mails.archive_remains', $filters['archive_remain']);
         }
         return $datas->get();
     }

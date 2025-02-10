@@ -53,7 +53,7 @@ class IncommingMailController extends Controller
             ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
             ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
             ->where('placeman', '!=', 'LITNADIN')
-            ->orderBy('created_at', 'desc');
+            ->orderBy('id', 'desc');
 
         // FIlter
         if ($entry_date != null) {
@@ -262,7 +262,7 @@ class IncommingMailController extends Controller
             ->leftJoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
             ->leftJoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
             ->where('placeman', '!=', 'LITNADIN')
-            ->orderBy('created_at', 'asc');
+            ->orderBy('id', 'asc');
 
         if (!empty($filters['startdate'])) {
             $startdatesearch = (new DateTime($filters['startdate']))->format('Y-m-d H:i:s');
