@@ -703,7 +703,6 @@ class IncommingMailController extends Controller
         $jmlHal = $request->get('jmlHal');
         $status = $request->get('status');
         $idUpdated = $request->get('idUpdated');
-
         // Master Dropdown
         $sators = Sator::orderBy('sator_name', 'asc')->get();
         $letters = Letter::get();
@@ -870,6 +869,7 @@ class IncommingMailController extends Controller
         $litnadin_number = $request->get('litnadin_number');
         $org_unit = $request->get('org_unit');
         $letter = $request->get('letter');
+        $receiver = $request->get('receiver');
         $jmlHal = $request->get('jmlHal');
         $status = $request->get('status');
         $result = $request->get('result');
@@ -878,10 +878,11 @@ class IncommingMailController extends Controller
         $letters = Letter::get();
         $jmlHals = Dropdown::where('category', 'Jumlah Halaman')->get();
         $results = Dropdown::where('category', 'Hasil Penelitian')->get();
+        $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
 
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($litnadin_number) || isset($letter) || isset($jmlHal) || isset($status)) {
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($litnadin_number) || isset($letter) || isset($receiver) || isset($jmlHal) || isset($status)) {
             // Fetch filters from request
-            $filters = $request->only(['startdate', 'enddate', 'mail_number', 'litnadin_number', 'org_unit', 'letter', 'jmlHal', 'status', 'result']);
+            $filters = $request->only(['startdate', 'enddate', 'mail_number', 'litnadin_number', 'org_unit', 'letter', 'receiver', 'jmlHal', 'status', 'result']);
             $datas = $this->getFilteredDataLitnadin($filters);
         } else {
             $datas = [];
@@ -900,10 +901,12 @@ class IncommingMailController extends Controller
             'org_unit',
             'sators',
             'letter',
+            'receiver',
             'jmlHal',
             'results',
             'status',
             'letters',
+            'receiverMails',
             'jmlHals',
             'result',
             'datas',
@@ -918,12 +921,13 @@ class IncommingMailController extends Controller
         $mail_number = $request->get('mail_number');
         $litnadin_number = $request->get('litnadin_number');
         $letter = $request->get('letter');
+        $receiver = $request->get('receiver');
         $jmlHal = $request->get('jmlHal');
         $status = $request->get('status');
 
-        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($litnadin_number) || isset($letter) || isset($jmlHal) || isset($status)) {
+        if (isset($startdate) || isset($enddate) || isset($mail_number) || isset($litnadin_number) || isset($letter) || isset($receiver) || isset($jmlHal) || isset($status)) {
             // Fetch filters from request
-            $filters = $request->only(['startdate', 'enddate', 'mail_number', 'litnadin_number', 'letter', 'jmlHal', 'status']);
+            $filters = $request->only(['startdate', 'enddate', 'mail_number', 'litnadin_number', 'letter', 'receiver', 'jmlHal', 'status']);
             $datas = $this->getFilteredDataLitnadin($filters);
         } else {
             $datas = [];
@@ -981,6 +985,10 @@ class IncommingMailController extends Controller
         }
         if (!empty($filters['letter'])) {
             $datas->where('incomming_mails.id_mst_letter', $filters['letter']);
+        }
+        if (!empty($filters['receiver'])) {
+            // dd($filters['receiver']);
+            $datas->where('incomming_mails.receiver', $filters['receiver']);
         }
         if (!empty($filters['jmlHal'])) {
             if ($filters['jmlHal'] == '1-3') {
