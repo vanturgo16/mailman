@@ -100,6 +100,19 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
+                                        <label id="labeljenisNaskah">Penandatanganan</label>
+                                        <div id="jenisNaskah">
+                                            <select class="form-control js-example-basic-single" id="receiver" name="receiver" style="width: 100%;">
+                                                <option value="">- Pilih -</option>
+                                                @foreach($receiverMails as $item)
+                                                    <option value="{{ $item->name_value }}" @if($receiver == $item->name_value) selected="selected" @endif>{{ $item->name_value }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
                                         <label>Jumlah Halaman</label>
                                         <select class="form-control js-example-basic-single" name="jmlHal" style="width: 100%;">
                                             <option value="">- Pilih -</option>
@@ -199,6 +212,7 @@
                     status: '{{ $status }}',
                     result: '{{ $result }}',
                     letter: '{{ $letter }}',
+                    receiver: '{{ $receiver }}',
                     jmlHal: '{{ $jmlHal }}',
                 }
             },
