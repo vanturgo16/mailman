@@ -261,7 +261,10 @@
                     searchable: true,
                     render: function (data, type, row) {
                         let html = row.sub_sator_name || '';
-                        return html + '<br><b>Tanda Tangan:</b><br>' + row.signer;
+                        var otherSign;
+                        otherSign = $('<div/>').html(row.signing_other).text();
+                        otherSign = otherSign.replace(/<p>/g, '<p class="custom-paragraph">');
+                        return html + '<br><b>Tanda Tangan:</b><br>' + row.signer + '<br>' + otherSign;
                     },
                 },
                 {
