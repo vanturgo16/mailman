@@ -42,6 +42,7 @@ use App\Http\Controllers\SubSatorController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\UnitLetterController;
 use App\Http\Controllers\WorkUnitController;
+use App\Http\Controllers\EkspedisiController;
 use App\Models\Dropdown;
 use Carbon\Carbon;
 use App\Models\User;
@@ -103,6 +104,9 @@ Route::group(['middleware' => 'cekadmin'], function () {
         Route::patch('/role/update/{role}', 'update');
     });
 
+    Route::controller(EkspedisiController::class)->group(function () {
+        Route::get('/ekspedisi', 'index')->name('ekspedisi.index');
+    });
 
 
     // master
