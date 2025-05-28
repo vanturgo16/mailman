@@ -29,6 +29,7 @@ class IncommingMailController extends Controller
         $this->middleware(['permission:surat_masuk']);
     }
 
+
     public function index(Request $request)
     {
         // Initiate Variable Filter
@@ -49,13 +50,25 @@ class IncommingMailController extends Controller
         $sators = Sator::orderBy('sator_name', 'asc')->get();
         $workunits = WorkUnit::get();
 
-        $datas = IncommingMail::select('incomming_mails.*', 'incomming_mails.updated_at as last_update', 'incomming_mails.created_at as created', 'master_unit_letter.unit_name', 'master_sub_sator.sub_sator_name')
+        // Ambil tanggal awal dan akhir bulan ini untuk filter otomatis
+        $startOfMonth = Carbon::now()->startOfMonth()->toDateString(); // misal: 2025-05-01
+        $endOfMonth = Carbon::now()->endOfMonth()->toDateString();     // misal: 2025-05-31
+
+        $datas = IncommingMail::select(
+                'incomming_mails.*', 
+                'incomming_mails.updated_at as last_update', 
+                'incomming_mails.created_at as created', 
+                'master_unit_letter.unit_name', 
+                'master_sub_sator.sub_sator_name'
+            )
             ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
             ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
             ->where('placeman', '!=', 'LITNADIN')
-            ->orderBy('id', 'desc');
+            ->whereBetween('incomming_mails.entry_date', [$startOfMonth, $endOfMonth])
+            ->orderBy('id', 'desc')
+            ->limit(4000);
 
-        // FIlter
+        // Filter tambahan dari user input (jika ada)
         if ($entry_date != null) {
             $datas->where('incomming_mails.entry_date', 'like', '%' . $entry_date . '%');
         }
@@ -78,8 +91,9 @@ class IncommingMailController extends Controller
             $datas->where('org_unit', $org_unit);
         }
 
-        // Get Query
+        // Ambil data
         $datas = $datas->get();
+
         // Get Page Number
         $page_number = 1;
         if ($idUpdated) {
@@ -94,9 +108,11 @@ class IncommingMailController extends Controller
                 $page_number = 1;
             }
         }
+
         // Get Last Update Database
         $lastUpdated = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
 
+        // Jika ajax request untuk DataTables
         if ($request->ajax()) {
             return DataTables::of($datas)->addColumn('action', function ($data) {
                 return view('mail.incomming.action', compact('data'));
@@ -113,7 +129,6 @@ class IncommingMailController extends Controller
             'org_unit',
             'placemans',
             'letters',
-            'letters',
             'receiverMails',
             'complains',
             'sators',
@@ -123,6 +138,7 @@ class IncommingMailController extends Controller
             'lastUpdated',
         ));
     }
+
 
     public function directupdate(Request $request, $id)
     {

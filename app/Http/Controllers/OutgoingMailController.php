@@ -48,9 +48,11 @@ class OutgoingMailController extends Controller
         return $text;
     }
 
+
+
     public function index(Request $request)
     {
-        // Initiate Variable Filter
+        // Ambil filter dari request
         $out_date = $request->get('out_date');
         $mail_date = $request->get('mail_date');
         $mail_number = $request->get('mail_number');
@@ -65,6 +67,10 @@ class OutgoingMailController extends Controller
         $sators = Sator::orderBy('sator_name', 'asc')->get();
         $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
 
+        // Tanggal awal dan akhir bulan ini
+        $startOfMonth = Carbon::now()->startOfMonth()->toDateString(); // misal 2025-05-01
+        $endOfMonth = Carbon::now()->endOfMonth()->toDateString();     // misal 2025-05-31
+
         $datas = OutgoingMail::select(
             'outgoing_mails.*',
             'outgoing_mails.updated_at as last_update',
@@ -78,7 +84,10 @@ class OutgoingMailController extends Controller
             ->leftjoin('master_letter', 'master_letter.id', 'outgoing_mails.id_mst_letter')
             ->orderBy('no_order', 'desc');
 
-        // FIlter
+        // Filter bulan berjalan otomatis di kolom out_date
+        $datas->whereBetween('outgoing_mails.out_date', [$startOfMonth, $endOfMonth]);
+
+        // Filter manual jika ada dari request
         if ($out_date != null) {
             $datas->where('outgoing_mails.out_date', 'like', '%' . $out_date . '%');
         }
@@ -98,10 +107,10 @@ class OutgoingMailController extends Controller
             $datas->where('org_unit', $org_unit);
         }
 
-        // Get Query
+        // Ambil data
         $datas = $datas->get();
-        // dd($datas);
-        // Get Page Number
+
+        // Halaman dan update
         $page_number = 1;
         if ($idUpdated) {
             $page_size = 10;
@@ -115,6 +124,7 @@ class OutgoingMailController extends Controller
                 $page_number = 1;
             }
         }
+
         $lastUpdated = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
 
         if ($request->ajax()) {
@@ -140,6 +150,7 @@ class OutgoingMailController extends Controller
             'lastUpdated',
         ));
     }
+
 
     public function directupdate(Request $request, $id)
     {

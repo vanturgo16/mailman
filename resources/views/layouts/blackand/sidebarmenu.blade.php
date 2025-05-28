@@ -210,6 +210,12 @@
               </a>
             </li>
             <li class="nav-item">
+              <a href="{{ route('ekspedisi.index') }}" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Ekspedisi</p>
+              </a>
+            </li>
+            <li class="nav-item">
               <a href="{{ route('incommingmail.indexLitnadin') }}" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Surat Masuk (Litnadin)</p>
