@@ -30,114 +30,226 @@ class IncommingMailController extends Controller
     }
 
 
-    public function index(Request $request)
-    {
-        // Initiate Variable Filter
-        $entry_date = $request->get('entry_date');
-        $mail_date = $request->get('mail_date');
-        $mail_number = $request->get('mail_number');
-        $placeman = $request->get('placeman');
-        $letter = $request->get('letter');
-        $complain = $request->get('complain');
-        $org_unit = $request->get('org_unit');
-        $idUpdated = $request->get('idUpdated');
+    // public function index(Request $request)
+    // {
+    //     // Initiate Variable Filter
+    //     $entry_date = $request->get('entry_date');
+    //     $mail_date = $request->get('mail_date');
+    //     $mail_number = $request->get('mail_number');
+    //     $placeman = $request->get('placeman');
+    //     $letter = $request->get('letter');
+    //     $complain = $request->get('complain');
+    //     $org_unit = $request->get('org_unit');
+    //     $idUpdated = $request->get('idUpdated');
 
-        // Master Dropdown 
-        $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
-        $letters = Letter::get();
-        $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
-        $complains = Complain::get();
-        $sators = Sator::orderBy('sator_name', 'asc')->get();
-        $workunits = WorkUnit::get();
+    //     // Master Dropdown 
+    //     $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
+    //     $letters = Letter::get();
+    //     $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
+    //     $complains = Complain::get();
+    //     $sators = Sator::orderBy('sator_name', 'asc')->get();
+    //     $workunits = WorkUnit::get();
 
-        // Ambil tanggal awal dan akhir bulan ini untuk filter otomatis
-        $startOfMonth = Carbon::now()->startOfMonth()->toDateString(); // misal: 2025-05-01
-        $endOfMonth = Carbon::now()->endOfMonth()->toDateString();     // misal: 2025-05-31
+    //     // Ambil tanggal awal dan akhir bulan ini untuk filter otomatis
+    //     $startOfMonth = Carbon::now()->startOfMonth()->toDateString(); // misal: 2025-05-01
+    //     $endOfMonth = Carbon::now()->endOfMonth()->toDateString();     // misal: 2025-05-31
 
-        $datas = IncommingMail::select(
-                'incomming_mails.*', 
-                'incomming_mails.updated_at as last_update', 
-                'incomming_mails.created_at as created', 
-                'master_unit_letter.unit_name', 
-                'master_sub_sator.sub_sator_name'
-            )
-            ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
-            ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
-            ->where('placeman', '!=', 'LITNADIN')
-            ->whereBetween('incomming_mails.entry_date', [$startOfMonth, $endOfMonth])
-            ->orderBy('id', 'desc')
-            ->limit(4000);
+    //     $datas = IncommingMail::select(
+    //             'incomming_mails.*', 
+    //             'incomming_mails.updated_at as last_update', 
+    //             'incomming_mails.created_at as created', 
+    //             'master_unit_letter.unit_name', 
+    //             'master_sub_sator.sub_sator_name'
+    //         )
+    //         ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
+    //         ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
+    //         ->where('placeman', '!=', 'LITNADIN')
+    //         ->whereBetween('incomming_mails.entry_date', [$startOfMonth, $endOfMonth])
+    //         ->orderBy('id', 'desc')
+    //         ->limit(4000);
 
-        // Filter tambahan dari user input (jika ada)
-        if ($entry_date != null) {
-            $datas->where('incomming_mails.entry_date', 'like', '%' . $entry_date . '%');
-        }
-        if ($mail_date != null) {
-            $datas->where('incomming_mails.mail_date', 'like', '%' . $mail_date . '%');
-        }
-        if ($mail_number != null) {
-            $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
-        }
-        if ($placeman != null) {
-            $datas->where('placeman', $placeman);
-        }
-        if ($letter != null) {
-            $datas->where('incomming_mails.id_mst_letter', $letter);
-        }
-        if ($complain != null) {
-            $datas->where('incomming_mails.id_mst_complain', $complain);
-        }
-        if ($org_unit != null) {
-            $datas->where('org_unit', $org_unit);
-        }
+    //     // Filter tambahan dari user input (jika ada)
+    //     if ($entry_date != null) {
+    //         $datas->where('incomming_mails.entry_date', 'like', '%' . $entry_date . '%');
+    //     }
+    //     if ($mail_date != null) {
+    //         $datas->where('incomming_mails.mail_date', 'like', '%' . $mail_date . '%');
+    //     }
+    //     if ($mail_number != null) {
+    //         $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
+    //     }
+    //     if ($placeman != null) {
+    //         $datas->where('placeman', $placeman);
+    //     }
+    //     if ($letter != null) {
+    //         $datas->where('incomming_mails.id_mst_letter', $letter);
+    //     }
+    //     if ($complain != null) {
+    //         $datas->where('incomming_mails.id_mst_complain', $complain);
+    //     }
+    //     if ($org_unit != null) {
+    //         $datas->where('org_unit', $org_unit);
+    //     }
 
-        // Ambil data
-        $datas = $datas->get();
+    //     // Ambil data
+    //     $datas = $datas->get();
 
-        // Get Page Number
-        $page_number = 1;
-        if ($idUpdated) {
-            $page_size = 10;
-            $item = $datas->firstWhere('id', $idUpdated);
-            if ($item) {
-                $index = $datas->search(function ($value) use ($idUpdated) {
-                    return $value->id == $idUpdated;
-                });
-                $page_number = (int) ceil(($index + 1) / $page_size);
-            } else {
-                $page_number = 1;
-            }
-        }
+    //     // Get Page Number
+    //     $page_number = 1;
+    //     if ($idUpdated) {
+    //         $page_size = 10;
+    //         $item = $datas->firstWhere('id', $idUpdated);
+    //         if ($item) {
+    //             $index = $datas->search(function ($value) use ($idUpdated) {
+    //                 return $value->id == $idUpdated;
+    //             });
+    //             $page_number = (int) ceil(($index + 1) / $page_size);
+    //         } else {
+    //             $page_number = 1;
+    //         }
+    //     }
 
-        // Get Last Update Database
-        $lastUpdated = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
+    //     // Get Last Update Database
+    //     $lastUpdated = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
 
-        // Jika ajax request untuk DataTables
-        if ($request->ajax()) {
-            return DataTables::of($datas)->addColumn('action', function ($data) {
-                return view('mail.incomming.action', compact('data'));
-            })->toJson();
-        }
+    //     // Jika ajax request untuk DataTables
+    //     if ($request->ajax()) {
+    //         return DataTables::of($datas)->addColumn('action', function ($data) {
+    //             return view('mail.incomming.action', compact('data'));
+    //         })->toJson();
+    //     }
 
-        return view('mail.incomming.index', compact(
-            'entry_date',
-            'mail_date',
-            'mail_number',
-            'placeman',
-            'letter',
-            'complain',
-            'org_unit',
-            'placemans',
-            'letters',
-            'receiverMails',
-            'complains',
-            'sators',
-            'workunits',
-            'idUpdated',
-            'page_number',
-            'lastUpdated',
-        ));
+    //     return view('mail.incomming.index', compact(
+    //         'entry_date',
+    //         'mail_date',
+    //         'mail_number',
+    //         'placeman',
+    //         'letter',
+    //         'complain',
+    //         'org_unit',
+    //         'placemans',
+    //         'letters',
+    //         'receiverMails',
+    //         'complains',
+    //         'sators',
+    //         'workunits',
+    //         'idUpdated',
+    //         'page_number',
+    //         'lastUpdated',
+    //     ));
+    // }
+public function index(Request $request)
+{
+    // Initiate Variable Filter
+    $entry_date = $request->get('entry_date');
+    $mail_date = $request->get('mail_date');
+    $mail_number = $request->get('mail_number');
+    $placeman = $request->get('placeman');
+    $letter = $request->get('letter');
+    $complain = $request->get('complain');
+    $org_unit = $request->get('org_unit');
+    $idUpdated = $request->get('idUpdated');
+
+    // Master Dropdown 
+    $placemans = Dropdown::where('category', 'Pejabat / Naskah')->get();
+    $letters = Letter::get();
+    $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
+    $complains = Complain::get();
+    $sators = Sator::orderBy('sator_name', 'asc')->get();
+    $workunits = WorkUnit::get();
+
+    // Cek apakah user melakukan pencarian (submit form)
+    $isSearching = $entry_date || $mail_date || $mail_number || $placeman || $letter || $complain || $org_unit;
+
+    $datas = IncommingMail::select(
+            'incomming_mails.*', 
+            'incomming_mails.updated_at as last_update', 
+            'incomming_mails.created_at as created', 
+            'master_unit_letter.unit_name', 
+            'master_sub_sator.sub_sator_name'
+        )
+        ->leftjoin('master_sub_sator', 'incomming_mails.sub_org_unit', 'master_sub_sator.id')
+        ->leftjoin('master_unit_letter', 'incomming_mails.mail_unit', 'master_unit_letter.id')
+        ->where('placeman', '!=', 'LITNADIN')
+        ->orderBy('id', 'desc');
+
+    // Tambahkan filter default (bulan ini) hanya jika bukan pencarian
+    if (!$isSearching) {
+        $startOfMonth = Carbon::now()->startOfMonth()->toDateString();
+        $endOfMonth = Carbon::now()->endOfMonth()->toDateString();
+        $datas->whereBetween('incomming_mails.entry_date', [$startOfMonth, $endOfMonth]);
     }
+
+    // Filter tambahan dari user input
+    if ($entry_date != null) {
+        $datas->where('incomming_mails.entry_date', 'like', '%' . $entry_date . '%');
+    }
+    if ($mail_date != null) {
+        $datas->where('incomming_mails.mail_date', 'like', '%' . $mail_date . '%');
+    }
+    if ($mail_number != null) {
+        $datas->where('incomming_mails.mail_number', 'like', '%' . $mail_number . '%');
+    }
+    if ($placeman != null) {
+        $datas->where('placeman', $placeman);
+    }
+    if ($letter != null) {
+        $datas->where('incomming_mails.id_mst_letter', $letter);
+    }
+    if ($complain != null) {
+        $datas->where('incomming_mails.id_mst_complain', $complain);
+    }
+    if ($org_unit != null) {
+        $datas->where('org_unit', $org_unit);
+    }
+
+    // Ambil data
+    $datas = $datas->limit(4000)->get();
+
+    // Get Page Number
+    $page_number = 1;
+    if ($idUpdated) {
+        $page_size = 10;
+        $item = $datas->firstWhere('id', $idUpdated);
+        if ($item) {
+            $index = $datas->search(function ($value) use ($idUpdated) {
+                return $value->id == $idUpdated;
+            });
+            $page_number = (int) ceil(($index + 1) / $page_size);
+        } else {
+            $page_number = 1;
+        }
+    }
+
+    // Get Last Update Database
+    $lastUpdated = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
+
+    // Jika ajax request untuk DataTables
+    if ($request->ajax()) {
+        return DataTables::of($datas)->addColumn('action', function ($data) {
+            return view('mail.incomming.action', compact('data'));
+        })->toJson();
+    }
+
+    return view('mail.incomming.index', compact(
+        'entry_date',
+        'mail_date',
+        'mail_number',
+        'placeman',
+        'letter',
+        'complain',
+        'org_unit',
+        'placemans',
+        'letters',
+        'receiverMails',
+        'complains',
+        'sators',
+        'workunits',
+        'idUpdated',
+        'page_number',
+        'lastUpdated',
+    ));
+}
 
 
     public function directupdate(Request $request, $id)
