@@ -818,26 +818,30 @@ public function index(Request $request)
 
 
     //LITNADIN
-    public function indexLitnadin(Request $request)
-    {
-        // Initiate Variable Filter
-        $entry_date = $request->get('entry_date');
-        $mail_date = $request->get('mail_date');
-        $mail_number = $request->get('mail_number');
-        $litnadin_number = $request->get('litnadin_number');
-        $org_unit = $request->get('org_unit');
-        $letter = $request->get('letter');
-        $receiver = $request->get('receiver');
-        $jmlHal = $request->get('jmlHal');
-        $status = $request->get('status');
-        $idUpdated = $request->get('idUpdated');
-        // Master Dropdown
-        $sators = Sator::orderBy('sator_name', 'asc')->get();
-        $letters = Letter::get();
-        $jmlHals = Dropdown::where('category', 'Jumlah Halaman')->get();
-        $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
+public function indexLitnadin(Request $request)
+{
+    // Initiate Variable Filter
+    $entry_date = $request->get('entry_date');
+    $mail_date = $request->get('mail_date');
+    $mail_number = $request->get('mail_number');
+    $litnadin_number = $request->get('litnadin_number');
+    $org_unit = $request->get('org_unit');
+    $letter = $request->get('letter');
+    $receiver = $request->get('receiver');
+    $jmlHal = $request->get('jmlHal');
+    $status = $request->get('status');
+    $idUpdated = $request->get('idUpdated');
 
-        $datas = IncommingMail::select(
+    // Master Dropdown
+    $sators = Sator::orderBy('sator_name', 'asc')->get();
+    $letters = Letter::get();
+    $jmlHals = Dropdown::where('category', 'Jumlah Halaman')->get();
+    $receiverMails = Dropdown::where('category', 'Penerima Surat Masuk')->get();
+
+    // Cek apakah user sedang melakukan pencarian
+    $isSearching = $entry_date || $mail_date || $mail_number || $litnadin_number || $org_unit || $letter || $receiver || $jmlHal || $status;
+
+    $datas = IncommingMail::select(
             'incomming_mails.*',
             'incomming_mails.updated_at as last_update',
             'incomming_mails.created_at as created',
@@ -851,88 +855,102 @@ public function index(Request $request)
                 "information", information
             )) FROM progress_incomming_mails WHERE progress_incomming_mails.id_incomming_mails = incomming_mails.id) as progressStatus')
         )
-            ->leftJoin('master_sub_sator', 'incomming_mails.sub_org_unit', '=', 'master_sub_sator.id')
-            ->leftJoin('master_unit_letter', 'incomming_mails.mail_unit', '=', 'master_unit_letter.id')
-            ->where('placeman', 'LITNADIN')
-            // Filter
-            ->when($entry_date, function ($q) use ($entry_date) {
-                $q->where('incomming_mails.entry_date', 'like', "%$entry_date%");
-            })
-            ->when($mail_date, function ($q) use ($mail_date) {
-                $q->where('incomming_mails.mail_date', 'like', "%$mail_date%");
-            })
-            ->when($mail_number, function ($q) use ($mail_number) {
-                $q->where('incomming_mails.mail_number', 'like', "%$mail_number%");
-            })
-            ->when($litnadin_number, function ($q) use ($litnadin_number) {
-                $q->where('incomming_mails.litnadin_number', $litnadin_number);
-            })
-            ->when($org_unit, function ($q) use ($org_unit) {
-                $q->where('org_unit', $org_unit);
-            })
-            ->when($letter, function ($q) use ($letter) {
-                $q->where('incomming_mails.id_mst_letter', $letter);
-            })
-            ->when($receiver, function ($q) use ($receiver) {
-                $q->where('incomming_mails.receiver', $receiver);
-            })
-            ->when($jmlHal, function ($q) use ($jmlHal) {
-                if ($jmlHal === '1-3') {
-                    $q->whereBetween('incomming_mails.jml_hal', [1, 3]);
-                } elseif ($jmlHal === '4-20') {
-                    $q->whereBetween('incomming_mails.jml_hal', [4, 20]);
-                } else {
-                    $q->where('incomming_mails.jml_hal', '>', 20);
-                }
-            })
-            ->when($status, function ($q) use ($status) {
-                $q->where('status', $status);
-            })
-            ->orderBy('created_at', 'asc')
-            ->get();
+        ->leftJoin('master_sub_sator', 'incomming_mails.sub_org_unit', '=', 'master_sub_sator.id')
+        ->leftJoin('master_unit_letter', 'incomming_mails.mail_unit', '=', 'master_unit_letter.id')
+        ->where('placeman', 'LITNADIN');
 
-        // Get Page Number
-        $page_number = 1;
-        if ($idUpdated) {
-            $page_size = 10;
-            $item = $datas->firstWhere('id', $idUpdated);
-            if ($item) {
-                $index = $datas->search(function ($value) use ($idUpdated) {
-                    return $value->id == $idUpdated;
-                });
-                $page_number = (int) ceil(($index + 1) / $page_size);
-            } else {
-                $page_number = 1;
-            }
-        }
-        // Get Last Update Database
-        $lastUpdated = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
-
-        if ($request->ajax()) {
-            return DataTables::of($datas)->addColumn('action', function ($data) {
-                return view('mail.incommingLitnadin.action', compact('data'));
-            })->toJson();
-        }
-
-        return view('mail.incommingLitnadin.index', compact(
-            'entry_date',
-            'mail_date',
-            'mail_number',
-            'litnadin_number',
-            'org_unit',
-            'letter',
-            'receiver',
-            'status',
-            'jmlHal',
-            'sators',
-            'letters',
-            'jmlHals',
-            'receiverMails',
-            'idUpdated',
-            'page_number',
-            'lastUpdated',
-        ));
+    // Tambahkan filter default bulan ini hanya kalau bukan pencarian
+    if (!$isSearching) {
+        $startOfMonth = Carbon::now()->startOfMonth()->toDateString();
+        $endOfMonth = Carbon::now()->endOfMonth()->toDateString();
+        $datas->whereBetween('incomming_mails.entry_date', [$startOfMonth, $endOfMonth]);
     }
+
+    // Filter manual dari user input
+    $datas
+        ->when($entry_date, function ($q) use ($entry_date) {
+            $q->where('incomming_mails.entry_date', 'like', "%$entry_date%");
+        })
+        ->when($mail_date, function ($q) use ($mail_date) {
+            $q->where('incomming_mails.mail_date', 'like', "%$mail_date%");
+        })
+        ->when($mail_number, function ($q) use ($mail_number) {
+            $q->where('incomming_mails.mail_number', 'like', "%$mail_number%");
+        })
+        ->when($litnadin_number, function ($q) use ($litnadin_number) {
+            $q->where('incomming_mails.litnadin_number', $litnadin_number);
+        })
+        ->when($org_unit, function ($q) use ($org_unit) {
+            $q->where('org_unit', $org_unit);
+        })
+        ->when($letter, function ($q) use ($letter) {
+            $q->where('incomming_mails.id_mst_letter', $letter);
+        })
+        ->when($receiver, function ($q) use ($receiver) {
+            $q->where('incomming_mails.receiver', $receiver);
+        })
+        ->when($jmlHal, function ($q) use ($jmlHal) {
+            if ($jmlHal === '1-3') {
+                $q->whereBetween('incomming_mails.jml_hal', [1, 3]);
+            } elseif ($jmlHal === '4-20') {
+                $q->whereBetween('incomming_mails.jml_hal', [4, 20]);
+            } else {
+                $q->where('incomming_mails.jml_hal', '>', 20);
+            }
+        })
+        ->when($status, function ($q) use ($status) {
+            $q->where('status', $status);
+        })
+        ->orderBy('created_at', 'asc');
+
+    // Ambil data
+    $datas = $datas->get();
+
+    // Hitung Page Number
+    $page_number = 1;
+    if ($idUpdated) {
+        $page_size = 10;
+        $item = $datas->firstWhere('id', $idUpdated);
+        if ($item) {
+            $index = $datas->search(function ($value) use ($idUpdated) {
+                return $value->id == $idUpdated;
+            });
+            $page_number = (int) ceil(($index + 1) / $page_size);
+        } else {
+            $page_number = 1;
+        }
+    }
+
+    // Last Update
+    $lastUpdated = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
+
+    // Ajax request (DataTables)
+    if ($request->ajax()) {
+        return DataTables::of($datas)->addColumn('action', function ($data) {
+            return view('mail.incommingLitnadin.action', compact('data'));
+        })->toJson();
+    }
+
+    return view('mail.incommingLitnadin.index', compact(
+        'entry_date',
+        'mail_date',
+        'mail_number',
+        'litnadin_number',
+        'org_unit',
+        'letter',
+        'receiver',
+        'status',
+        'jmlHal',
+        'sators',
+        'letters',
+        'jmlHals',
+        'receiverMails',
+        'idUpdated',
+        'page_number',
+        'lastUpdated',
+    ));
+}
+
 
     public function directupdateLitnadin(Request $request, $id)
     {
