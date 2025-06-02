@@ -49,29 +49,27 @@ class OutgoingMailController extends Controller
     }
 
 
+public function index(Request $request)
+{
+    // Ambil filter dari request
+    $out_date = $request->get('out_date');
+    $mail_date = $request->get('mail_date');
+    $mail_number = $request->get('mail_number');
+    $id_mst_letter = $request->get('id_mst_letter');
+    $archive_remain = $request->get('archive_remain');
+    $org_unit = $request->get('org_unit');
+    $idUpdated = $request->get('idUpdated');
 
-    public function index(Request $request)
-    {
-        // Ambil filter dari request
-        $out_date = $request->get('out_date');
-        $mail_date = $request->get('mail_date');
-        $mail_number = $request->get('mail_number');
-        $id_mst_letter = $request->get('id_mst_letter');
-        $archive_remain = $request->get('archive_remain');
-        $org_unit = $request->get('org_unit');
-        $idUpdated = $request->get('idUpdated');
+    // Master Dropdown
+    $workunits = WorkUnit::get();
+    $letters = Letter::get();
+    $sators = Sator::orderBy('sator_name', 'asc')->get();
+    $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
 
-        // Master Dropdown
-        $workunits = WorkUnit::get();
-        $letters = Letter::get();
-        $sators = Sator::orderBy('sator_name', 'asc')->get();
-        $archive_remains = Dropdown::where('category', 'Arsip Pertinggal')->get();
+    // Cek apakah user melakukan pencarian (submit form)
+    $isSearching = $out_date || $mail_date || $mail_number || $id_mst_letter || $archive_remain || $org_unit;
 
-        // Tanggal awal dan akhir bulan ini
-        $startOfMonth = Carbon::now()->startOfMonth()->toDateString(); // misal 2025-05-01
-        $endOfMonth = Carbon::now()->endOfMonth()->toDateString();     // misal 2025-05-31
-
-        $datas = OutgoingMail::select(
+    $datas = OutgoingMail::select(
             'outgoing_mails.*',
             'outgoing_mails.updated_at as last_update',
             'outgoing_mails.created_at as created',
@@ -79,77 +77,85 @@ class OutgoingMailController extends Controller
             'master_unit_letter.unit_name',
             'master_sub_sator.sub_sator_name'
         )
-            ->leftjoin('master_sub_sator', 'outgoing_mails.sub_org_unit', 'master_sub_sator.id')
-            ->leftjoin('master_unit_letter', 'outgoing_mails.mail_unit', 'master_unit_letter.id')
-            ->leftjoin('master_letter', 'master_letter.id', 'outgoing_mails.id_mst_letter')
-            ->orderBy('no_order', 'desc');
+        ->leftjoin('master_sub_sator', 'outgoing_mails.sub_org_unit', 'master_sub_sator.id')
+        ->leftjoin('master_unit_letter', 'outgoing_mails.mail_unit', 'master_unit_letter.id')
+        ->leftjoin('master_letter', 'master_letter.id', 'outgoing_mails.id_mst_letter')
+        ->orderBy('no_order', 'desc');
 
-        // Filter bulan berjalan otomatis di kolom out_date
+    // Tambahkan filter default (bulan ini) hanya jika bukan pencarian
+    if (!$isSearching) {
+        $startOfMonth = Carbon::now()->startOfMonth()->toDateString();
+        $endOfMonth = Carbon::now()->endOfMonth()->toDateString();
         $datas->whereBetween('outgoing_mails.out_date', [$startOfMonth, $endOfMonth]);
-
-        // Filter manual jika ada dari request
-        if ($out_date != null) {
-            $datas->where('outgoing_mails.out_date', 'like', '%' . $out_date . '%');
-        }
-        if ($mail_date != null) {
-            $datas->where('outgoing_mails.mail_date', 'like', '%' . $mail_date . '%');
-        }
-        if ($mail_number != null) {
-            $datas->where('outgoing_mails.mail_number', 'like', '%' . $mail_number . '%');
-        }
-        if ($id_mst_letter != null) {
-            $datas->where('id_mst_letter', $id_mst_letter);
-        }
-        if ($archive_remain != null) {
-            $datas->where('outgoing_mails.archive_remains', $archive_remain);
-        }
-        if ($org_unit != null) {
-            $datas->where('org_unit', $org_unit);
-        }
-
-        // Ambil data
-        $datas = $datas->get();
-
-        // Halaman dan update
-        $page_number = 1;
-        if ($idUpdated) {
-            $page_size = 10;
-            $item = $datas->firstWhere('id', $idUpdated);
-            if ($item) {
-                $index = $datas->search(function ($value) use ($idUpdated) {
-                    return $value->id == $idUpdated;
-                });
-                $page_number = (int) ceil(($index + 1) / $page_size);
-            } else {
-                $page_number = 1;
-            }
-        }
-
-        $lastUpdated = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
-
-        if ($request->ajax()) {
-            return DataTables::of($datas)->addColumn('action', function ($data) {
-                return view('mail.outgoing.action', compact('data'));
-            })->toJson();
-        }
-
-        return view('mail.outgoing.index', compact(
-            'workunits',
-            'letters',
-            'sators',
-            'archive_remains',
-            'datas',
-            'out_date',
-            'mail_date',
-            'mail_number',
-            'id_mst_letter',
-            'archive_remain',
-            'org_unit',
-            'idUpdated',
-            'page_number',
-            'lastUpdated',
-        ));
     }
+
+    // Filter manual dari user input
+    if ($out_date != null) {
+        $datas->where('outgoing_mails.out_date', 'like', '%' . $out_date . '%');
+    }
+    if ($mail_date != null) {
+        $datas->where('outgoing_mails.mail_date', 'like', '%' . $mail_date . '%');
+    }
+    if ($mail_number != null) {
+        $datas->where('outgoing_mails.mail_number', 'like', '%' . $mail_number . '%');
+    }
+    if ($id_mst_letter != null) {
+        $datas->where('id_mst_letter', $id_mst_letter);
+    }
+    if ($archive_remain != null) {
+        $datas->where('outgoing_mails.archive_remains', $archive_remain);
+    }
+    if ($org_unit != null) {
+        $datas->where('org_unit', $org_unit);
+    }
+
+    // Ambil data
+    $datas = $datas->get();
+
+    // Hitung halaman
+    $page_number = 1;
+    if ($idUpdated) {
+        $page_size = 10;
+        $item = $datas->firstWhere('id', $idUpdated);
+        if ($item) {
+            $index = $datas->search(function ($value) use ($idUpdated) {
+                return $value->id == $idUpdated;
+            });
+            $page_number = (int) ceil(($index + 1) / $page_size);
+        } else {
+            $page_number = 1;
+        }
+    }
+
+    // Last Update
+    $lastUpdated = $datas->isNotEmpty() ? $datas->max('updated_at')->toDateTimeString() : null;
+
+    // Jika request via AJAX
+    if ($request->ajax()) {
+        return DataTables::of($datas)->addColumn('action', function ($data) {
+            return view('mail.outgoing.action', compact('data'));
+        })->toJson();
+    }
+
+    // Return view
+    return view('mail.outgoing.index', compact(
+        'workunits',
+        'letters',
+        'sators',
+        'archive_remains',
+        'datas',
+        'out_date',
+        'mail_date',
+        'mail_number',
+        'id_mst_letter',
+        'archive_remain',
+        'org_unit',
+        'idUpdated',
+        'page_number',
+        'lastUpdated',
+    ));
+}
+
 
 
     public function directupdate(Request $request, $id)
