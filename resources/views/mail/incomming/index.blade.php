@@ -44,6 +44,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
+                    
                     <form action="{{ route('incommingmail.index.post') }}" method="POST" enctype="multipart/form-data" id="modalSearch">
                         @csrf
                         <div class="modal-body" style="max-height: 65vh; overflow-y: auto;">
