@@ -204,7 +204,7 @@ public function index(Request $request)
     }
 
     // Ambil data
-    $datas = $datas->limit(4000)->get();
+    $datas = $datas->limit(8000)->get();
 
     // Get Page Number
     $page_number = 1;
